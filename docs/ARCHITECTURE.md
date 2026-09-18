@@ -22,8 +22,7 @@ Comptasse est construit sur une architecture monorepo moderne utilisant **pnpm w
 └────────────────────────────┬────────────────────────────┘
                              │
                   ┌──────────▼──────────┐
-                  │ @comptasse/application  │  (Frontend React)
-                  │    -website          │
+                  │ @comptasse/website  │  (Frontend React)
                   │   Port: 5173        │
                   └──────────┬──────────┘
                              │

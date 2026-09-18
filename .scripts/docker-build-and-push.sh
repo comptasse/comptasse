@@ -4,7 +4,7 @@ set -eu
 version="${1:?version argument is required}"
 
 : "${REGISTRY:=ghcr.io}"
-: "${IMAGE_PREFIX:=ghcr.io/comptasse/application}"
+: "${IMAGE_PREFIX:=ghcr.io/comptasse}"
 
 export COMPTASSE_VERSION="$version"
 

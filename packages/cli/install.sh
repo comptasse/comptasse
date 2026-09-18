@@ -3,7 +3,7 @@
 # Usage: curl -fsSL https://comptasse.com/cli/install.sh | sh
 set -e
 
-REPO="comptasse/application"
+REPO="comptasse/comptasse"
 INSTALL_DIR="${COMPTASSE_INSTALL_DIR:-$HOME/.local/bin}"
 DEST="${INSTALL_DIR}/comptasse"
 

@@ -104,12 +104,12 @@ export function InstallationGuideDocPage() {
   -e STORAGE_BUCKET_NAME=my-bucket \\
   -e STORAGE_ACCESS_KEY=VOTRE_CLE_ACCES_S3 \\
   -e STORAGE_SECRET_KEY=VOTRE_CLE_SECRETE_S3 \\
-  ghcr.io/comptasse/application/api
+  ghcr.io/comptasse/api
 
 docker run -d \\
   --name comptasse-dashboard \\
   -p 5173:80 \\
-  ghcr.io/comptasse/application/dashboard`}</DocCodeBlock>
+  ghcr.io/comptasse/dashboard`}</DocCodeBlock>
                 </DocExample>
 
                 <DocExample title="Variables d'environnement (API)">
@@ -139,7 +139,7 @@ docker run -d \\
                 <DocExample title="Fichier compose.yml">
                     <DocCodeBlock>{`services:
   api:
-    image: ghcr.io/comptasse/application/api
+    image: ghcr.io/comptasse/api
     ports:
       - "3000:3000"
     environment:
@@ -165,7 +165,7 @@ docker run -d \\
     restart: unless-stopped
 
   dashboard:
-    image: ghcr.io/comptasse/application/dashboard
+    image: ghcr.io/comptasse/dashboard
     ports:
       - "5173:80"
     depends_on:

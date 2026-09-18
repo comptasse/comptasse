@@ -1,3 +1,5 @@
+import { accountDescriptions } from "./accountsDescriptions.js"
+
 export interface CounterpartInfo {
     number: string
     label: string
@@ -45,7 +47,13 @@ function defineAccount(
         number,
         slug: toSlug(number),
         label,
-        description: options.description,
+        description:
+            [
+                options.description,
+                accountDescriptions[number],
+            ]
+                .filter(Boolean)
+                .join(" ") || undefined,
         classNumber: options.classNumber,
         className: options.className,
         type: options.type,

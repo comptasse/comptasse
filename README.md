@@ -27,8 +27,8 @@ Comptasse est une application open source de gestion de comptabilite en partie d
 Prérequis : [just](https://github.com/casey/just), Docker
 
 ```bash
-git clone https://github.com/comptasse/application.git
-cd application
+git clone https://github.com/comptasse/comptasse.git
+cd comptasse
 
 # Demarrer l'environnement de developpement
 just dev up
@@ -48,8 +48,8 @@ just dev logs
 Prérequis : Docker
 
 ```bash
-git clone https://github.com/comptasse/application.git
-cd application
+git clone https://github.com/comptasse/comptasse.git
+cd comptasse
 
 # Demarrer les services
 docker compose -f .workflows/dev/compose.yml up -d --build
@@ -100,8 +100,8 @@ Ce projet est sous licence AGPL-3.0. Voir le fichier [LICENSE](LICENSE) pour plu
 
 ## Support
 
-- [Signaler un bug](https://github.com/comptasse/application/issues)
-- [Proposer une fonctionnalité](https://github.com/comptasse/application/issues)
+- [Signaler un bug](https://github.com/comptasse/comptasse/issues)
+- [Proposer une fonctionnalité](https://github.com/comptasse/comptasse/issues)
 - Contact : contact@comptasse.com
 
 ---

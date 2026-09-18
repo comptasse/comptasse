@@ -85,7 +85,7 @@ export function NotFoundPage() {
                                 leftIcon={<IconHome />}
                             />
                         </LinkButton>
-                        <LinkButton to="/documentation">
+                        <LinkButton to="/documentation/fonctionnalités">
                             <ButtonOutlineContent
                                 text="Documentation"
                                 leftIcon={<IconBook2 />}

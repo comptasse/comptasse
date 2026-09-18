@@ -30,6 +30,7 @@ export function prerenderPlugin(): Plugin {
                 const renderBuildDir = resolve(pkgRoot, "build-render")
                 const env = loadEnv("production", pkgRoot, "VITE_")
                 const baseUrl = env.VITE_WEBSITE_BASE_URL ?? "https://comptasse.com"
+                const siteName = "Comptasse"
 
                 const spaShell = readFileSync(resolve(buildDir, "index.html"), "utf-8")
 
@@ -100,13 +101,25 @@ export function prerenderPlugin(): Plugin {
                                     .replace(/</g, "&lt;")
                                     .replace(/>/g, "&gt;")
                                     .replace(/"/g, "&quot;")
-                            let html = spaShell.replace(/<title>[^<]*<\/title>/, `<title>${escapeAttr(title)}</title>`)
-                            html = html.replace(
-                                /(<meta name="description" content=")[^"]*(")/,
-                                `$1${escapeAttr(description)}$2`,
-                            )
                             const canonicalUrl = encodeURI(`${baseUrl}${route}`)
-                            html = html.replace("</head>", `<link rel="canonical" href="${canonicalUrl}" /></head>`)
+                            // Replace the whole per-page SEO region in one shot so a
+                            // prerendered file can never contain two canonical links.
+                            const seoBlock = [
+                                `<title>${escapeAttr(title)}</title>`,
+                                `<meta name="description" content="${escapeAttr(description)}" />`,
+                                `<link rel="canonical" href="${canonicalUrl}" />`,
+                                `<meta property="og:title" content="${escapeAttr(title)}" />`,
+                                `<meta property="og:description" content="${escapeAttr(description)}" />`,
+                                `<meta property="og:type" content="website" />`,
+                                `<meta property="og:url" content="${canonicalUrl}" />`,
+                                `<meta property="og:locale" content="fr_FR" />`,
+                                `<meta property="og:site_name" content="${siteName}" />`,
+                                `<meta name="twitter:card" content="summary_large_image" />`,
+                                `<meta name="twitter:site" content="@comptasse" />`,
+                                `<meta name="twitter:title" content="${escapeAttr(title)}" />`,
+                                `<meta name="twitter:description" content="${escapeAttr(description)}" />`,
+                            ].join("\n        ")
+                            let html = spaShell.replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, seoBlock)
                             html = html.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`)
 
                             const outFile =

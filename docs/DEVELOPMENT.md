@@ -116,8 +116,8 @@ C'est tout ! PostgreSQL, RustFS seront lances automatiquement dans des container
 ### Etape 1 : Cloner le repository
 
 ```bash
-git clone https://github.com/comptasse/application.git
-cd application
+git clone https://github.com/comptasse/comptasse.git
+cd comptasse
 ```
 
 ### Etape 2 : Installer les dependances

@@ -13,14 +13,8 @@
 
         <meta name="keywords"
             content="comptabilité, open source, association, entreprise, gestion, comptable, bilan, compte de résultat, france, française, logiciel comptabilité">
-        <meta name="description" content="Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement.">
-        <title>Comptasse</title>
 
-        <!-- Open Graph (static fallback for crawlers that don't execute JS) -->
-        <meta property="og:title" content="Comptasse - Logiciel de comptabilité open source" />
-        <meta property="og:description" content="Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://comptasse.com" />
+        <!-- Static social image, shared by every page. -->
         <meta property="og:image" content="https://comptasse.com/og.png" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
@@ -29,14 +23,27 @@
         <meta property="og:image:type" content="image/webp" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta name="twitter:image" content="https://comptasse.com/og.png" />
+
+        <!-- Per-page SEO. The prerender plugin replaces everything between the
+             markers with the route's title, description, canonical and
+             OG/Twitter tags. Keeping it as a single region means a prerendered
+             page can never end up with two canonical links. -->
+        <!--seo:start-->
+        <title>Comptasse</title>
+        <meta name="description" content="Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement.">
+        <link rel="canonical" href="https://comptasse.com/" />
+        <meta property="og:title" content="Comptasse - Logiciel de comptabilité open source" />
+        <meta property="og:description" content="Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://comptasse.com/" />
         <meta property="og:locale" content="fr_FR" />
         <meta property="og:site_name" content="Comptasse" />
-
-        <!-- Twitter Card (static fallback) -->
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@comptasse" />
         <meta name="twitter:title" content="Comptasse - Logiciel de comptabilité open source" />
         <meta name="twitter:description" content="Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement." />
-        <meta name="twitter:image" content="https://comptasse.com/og.png" />
+        <!--seo:end-->
     </head>
 
     <body>

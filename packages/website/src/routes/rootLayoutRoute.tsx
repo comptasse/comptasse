@@ -1,10 +1,12 @@
 import type { readUserSessionRouteDefinition } from "@comptasse/application-metadata/routes"
 import { CircularLoader } from "@comptasse/ui"
 import { createRootRouteWithContext, useRouterState } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
-import { RootLayout } from "../features/RootLayout.js"
 import { SidebarContextProvider } from "../contexts/sidebar/SidebarContextProvider.tsx"
+import { RootLayout } from "../features/RootLayout.js"
+import { removeMetaTag, upsertCanonical, upsertMetaTag } from "../utilities/seoHead.js"
 
 const DEFAULT_DESCRIPTION =
     "Logiciel de comptabilité open source pour les entreprises et associations françaises. Gérez vos écritures, comptes et documents comptables simplement."
@@ -12,10 +14,7 @@ const SITE_NAME = "Comptasse"
 const BASE_URL = "https://comptasse.com"
 
 function escapeJsonLd(value: unknown): string {
-    return JSON.stringify(value)
-        .replace(/</g, "\\u003c")
-        .replace(/>/g, "\\u003e")
-        .replace(/&/g, "\\u0026")
+    return JSON.stringify(value).replace(/</g, "\\u003c").replace(/>/g, "\\u003e").replace(/&/g, "\\u0026")
 }
 
 const organizationJsonLd = {
@@ -67,8 +66,12 @@ function buildBreadcrumbJsonLd(pathname: string, title: string) {
     }
 
     const items = segments.map((segment, index) => {
-        const path = `/${segments.slice(0, index + 1).join("/")}`
         const isLast = index === segments.length - 1
+        // "/documentation" is a redirect: point the breadcrumb at the docs landing.
+        const path =
+            segment === "documentation" && !isLast
+                ? "/documentation/fonctionnalités"
+                : `/${segments.slice(0, index + 1).join("/")}`
         return {
             "@type": "ListItem",
             position: index + 1,
@@ -167,68 +170,32 @@ export const rootLayoutRoute = createRootRouteWithContext<{
         // JSON-LD: BreadcrumbList (documentation pages)
         const breadcrumbJsonLd = isDocPage ? buildBreadcrumbJsonLd(pathname, rawTitle) : null
 
+        // The prerendered HTML already carries the head tags; here we only
+        // update the existing elements on client-side navigation so React never
+        // appends a second <title>/<link rel="canonical">.
+        useEffect(() => {
+            document.title = title
+            upsertMetaTag("name", "description", description)
+            upsertCanonical(canonicalUrl)
+            upsertMetaTag("property", "og:title", title)
+            upsertMetaTag("property", "og:description", description)
+            upsertMetaTag("property", "og:url", canonicalUrl)
+            upsertMetaTag("name", "twitter:title", title)
+            upsertMetaTag("name", "twitter:description", description)
+            if (robots) {
+                upsertMetaTag("name", "robots", robots)
+            } else {
+                removeMetaTag("name", "robots")
+            }
+        }, [
+            title,
+            description,
+            canonicalUrl,
+            robots,
+        ])
+
         return (
             <Fragment>
-                <title>{title}</title>
-                <meta
-                    name="description"
-                    content={description}
-                />
-                <link
-                    rel="canonical"
-                    href={canonicalUrl}
-                />
-                {robots && (
-                    <meta
-                        name="robots"
-                        content={robots}
-                    />
-                )}
-
-                {/* Open Graph */}
-                <meta
-                    property="og:title"
-                    content={title}
-                />
-                <meta
-                    property="og:description"
-                    content={description}
-                />
-                <meta
-                    property="og:type"
-                    content="website"
-                />
-                <meta
-                    property="og:url"
-                    content={canonicalUrl}
-                />
-                <meta
-                    property="og:locale"
-                    content="fr_FR"
-                />
-                <meta
-                    property="og:site_name"
-                    content={SITE_NAME}
-                />
-
-                {/* Twitter Card */}
-                <meta
-                    name="twitter:card"
-                    content="summary"
-                />
-                <meta
-                    name="twitter:site"
-                    content="@comptasse"
-                />
-                <meta
-                    name="twitter:title"
-                    content={title}
-                />
-                <meta
-                    name="twitter:description"
-                    content={description}
-                />
-
                 {/* JSON-LD Structured Data */}
                 <script
                     type="application/ld+json"

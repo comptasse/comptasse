@@ -56,4 +56,4 @@ Deux plans tarifaires :
 
 - [Mentions légales](https://comptasse.com/documentation/mentions-légales): Informations légales
 - [Politique de confidentialité](https://comptasse.com/documentation/confidentialité): Politique de confidentialité et traitement des données
-- [Code source](https://github.com/comptasse/application): Dépôt GitHub du projet (licence AGPL-3.0)
+- [Code source](https://github.com/comptasse/comptasse): Dépôt GitHub du projet (licence AGPL-3.0)

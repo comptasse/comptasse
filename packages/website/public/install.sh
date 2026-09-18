@@ -27,7 +27,7 @@
 #       local dev server, and overridable for testing.
 #   COMPTASSE_SERVICES=integrated|external        default: integrated
 #   COMPTASSE_DATA_DIR                            default: ~/.comptasse
-#   COMPTASSE_IMAGE                               base image name override (default: ghcr.io/comptasse/application)
+#   COMPTASSE_IMAGE                               base image name override (default: ghcr.io/comptasse)
 #   COMPTASSE_REPO_DIR                            local development: path to the repository checkout
 #                                                 (optional; otherwise auto-detected from the working directory)
 #   COMPTASSE_VERSION                             image tag (default: latest for registry, dev for local build)
@@ -57,7 +57,7 @@ API_PORT="${COMPTASSE_API_PORT:-3000}"
 DASHBOARD_PORT="${COMPTASSE_DASHBOARD_PORT:-5173}"
 SERVICES="${COMPTASSE_SERVICES:-integrated}"
 SOURCE_ORIGIN="${COMPTASSE_SOURCE_ORIGIN:-https://comptasse.com}"
-IMAGE_BASE="${COMPTASSE_IMAGE:-ghcr.io/comptasse/application}"
+IMAGE_BASE="${COMPTASSE_IMAGE:-ghcr.io/comptasse}"
 
 INTERACTIVE=false
 [ -t 0 ] && INTERACTIVE=true
@@ -339,7 +339,7 @@ else
     CLI_INSTALL_DIR="${COMPTASSE_INSTALL_DIR:-$HOME/.local/bin}"
     CLI_DEST="${CLI_INSTALL_DIR}/comptasse"
     mkdir -p "$CLI_INSTALL_DIR"
-    curl -fsSL --progress-bar "https://github.com/comptasse/application/releases/latest/download/comptasse.sh" -o "$CLI_DEST"
+    curl -fsSL --progress-bar "https://github.com/comptasse/comptasse/releases/latest/download/comptasse.sh" -o "$CLI_DEST"
     chmod +x "$CLI_DEST"
     echo "Installed CLI: $CLI_DEST"
 fi
