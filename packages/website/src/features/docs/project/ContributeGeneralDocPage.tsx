@@ -8,7 +8,7 @@ import { DocRoot } from "../../../components/document/DocRoot.js"
 import { DocSection } from "../../../components/document/DocSection.js"
 import { DocTip } from "../../../components/document/DocTip.js"
 
-const githubUrl = "https://github.com/comptasse/application"
+const githubUrl = "https://github.com/comptasse/comptasse"
 
 export function ContributeGeneralDocPage() {
     return (

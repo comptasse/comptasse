@@ -41,12 +41,12 @@ export function SupportGeneralDocPage() {
                     <DocParagraph>Signalez un bug, proposez une amélioration ou consultez le code source.</DocParagraph>
                     <DocParagraph>
                         <DocLink
-                            href="https://github.com/comptasse/application"
+                            href="https://github.com/comptasse/comptasse"
                             target="_blank"
                             rel="noopener noreferrer"
                             buttonProps={{
                                 leftIcon: <IconBrandGithub />,
-                                text: "comptasse/application",
+                                text: "comptasse/comptasse",
                                 rightIcon: <IconExternalLink />,
                             }}
                         />

@@ -39,7 +39,7 @@ export function LegalGeneralDocPage() {
                 <DocParagraph>
                     Le code source de Comptasse est distribué sous licence{" "}
                     <DocLink
-                        href="https://raw.githubusercontent.com/comptasse/application/refs/heads/main/LICENSE"
+                        href="https://raw.githubusercontent.com/comptasse/comptasse/refs/heads/main/LICENSE"
                         target="_blank"
                         rel="noopener noreferrer"
                     >

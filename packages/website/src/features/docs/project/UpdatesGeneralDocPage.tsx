@@ -19,7 +19,7 @@ export function UpdatesGeneralDocPage() {
                 </DocParagraph>
                 <DocParagraph>
                     <DocLink
-                        href="https://github.com/comptasse/application/releases"
+                        href="https://github.com/comptasse/comptasse/releases"
                         target="_blank"
                         rel="noopener noreferrer"
                         buttonProps={{

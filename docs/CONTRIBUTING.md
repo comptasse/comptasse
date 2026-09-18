@@ -67,7 +67,7 @@ Avant de commencer a contribuer, configurez votre environnement de developpement
 
 3. **Ajouter le repository principal comme remote**
    ```bash
-   git remote add upstream https://github.com/comptasse/application.git
+   git remote add upstream https://github.com/comptasse/comptasse.git
    ```
 
 4. **Choisir votre methode de developpement**
@@ -569,8 +569,8 @@ Plusieurs utilisateurs ont demande cette fonctionnalite pour faire des analyses 
 - [Documentation d'architecture](ARCHITECTURE.md)
 - [Guide de developpement](DEVELOPMENT.md)
 - [Configuration](CONFIGURATION.md)
-- [Issues GitHub](https://github.com/comptasse/application/issues)
-- [Discussions GitHub](https://github.com/comptasse/application/discussions)
+- [Issues GitHub](https://github.com/comptasse/comptasse/issues)
+- [Discussions GitHub](https://github.com/comptasse/comptasse/discussions)
 
 ## Questions ?
 
