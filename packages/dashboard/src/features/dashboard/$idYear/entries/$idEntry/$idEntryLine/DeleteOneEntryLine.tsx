@@ -40,15 +40,6 @@ export function DeleteOneEntryLine(props: {
                 body: {
                     idYear: props.entryLine.idYear,
                 },
-                params: {
-                    idEntry: props.entryLine.idEntry,
-                },
-            }),
-            invalidateData({
-                routeDefinition: readAllEntryLinesRouteDefinition,
-                body: {
-                    idYear: props.entryLine.idYear,
-                },
             }),
         ])
 

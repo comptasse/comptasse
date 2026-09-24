@@ -18,7 +18,7 @@ export const readAllEntryLinesRoute = registerRoute(readAllEntryLinesRouteDefini
         context: c,
         schema: readAllEntryLinesRouteDefinition.schemas.body,
     })
-    const idEntry = c.req.param("idEntry")
+    const idEntry = body.idEntry
 
     const readAllEntryLines = await selectMany({
         database: c.var.clients.sql,

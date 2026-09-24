@@ -66,8 +66,64 @@ describe("Entries", () => {
 })
 
 describe("Entry Lines", () => {
-    describe("GET /organizations/:idOrganization/years/:idYear/entries/:idEntry/lines", () => {
-        it("returns all entry lines for a specific entry", async () => {
+    describe("GET /organizations/:idOrganization/years/:idYear/entries/lines", () => {
+        it("returns all entry lines for the year without requiring idEntry", async () => {
+            const entriesResponse = await authenticatedRequest({
+                session,
+                method: "GET",
+                path: `/organizations/${idOrganization}/years/${idYear}/entries`,
+            })
+            const entries = entriesResponse.data as any[]
+            expect(entries.length).toBeGreaterThan(0)
+            const idEntry = entries[0].id
+
+            const accountsResponse = await authenticatedRequest({
+                session,
+                method: "GET",
+                path: `/organizations/${idOrganization}/years/${idYear}/accounts`,
+            })
+            const accounts = accountsResponse.data as any[]
+            const selectableAccount = accounts.find((a: any) => a.isSelectable === true)
+
+            const createResponse = await authenticatedRequest({
+                session,
+                method: "POST",
+                path: `/organizations/${idOrganization}/years/${idYear}/entries/${idEntry}/lines`,
+                body: {
+                    idAccount: selectableAccount.id,
+                    isComputedForJournalReport: true,
+                    isComputedForLedgerReport: true,
+                    isComputedForBalanceReport: true,
+                    isComputedForBalanceSheetReport: true,
+                    isComputedForIncomeStatementReport: true,
+                    label: "Regression Line",
+                    debit: "1.00",
+                    credit: "0",
+                },
+            })
+            expect(createResponse.status).toBe(200)
+            const createdLineId = (createResponse.data as any).id
+
+            const response = await authenticatedRequest({
+                session,
+                method: "GET",
+                path: `/organizations/${idOrganization}/years/${idYear}/entries/lines`,
+            })
+            expect(response.status).toBe(200)
+
+            const data = response.data as any[]
+            expect(Array.isArray(data)).toBe(true)
+            if (data.length > 0) {
+                const line = data[0]
+                expect(line).toHaveProperty("id")
+                expect(line).toHaveProperty("idEntry")
+                expect(line).toHaveProperty("idAccount")
+            }
+            // Regression: this returned [] when the route required a missing :idEntry.
+            expect(data.some((line) => line.id === createdLineId)).toBe(true)
+        })
+
+        it("filters entry lines by idEntry query parameter", async () => {
             const entriesResponse = await authenticatedRequest({
                 session,
                 method: "GET",
@@ -80,18 +136,14 @@ describe("Entry Lines", () => {
             const response = await authenticatedRequest({
                 session,
                 method: "GET",
-                path: `/organizations/${idOrganization}/years/${idYear}/entries/${idEntry}/lines`,
+                path: `/organizations/${idOrganization}/years/${idYear}/entries/lines?idEntry=${idEntry}`,
             })
             expect(response.status).toBe(200)
 
             const data = response.data as any[]
             expect(Array.isArray(data)).toBe(true)
-
-            if (data.length > 0) {
-                const line = data[0]
-                expect(line).toHaveProperty("id")
-                expect(line).toHaveProperty("idEntry")
-                expect(line).toHaveProperty("idAccount")
+            for (const line of data) {
+                expect(line.idEntry).toBe(idEntry)
             }
         })
     })
