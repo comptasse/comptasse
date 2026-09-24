@@ -63,15 +63,6 @@ export function UpdateManyEntryLines(props: {
                         body: {
                             idYear: props.entry.idYear,
                         },
-                        params: {
-                            idEntry: props.entry.id,
-                        },
-                    }),
-                    invalidateData({
-                        routeDefinition: readAllEntryLinesRouteDefinition,
-                        body: {
-                            idYear: props.entry.idYear,
-                        },
                     }),
                 ])
 
