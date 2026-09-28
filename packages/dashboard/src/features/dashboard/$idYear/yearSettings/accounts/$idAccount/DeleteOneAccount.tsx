@@ -45,7 +45,7 @@ export function DeleteOneAccount(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/comptes",
+            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
             params: {
                 idOrganization: props.account.idOrganization,
                 idYear: props.account.idYear,

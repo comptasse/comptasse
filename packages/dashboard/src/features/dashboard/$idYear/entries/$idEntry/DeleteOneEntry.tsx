@@ -44,7 +44,7 @@ export function DeleteOneEntry(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures",
+            to: "/organisation/$idOrganization/exercice/$idYear/écritures",
             params: {
                 idOrganization: props.entry.idOrganization,
                 idYear: props.entry.idYear,

@@ -620,8 +620,16 @@ _lines_base() { printf '%s/%s/lines' "$(_entries_base "$1")" "$2"; }
 _lines_list() {
     entry=''; year=''
     while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; -*) _die "Unknown: $1" ;; *) entry="$1" ;; esac; shift; done
-    [ -n "$entry" ] && [ -n "$year" ] || _die "Usage: comptasse entries lines list <idEntry> --year <id>"
-    _require_cfg; _api GET "$(_lines_base "$year" "$entry")"
+    [ -n "$year" ] || _die "Usage: comptasse entries lines list [<idEntry>] --year <id>"
+    _require_cfg
+    # Entry lines are collected through the year-scoped route
+    # (GET .../entries/lines?idYear=...), optionally filtered by idEntry. The
+    # per-entry route GET .../entries/:idEntry/lines no longer exists.
+    if [ -n "$entry" ]; then
+        _api GET "$(_entries_base "$year")/lines?idYear=$year&idEntry=$entry"
+    else
+        _api GET "$(_entries_base "$year")/lines?idYear=$year"
+    fi
 }
 
 _lines_get() {

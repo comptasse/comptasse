@@ -38,7 +38,7 @@ export function DeleteOneFile(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/stockage",
+            to: "/organisation/$idOrganization/stockage",
             params: {
                 idOrganization: props.file.idOrganization,
             },

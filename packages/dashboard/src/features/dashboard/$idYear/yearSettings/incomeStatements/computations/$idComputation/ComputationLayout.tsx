@@ -46,7 +46,7 @@ export function ComputationLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs"
+                                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
                                         params={{
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,
@@ -87,7 +87,7 @@ export function ComputationLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -97,7 +97,7 @@ export function ComputationLayout() {
                                         {
                                             label: "Postes",
                                             icon: <IconList />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation/postes",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -107,7 +107,7 @@ export function ComputationLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,

@@ -25,7 +25,7 @@ export function ComputationsPage() {
                         {
                             label: "Postes",
                             icon: <IconReportMoney />,
-                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat",
+                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat",
                             params: {
                                 idOrganization: params.idOrganization,
                                 idYear: params.idYear,
@@ -34,7 +34,7 @@ export function ComputationsPage() {
                         {
                             label: "Calculs",
                             icon: <IconCalculator />,
-                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs",
+                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                             params: {
                                 idOrganization: params.idOrganization,
                                 idYear: params.idYear,

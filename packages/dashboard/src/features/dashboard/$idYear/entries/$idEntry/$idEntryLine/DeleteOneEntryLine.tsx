@@ -49,7 +49,7 @@ export function DeleteOneEntryLine(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry",
+            to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
             params: {
                 idOrganization: props.entryLine.idOrganization,
                 idYear: props.entryLine.idYear,

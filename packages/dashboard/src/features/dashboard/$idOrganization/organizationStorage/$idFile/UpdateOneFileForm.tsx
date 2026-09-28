@@ -19,11 +19,16 @@ import { useRightPanel } from "../../../../../contexts/rightPanel/RightPanelCont
 import { getResponseBodyFromAPI } from "../../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../../utilities/invalidateData.js"
 import { resolveApiBaseUrl } from "../../../../../utilities/resolveApiBaseUrl.js"
-import { getCookie } from "../../../../../utilities/cookies/getCookie.js"
-import { cookiePrefix } from "../../../../../utilities/variables.js"
+import { resolveOrganizationId } from "../../../../../utilities/resolveOrganizationId.js"
 
-export function UpdateOneFileForm(props: { file: v.InferOutput<typeof returnedSchemas.file> }) {
+export function UpdateOneFileForm(props: {
+    file: v.InferOutput<typeof returnedSchemas.file>
+    /** Which part of the file to edit. Defaults to everything. */
+    mode?: "metadata" | "file"
+}) {
     const { closePanel } = useRightPanel()
+    const showFile = props.mode !== "metadata"
+    const showMetadata = props.mode !== "file"
     return (
         <FormRoot
             schema={v.object({
@@ -40,7 +45,7 @@ export function UpdateOneFileForm(props: { file: v.InferOutput<typeof returnedSc
             }}
             onSubmit={async (data) => {
                 const apiBaseUrl = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
-                const orgId = getCookie(`${cookiePrefix}_id_organization`) ?? props.file.idOrganization
+                const orgId = resolveOrganizationId() ?? props.file.idOrganization
                 const url = `${apiBaseUrl}/organizations/${orgId}/years/:idYear/files/${props.file.id}`
 
                 if (data.file instanceof File) {
@@ -115,87 +120,93 @@ export function UpdateOneFileForm(props: { file: v.InferOutput<typeof returnedSc
         >
             {(form) => (
                 <Fragment>
-                    <FormField
-                        control={form.control}
-                        name="file"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    label="Fichier"
-                                    isRequired={false}
-                                />
-                                <FormControl>
-                                    <InputFile
-                                        value={field.value instanceof File ? field.value : null}
-                                        onChange={field.onChange}
+                    {showFile && (
+                        <FormField
+                            control={form.control}
+                            name="file"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel
+                                        label="Fichier"
+                                        isRequired={false}
                                     />
-                                </FormControl>
-                                <FormError />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="reference"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    label="Référence"
-                                    isRequired
-                                />
-                                <FormControl>
-                                    <InputText
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        autoFocus
-                                    />
-                                </FormControl>
-                                <FormError />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    label="Nom du fichier"
-                                    isRequired={false}
-                                    description={undefined}
-                                    tooltip={undefined}
-                                />
-                                <FormControl>
-                                    <InputText
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormError />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="date"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    label="Date du document"
-                                    isRequired={false}
-                                    description={undefined}
-                                    tooltip={undefined}
-                                />
-                                <FormControl>
-                                    <InputDate
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormError />
-                            </FormItem>
-                        )}
-                    />
+                                    <FormControl>
+                                        <InputFile
+                                            value={field.value instanceof File ? field.value : null}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormError />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+                    {showMetadata && (
+                        <Fragment>
+                            <FormField
+                                control={form.control}
+                                name="reference"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            label="Référence"
+                                            isRequired={false}
+                                        />
+                                        <FormControl>
+                                            <InputText
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                autoFocus
+                                            />
+                                        </FormControl>
+                                        <FormError />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            label="Nom du fichier"
+                                            isRequired={false}
+                                            description={undefined}
+                                            tooltip={undefined}
+                                        />
+                                        <FormControl>
+                                            <InputText
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormError />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="date"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            label="Date du document"
+                                            isRequired={false}
+                                            description={undefined}
+                                            tooltip={undefined}
+                                        />
+                                        <FormControl>
+                                            <InputDate
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormError />
+                                    </FormItem>
+                                )}
+                            />
+                        </Fragment>
+                    )}
                 </Fragment>
             )}
         </FormRoot>

@@ -46,7 +46,7 @@ export function AccountLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/comptes"
+                                        to="/organisation/$idOrganization/exercice/$idYear/comptes"
                                         params={{
                                             idOrganization: account.idOrganization,
                                             idYear: account.idYear,
@@ -88,7 +88,7 @@ export function AccountLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/comptes/$idAccount",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -98,7 +98,7 @@ export function AccountLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/comptes/$idAccount/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,

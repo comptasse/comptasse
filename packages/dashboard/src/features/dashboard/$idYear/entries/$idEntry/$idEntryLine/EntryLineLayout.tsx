@@ -46,7 +46,7 @@ export function EntryLineLayout() {
                                         })}
                                     >
                                         <LinkButton
-                                            to="/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/mouvements"
+                                            to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
                                             params={{
                                                 idOrganization: entryLine.idOrganization,
                                                 idYear: entryLine.idYear,
@@ -87,7 +87,7 @@ export function EntryLineLayout() {
                                             {
                                                 label: "Informations",
                                                 icon: <IconInfoCircle />,
-                                                to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/mouvements/$idEntryLine",
+                                                to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                                                 params: {
                                                     idOrganization: params.idOrganization,
                                                     idYear: params.idYear,
@@ -98,7 +98,7 @@ export function EntryLineLayout() {
                                             {
                                                 label: "Métadonnées",
                                                 icon: <IconDatabase />,
-                                                to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/mouvements/$idEntryLine/métadonnées",
+                                                to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry/métadonnées",
                                                 params: {
                                                     idOrganization: params.idOrganization,
                                                     idYear: params.idYear,

@@ -2,30 +2,23 @@ import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { CircularLoader, FormatError } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 import type * as v from "valibot"
-import { getCookie } from "../../../../../utilities/cookies/getCookie.js"
 import { resolveApiBaseUrl } from "../../../../../utilities/resolveApiBaseUrl.js"
-import { cookiePrefix } from "../../../../../utilities/variables.js"
+import { resolveOrganizationId } from "../../../../../utilities/resolveOrganizationId.js"
 
-export function FileFile(props: { file: v.InferOutput<typeof returnedSchemas.file> }) {
-    const apiBaseUrl = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
-    const orgId = getCookie(`${cookiePrefix}_id_organization`) ?? props.file.idOrganization
-
-    const downloadUrl = apiBaseUrl
-        ? `${apiBaseUrl}/organizations/${orgId}/years/:idYear/files/${props.file.id}/content`
-        : undefined
-
-    const isMarkdownFile = props.file.type?.startsWith("text/markdown") ?? false
-
-    const contentQuery = useQuery({
-        queryKey: ["file-content", props.file.id, isMarkdownFile],
+function MarkdownFileContent(props: { downloadUrl: string; orgId: string; fileId: string }) {
+    const query = useQuery({
+        queryKey: [
+            "file-content",
+            props.fileId,
+        ],
         queryFn: async ({ signal }) => {
-            if (!downloadUrl) throw new Error("API_BASE_URL is not defined")
-            const response = await fetch(downloadUrl, {
+            const response = await fetch(props.downloadUrl, {
                 signal,
                 credentials: "include",
                 headers: {
-                    "X-Organization-Id": orgId,
+                    "X-Organization-Id": props.orgId,
                 },
             })
             if (!response.ok) {
@@ -34,41 +27,89 @@ export function FileFile(props: { file: v.InferOutput<typeof returnedSchemas.fil
             const bytes = await response.arrayBuffer()
             return new TextDecoder("utf-8").decode(bytes)
         },
-        enabled: apiBaseUrl !== undefined && isMarkdownFile && props.file.storageKey !== null,
         staleTime: Infinity,
     })
 
-    if (props.file.storageKey === null) {
-        return <FormatError text="Ce fichier n'a pas de contenu associé." />
+    if (query.isPending) {
+        return <CircularLoader text="Affichage du markdown..." />
+    }
+    if (query.isError) {
+        return <FormatError text="Impossible d'afficher le contenu markdown." />
     }
 
-    if (isMarkdownFile) {
-        if (contentQuery.isPending) {
-            return <CircularLoader text="Affichage du markdown..." />
+    return (
+        <pre
+            className={css({
+                width: "100%",
+                minH: "fit",
+                height: "768px",
+                maxH: "768px",
+                border: "1px solid",
+                borderColor: "neutral/20",
+                borderRadius: "md",
+                padding: "4",
+                overflow: "auto",
+                whiteSpace: "pre-wrap",
+                lineHeight: "1.5",
+                color: "neutral",
+            })}
+        >
+            {query.data ?? ""}
+        </pre>
+    )
+}
+
+function BinaryFileContent(props: {
+    downloadUrl: string
+    orgId: string
+    file: v.InferOutput<typeof returnedSchemas.file>
+}) {
+    // `X-Organization-Id` cannot be sent by an <embed>, so fetch the file as a blob.
+    const query = useQuery({
+        queryKey: [
+            "file-blob",
+            props.file.id,
+            props.file.type,
+        ],
+        queryFn: async ({ signal }) => {
+            const response = await fetch(props.downloadUrl, {
+                signal,
+                credentials: "include",
+                headers: {
+                    "X-Organization-Id": props.orgId,
+                },
+            })
+            if (!response.ok) {
+                throw new Error("Impossible de récupérer le fichier")
+            }
+            const buffer = await response.arrayBuffer()
+            return new Blob([
+                buffer,
+            ], {
+                type: props.file.type ?? "application/octet-stream",
+            })
+        },
+        staleTime: Infinity,
+    })
+
+    const [objectUrl, setObjectUrl] = useState<string | null>(null)
+    useEffect(() => {
+        if (!query.data) {
+            setObjectUrl(null)
+            return
         }
-        if (contentQuery.isError) {
-            return <FormatError text="Impossible d'afficher le contenu markdown." />
-        }
-        return (
-            <pre
-                className={css({
-                    width: "100%",
-                    minH: "fit",
-                    height: "768px",
-                    maxH: "768px",
-                    border: "1px solid",
-                    borderColor: "neutral/20",
-                    borderRadius: "md",
-                    padding: "4",
-                    overflow: "auto",
-                    whiteSpace: "pre-wrap",
-                    lineHeight: "1.5",
-                    color: "neutral",
-                })}
-            >
-                {contentQuery.data ?? ""}
-            </pre>
-        )
+        const url = URL.createObjectURL(query.data)
+        setObjectUrl(url)
+        return () => URL.revokeObjectURL(url)
+    }, [
+        query.data,
+    ])
+
+    if (query.isError) {
+        return <FormatError text="Impossible d'afficher le fichier." />
+    }
+    if (query.isPending || objectUrl === null) {
+        return <CircularLoader text="Chargement du fichier..." />
     }
 
     return (
@@ -84,8 +125,40 @@ export function FileFile(props: { file: v.InferOutput<typeof returnedSchemas.fil
                 borderRadius: "md",
                 padding: "4",
             })}
-            src={downloadUrl}
+            src={objectUrl}
             type={props.file.type ?? undefined}
+        />
+    )
+}
+
+export function FileFile(props: { file: v.InferOutput<typeof returnedSchemas.file> }) {
+    const apiBaseUrl = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
+    const orgId = resolveOrganizationId() ?? props.file.idOrganization
+
+    if (props.file.storageKey === null) {
+        return <FormatError text="Ce fichier n'a pas de contenu associé." />
+    }
+    if (apiBaseUrl === undefined) {
+        return <FormatError text="L'API n'est pas configurée." />
+    }
+
+    const downloadUrl = `${apiBaseUrl}/organizations/${orgId}/years/:idYear/files/${props.file.id}/content`
+
+    if (props.file.type?.startsWith("text/markdown")) {
+        return (
+            <MarkdownFileContent
+                downloadUrl={downloadUrl}
+                orgId={orgId}
+                fileId={props.file.id}
+            />
+        )
+    }
+
+    return (
+        <BinaryFileContent
+            downloadUrl={downloadUrl}
+            orgId={orgId}
+            file={props.file}
         />
     )
 }

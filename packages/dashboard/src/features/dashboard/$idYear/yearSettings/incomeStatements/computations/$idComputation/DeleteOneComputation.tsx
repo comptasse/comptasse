@@ -47,7 +47,7 @@ export function DeleteOneComputation(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat",
+            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat",
             params: {
                 idOrganization: props.computation.idOrganization,
                 idYear: props.computation.idYear,

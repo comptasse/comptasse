@@ -37,12 +37,11 @@ export function EntryLinesTable(props: {
                                 />
                             </UpdateOneEntryLine>
                             <LinkButton
-                                to="/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/mouvements/$idEntryLine"
+                                to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
                                 params={{
                                     idOrganization: props.entry.idOrganization,
                                     idYear: props.entry.idYear,
                                     idEntry: row.original.idEntry,
-                                    idEntryLine: row.original.id,
                                 }}
                             >
                                 <ButtonGhostContent

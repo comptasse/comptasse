@@ -47,7 +47,7 @@ export function DeleteOneBalanceSheet(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/bilan",
+            to: "/organisation/$idOrganization/exercice/$idYear/bilan",
             params: {
                 idOrganization: props.balanceSheet.idOrganization,
                 idYear: props.balanceSheet.idYear,

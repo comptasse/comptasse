@@ -46,7 +46,7 @@ export function BalanceSheetLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/bilan"
+                                        to="/organisation/$idOrganization/exercice/$idYear/bilan"
                                         params={{
                                             idOrganization: balanceSheet.idOrganization,
                                             idYear: balanceSheet.idYear,
@@ -87,7 +87,7 @@ export function BalanceSheetLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/bilan/$idBalanceSheet",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/bilan",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -97,7 +97,7 @@ export function BalanceSheetLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/bilan/$idBalanceSheet/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/bilan",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
