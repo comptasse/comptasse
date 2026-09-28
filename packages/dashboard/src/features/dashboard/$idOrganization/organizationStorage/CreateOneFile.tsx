@@ -5,10 +5,9 @@ import { Button, toast } from "@comptasse/ui"
 import type { JSX } from "react"
 import { useRef } from "react"
 import type * as v from "valibot"
-import { getCookie } from "../../../../utilities/cookies/getCookie.js"
 import { invalidateData } from "../../../../utilities/invalidateData.js"
 import { resolveApiBaseUrl } from "../../../../utilities/resolveApiBaseUrl.js"
-import { cookiePrefix } from "../../../../utilities/variables.js"
+import { resolveOrganizationId } from "../../../../utilities/resolveOrganizationId.js"
 
 const MAX_FILE_SIZE = 1024 * 1024 * 50
 
@@ -52,7 +51,7 @@ async function uploadOneFile(params: {
         formData.append("idFolder", idFolder)
     }
 
-    const orgId = getCookie(`${cookiePrefix}_id_organization`) ?? idOrganization
+    const orgId = resolveOrganizationId() ?? idOrganization
 
     const response = await fetch(`${apiBaseUrl}/organizations/${orgId}/years/:idYear/files`, {
         method: "POST",

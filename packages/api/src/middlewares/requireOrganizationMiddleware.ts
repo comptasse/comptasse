@@ -6,6 +6,7 @@ export async function requireOrganizationMiddleware(parameters: { idOrganization
     }
 
     throw new Exception({
+        statusCode: 400,
         internalMessage: "Organization required",
         cause: "No organization context found in the request",
     })

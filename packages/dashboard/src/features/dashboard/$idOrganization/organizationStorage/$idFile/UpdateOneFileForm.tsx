@@ -19,8 +19,7 @@ import { useRightPanel } from "../../../../../contexts/rightPanel/RightPanelCont
 import { getResponseBodyFromAPI } from "../../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../../utilities/invalidateData.js"
 import { resolveApiBaseUrl } from "../../../../../utilities/resolveApiBaseUrl.js"
-import { getCookie } from "../../../../../utilities/cookies/getCookie.js"
-import { cookiePrefix } from "../../../../../utilities/variables.js"
+import { resolveOrganizationId } from "../../../../../utilities/resolveOrganizationId.js"
 
 export function UpdateOneFileForm(props: {
     file: v.InferOutput<typeof returnedSchemas.file>
@@ -46,7 +45,7 @@ export function UpdateOneFileForm(props: {
             }}
             onSubmit={async (data) => {
                 const apiBaseUrl = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL)
-                const orgId = getCookie(`${cookiePrefix}_id_organization`) ?? props.file.idOrganization
+                const orgId = resolveOrganizationId() ?? props.file.idOrganization
                 const url = `${apiBaseUrl}/organizations/${orgId}/years/:idYear/files/${props.file.id}`
 
                 if (data.file instanceof File) {
