@@ -44,7 +44,7 @@ export function DeleteOneTag(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/catégories",
+            to: "/organisation/$idOrganization/exercice/$idYear/catégories",
             params: {
                 idOrganization: props.tag.idOrganization,
                 idYear: props.tag.idYear,

@@ -47,7 +47,7 @@ export function ComputationIncomeStatementLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation/postes"
+                                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
                                         params={{
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,
@@ -93,7 +93,7 @@ export function ComputationIncomeStatementLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation/postes/$idComputationIncomeStatement",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -104,7 +104,7 @@ export function ComputationIncomeStatementLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation/postes/$idComputationIncomeStatement/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,

@@ -88,7 +88,7 @@ export function EntryLayout() {
                                 })}
                             >
                                 <LinkButton
-                                    to="/dashboard/organisations/$idOrganization/exercices/$idYear/écritures"
+                                    to="/organisation/$idOrganization/exercice/$idYear/écritures"
                                     params={{
                                         idOrganization: params.idOrganization,
                                         idYear: params.idYear,
@@ -187,7 +187,7 @@ export function EntryLayout() {
                                     {
                                         label: "Informations",
                                         icon: <IconInfoCircle />,
-                                        to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry",
+                                        to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                                         params: {
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,
@@ -197,7 +197,7 @@ export function EntryLayout() {
                                     {
                                         label: "Mouvements",
                                         icon: <IconList />,
-                                        to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/mouvements",
+                                        to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                                         params: {
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,
@@ -207,7 +207,7 @@ export function EntryLayout() {
                                     {
                                         label: "Catégories",
                                         icon: <IconTag />,
-                                        to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/catégories",
+                                        to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                                         params: {
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,
@@ -217,7 +217,7 @@ export function EntryLayout() {
                                     {
                                         label: "Métadonnées",
                                         icon: <IconDatabase />,
-                                        to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry/métadonnées",
+                                        to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                                         params: {
                                             idOrganization: params.idOrganization,
                                             idYear: params.idYear,

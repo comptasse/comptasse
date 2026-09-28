@@ -44,7 +44,7 @@ export function DeleteOneJournal(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/journaux",
+            to: "/organisation/$idOrganization/exercice/$idYear/journaux",
             params: {
                 idOrganization: props.journal.idOrganization,
                 idYear: props.journal.idYear,

@@ -131,11 +131,44 @@ export function FileActions(props: { file: v.InferOutput<typeof returnedSchemas.
                         className={{
                             width: "100%",
                         }}
-                        onClick={() => openPanel(<UpdateOneFileForm file={props.file} />, "Modifier le fichier")}
+                        onClick={() =>
+                            openPanel(
+                                <UpdateOneFileForm
+                                    file={props.file}
+                                    mode="metadata"
+                                />,
+                                "Modifier les métadonnées",
+                            )
+                        }
                     >
                         <ButtonGhostContent
                             leftIcon={<IconPencil />}
-                            text="Modifier"
+                            text="Modifier les métadonnées"
+                            className={{
+                                width: "100%",
+                                justifyContent: "start",
+                            }}
+                        />
+                    </Button>
+                </Popover.Close>
+                <Popover.Close asChild>
+                    <Button
+                        className={{
+                            width: "100%",
+                        }}
+                        onClick={() =>
+                            openPanel(
+                                <UpdateOneFileForm
+                                    file={props.file}
+                                    mode="file"
+                                />,
+                                "Remplacer le fichier",
+                            )
+                        }
+                    >
+                        <ButtonGhostContent
+                            leftIcon={<IconFileText />}
+                            text="Remplacer le fichier"
                             className={{
                                 width: "100%",
                                 justifyContent: "start",

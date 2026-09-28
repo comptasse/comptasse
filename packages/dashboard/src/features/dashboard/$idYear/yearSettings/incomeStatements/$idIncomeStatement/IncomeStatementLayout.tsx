@@ -46,7 +46,7 @@ export function IncomeStatementLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat"
+                                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat"
                                         params={{
                                             idOrganization: incomeStatement.idOrganization,
                                             idYear: incomeStatement.idYear,
@@ -87,7 +87,7 @@ export function IncomeStatementLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/$idIncomeStatement",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -97,7 +97,7 @@ export function IncomeStatementLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/$idIncomeStatement/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,

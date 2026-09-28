@@ -101,7 +101,7 @@ function CreateOneEntryPanel(props: {
                     variant: "success",
                 })
                 applicationRouter.navigate({
-                    to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry",
+                    to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
                     params: {
                         idOrganization: props.idOrganization,
                         idYear: props.idYear,

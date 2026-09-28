@@ -1,7 +1,7 @@
 import { readAllFilesRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, ButtonOutlineContent, ButtonPlainContent, toast, useModalStore } from "@comptasse/ui"
-import { IconArrowsMove, IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
+import { IconArrowsMove, IconEye, IconFileText, IconPencil, IconTrash } from "@tabler/icons-react"
 import { type ReactElement, useId } from "react"
 import type * as v from "valibot"
 import { ContextMenu } from "../../../../components/overlays/contextMenu/contextMenu.js"
@@ -54,7 +54,7 @@ export function FileContextMenu(props: {
                     leftIcon={<IconEye />}
                     onSelect={() => {
                         applicationRouter.navigate({
-                            to: "/dashboard/organisations/$idOrganization/stockage/$idFile",
+                            to: "/organisation/$idOrganization/fichier/$idFile",
                             params: {
                                 idOrganization: props.idOrganization,
                                 idFile: props.file.id,
@@ -66,9 +66,31 @@ export function FileContextMenu(props: {
                 </ContextMenu.Item>
                 <ContextMenu.Item
                     leftIcon={<IconPencil />}
-                    onSelect={() => openPanel(<UpdateOneFileForm file={props.file} />, "Modifier le fichier")}
+                    onSelect={() =>
+                        openPanel(
+                            <UpdateOneFileForm
+                                file={props.file}
+                                mode="metadata"
+                            />,
+                            "Modifier les métadonnées",
+                        )
+                    }
                 >
-                    Modifier
+                    Modifier les métadonnées
+                </ContextMenu.Item>
+                <ContextMenu.Item
+                    leftIcon={<IconFileText />}
+                    onSelect={() =>
+                        openPanel(
+                            <UpdateOneFileForm
+                                file={props.file}
+                                mode="file"
+                            />,
+                            "Remplacer le fichier",
+                        )
+                    }
+                >
+                    Remplacer le fichier
                 </ContextMenu.Item>
                 <ContextMenu.Item
                     leftIcon={<IconArrowsMove />}

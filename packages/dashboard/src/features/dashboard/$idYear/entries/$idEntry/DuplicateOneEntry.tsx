@@ -59,7 +59,7 @@ export function DuplicateOneEntry(props: {
         })
 
         applicationRouter.navigate({
-            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/écritures/$idEntry",
+            to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
             params: {
                 idOrganization: props.entry.idOrganization,
                 idYear: props.entry.idYear,

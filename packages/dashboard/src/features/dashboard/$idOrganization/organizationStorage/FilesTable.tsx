@@ -148,7 +148,7 @@ function buildFileTableColumns(parameters: {
                                         return
                                     }
                                     applicationRouter.navigate({
-                                        to: "/dashboard/organisations/$idOrganization/stockage/$idFile",
+                                        to: "/organisation/$idOrganization/fichier/$idFile",
                                         params: {
                                             idOrganization: parameters.idOrganization,
                                             idFile: item.data.id,

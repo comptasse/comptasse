@@ -43,9 +43,8 @@ export function ComputationsTable(props: {
                         {computations.map((computation) => (
                             <LinkButton
                                 key={computation.id}
-                                to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/compte-de-résultat/calculs/$idComputation"
+                                to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
                                 params={{
-                                    idComputation: computation.id,
                                     idOrganization: props.idOrganization,
                                     idYear: props.idYear,
                                 }}

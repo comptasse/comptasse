@@ -39,7 +39,7 @@ export function FileLayout() {
                                         })}
                                     >
                                         <LinkButton
-                                            to="/dashboard/organisations/$idOrganization/stockage"
+                                            to="/organisation/$idOrganization/stockage"
                                             params={{
                                                 idOrganization: file.idOrganization,
                                             }}
@@ -79,7 +79,7 @@ export function FileLayout() {
                                             {
                                                 label: "Informations",
                                                 icon: <IconInfoCircle />,
-                                                to: "/dashboard/organisations/$idOrganization/stockage/$idFile",
+                                                to: "/organisation/$idOrganization/fichier/$idFile",
                                                 params: {
                                                     idOrganization: params.idOrganization,
                                                     idFile: params.idFile,
@@ -88,7 +88,7 @@ export function FileLayout() {
                                             {
                                                 label: "Métadonnées",
                                                 icon: <IconDatabase />,
-                                                to: "/dashboard/organisations/$idOrganization/stockage/$idFile/métadonnées",
+                                                to: "/organisation/$idOrganization/fichier/$idFile",
                                                 params: {
                                                     idOrganization: params.idOrganization,
                                                     idFile: params.idFile,
@@ -97,7 +97,7 @@ export function FileLayout() {
                                             {
                                                 label: "Visualisation",
                                                 icon: <IconEye />,
-                                                to: "/dashboard/organisations/$idOrganization/stockage/$idFile/visualisation",
+                                                to: "/organisation/$idOrganization/fichier/$idFile",
                                                 params: {
                                                     idOrganization: params.idOrganization,
                                                     idFile: params.idFile,

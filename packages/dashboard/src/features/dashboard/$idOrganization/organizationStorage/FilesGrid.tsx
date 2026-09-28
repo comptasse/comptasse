@@ -408,7 +408,7 @@ function FileCard({
                         return
                     }
                     applicationRouter.navigate({
-                        to: "/dashboard/organisations/$idOrganization/stockage/$idFile",
+                        to: "/organisation/$idOrganization/fichier/$idFile",
                         params: {
                             idOrganization: idOrganization,
                             idFile: file.id,
@@ -419,7 +419,7 @@ function FileCard({
                     if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault()
                         applicationRouter.navigate({
-                            to: "/dashboard/organisations/$idOrganization/stockage/$idFile",
+                            to: "/organisation/$idOrganization/fichier/$idFile",
                             params: {
                                 idOrganization: idOrganization,
                                 idFile: file.id,

@@ -46,7 +46,7 @@ export function JournalLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/journaux"
+                                        to="/organisation/$idOrganization/exercice/$idYear/journaux"
                                         params={{
                                             idOrganization: journal.idOrganization,
                                             idYear: journal.idYear,
@@ -88,7 +88,7 @@ export function JournalLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/journaux/$idJournal",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/journaux",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -98,7 +98,7 @@ export function JournalLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/journaux/$idJournal/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/journaux",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,

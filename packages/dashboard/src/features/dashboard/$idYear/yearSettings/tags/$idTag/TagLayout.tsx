@@ -46,7 +46,7 @@ export function TagLayout() {
                                     })}
                                 >
                                     <LinkButton
-                                        to="/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/catégories"
+                                        to="/organisation/$idOrganization/exercice/$idYear/catégories"
                                         params={{
                                             idOrganization: tag.idOrganization,
                                             idYear: tag.idYear,
@@ -88,7 +88,7 @@ export function TagLayout() {
                                         {
                                             label: "Informations",
                                             icon: <IconInfoCircle />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/catégories/$idTag",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/catégories",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
@@ -98,7 +98,7 @@ export function TagLayout() {
                                         {
                                             label: "Métadonnées",
                                             icon: <IconDatabase />,
-                                            to: "/dashboard/organisations/$idOrganization/exercices/$idYear/paramètres/catégories/$idTag/métadonnées",
+                                            to: "/organisation/$idOrganization/exercice/$idYear/catégories",
                                             params: {
                                                 idOrganization: params.idOrganization,
                                                 idYear: params.idYear,
