@@ -1,5 +1,4 @@
-import { getCookie } from "./cookies/getCookie.js"
-import { cookiePrefix } from "./variables.js"
+import { resolveOrganizationId } from "./resolveOrganizationId.js"
 
 /**
  * Builds the canonical React Query key for an API route.
@@ -22,7 +21,7 @@ export function buildQueryKey(
         resolvedParams.idOrganization === undefined &&
         body.idOrganization === undefined
     ) {
-        const idOrganization = getCookie(`${cookiePrefix}_id_organization`)
+        const idOrganization = resolveOrganizationId()
         if (idOrganization) {
             resolvedParams.idOrganization = idOrganization
         }

@@ -2,10 +2,9 @@ import type { routeDefinition } from "@comptasse/application-metadata/utilities"
 import { toast } from "@comptasse/ui"
 import type * as v from "valibot"
 import { ClientError } from "./clientError.js"
-import { getCookie } from "./cookies/getCookie.js"
 import { resolveApiBaseUrl } from "./resolveApiBaseUrl.js"
+import { resolveOrganizationId } from "./resolveOrganizationId.js"
 import { validate } from "./validate.js"
-import { cookiePrefix } from "./variables.js"
 
 /**
  * Interpolates URL path params (e.g. `:idOrganization`) with values from the
@@ -103,7 +102,7 @@ export async function getResponseBodyFromAPI<
             "Content-Type": "application/json",
         }
 
-        const idOrganization = getCookie(`${cookiePrefix}_id_organization`)
+        const idOrganization = resolveOrganizationId()
         if (idOrganization) {
             headers["X-Organization-Id"] = idOrganization
         }
