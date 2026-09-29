@@ -8,6 +8,7 @@ import { Section } from "../../../../../components/layouts/section/section.tsx"
 import type { YearDataKey } from "../../YearDataWrapper.tsx"
 import { YearDataWrapper } from "../../YearDataWrapper.tsx"
 import { ReportFilterPopover } from "../ReportFilterPopover.tsx"
+import { UnconnectedAccountsWarning } from "../UnconnectedAccountsWarning.tsx"
 import { DownloadIncomeStatementReport } from "./DownloadIncomeStatementReport.tsx"
 import { IncomeStatementsReportTable } from "./IncomeStatementsReportTable.tsx"
 
@@ -156,6 +157,11 @@ export function IncomeStatementReportPage({
                                     </Button>
                                 </div>
                             </div>
+                            <UnconnectedAccountsWarning
+                                kind="income-statement"
+                                accounts={filteredAccounts}
+                                entryLines={filteredEntryLines}
+                            />
                             <div
                                 className={css({
                                     width: "100%",

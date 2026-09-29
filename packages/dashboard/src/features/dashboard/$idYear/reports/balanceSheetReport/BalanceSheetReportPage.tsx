@@ -8,6 +8,7 @@ import { Section } from "../../../../../components/layouts/section/section.tsx"
 import type { YearDataKey } from "../../YearDataWrapper.tsx"
 import { YearDataWrapper } from "../../YearDataWrapper.tsx"
 import { ReportFilterPopover } from "../ReportFilterPopover.tsx"
+import { UnconnectedAccountsWarning } from "../UnconnectedAccountsWarning.tsx"
 import { BalanceSheetAssetsReportTable } from "./balanceSheetAsset/BalanceSheetAssetsReportTable.tsx"
 import { BalanceSheetLiabilitiesReportTable } from "./balanceSheetLiability/BalanceSheetLiabilitiesReportTable.tsx"
 import { DownloadBalanceSheetReport } from "./DownloadBalanceSheetReport.tsx"
@@ -167,6 +168,11 @@ export function BalanceSheetReportPage({
                                     </div>
                                 </div>
                             </div>
+                            <UnconnectedAccountsWarning
+                                kind="balance-sheet"
+                                accounts={filteredAccounts}
+                                entryLines={filteredEntryLines}
+                            />
                             <div
                                 className={css({
                                     width: "100%",
