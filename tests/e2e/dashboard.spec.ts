@@ -11,13 +11,13 @@ test.describe("Dashboard", () => {
                 name: "Se connecter",
             })
             .click()
-        await page.waitForURL("**/dashboard/organisations", {
+        await page.waitForURL("**/organisations", {
             timeout: 10000,
         })
     })
 
     test("displays the organizations page after sign-in", async ({ page }) => {
-        await expect(page).toHaveURL(/dashboard\/organisations/)
+        await expect(page).toHaveURL(/organisations/)
     })
 
     test("shows the demo organizations", async ({ page }) => {

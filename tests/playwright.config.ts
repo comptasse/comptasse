@@ -17,7 +17,7 @@ export default defineConfig({
     ],
     timeout: 30000,
     use: {
-        baseURL: "http://localhost:5173",
+        baseURL: process.env.DASHBOARD_BASE_URL ?? "http://localhost:5173",
         trace: "on-first-retry",
     },
     projects: [

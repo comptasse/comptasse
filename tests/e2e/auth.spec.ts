@@ -25,10 +25,10 @@ test.describe("Sign In", () => {
             .click()
 
         // Should redirect to dashboard/organisations
-        await page.waitForURL("**/dashboard/organisations", {
+        await page.waitForURL("**/organisations", {
             timeout: 10000,
         })
-        await expect(page).toHaveURL(/dashboard\/organisations/)
+        await expect(page).toHaveURL(/organisations/)
     })
 
     test("shows error for invalid credentials", async ({ page }) => {
@@ -89,10 +89,10 @@ test.describe("Sign Up", () => {
             })
             .click()
 
-        await page.waitForURL("**/dashboard/**", {
+        await page.waitForURL("**/organisations", {
             timeout: 10000,
         })
-        await expect(page).toHaveURL(/dashboard/)
+        await expect(page).toHaveURL(/organisations/)
     })
 
     test("has a link to the sign-in page", async ({ page }) => {
@@ -116,7 +116,7 @@ test.describe("Sign Out", () => {
                 name: "Se connecter",
             })
             .click()
-        await page.waitForURL("**/dashboard/organisations", {
+        await page.waitForURL("**/organisations", {
             timeout: 10000,
         })
 
@@ -146,7 +146,7 @@ test.describe("Auth Guards", () => {
     test("redirects unauthenticated users from dashboard to sign-in", async ({ page }) => {
         // Clear cookies to ensure unauthenticated state
         await page.context().clearCookies()
-        await page.goto("/dashboard")
+        await page.goto("/organisations")
         await page.waitForURL("**/connexion", {
             timeout: 10000,
         })
@@ -163,12 +163,12 @@ test.describe("Auth Guards", () => {
                 name: "Se connecter",
             })
             .click()
-        await page.waitForURL("**/dashboard/organisations", {
+        await page.waitForURL("**/organisations", {
             timeout: 10000,
         })
 
         // Try to navigate to sign-in page while authenticated
         await page.goto("/connexion")
-        await expect(page).toHaveURL(/dashboard/)
+        await expect(page).toHaveURL(/organisations/)
     })
 })
