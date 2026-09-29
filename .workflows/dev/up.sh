@@ -94,13 +94,41 @@ POSTGRES_HOST_PORT=$postgres_host_port
 DASHBOARD_HOST_PORT=$dashboard_host_port
 EOF
 
-if ! WEBSITE_HOST_PORT="$website_host_port" \
-   API_HOST_PORT="$api_host_port" \
-   STORAGE_HOST_PORT="$storage_host_port" \
-   RUSTFS_UI_HOST_PORT="$rustfs_ui_host_port" \
-   POSTGRES_HOST_PORT="$postgres_host_port" \
-   DASHBOARD_HOST_PORT="$dashboard_host_port" \
-       "${DC[@]}" up --detach --build --force-recreate --wait; then
+# Port values must be passed to every compose invocation, otherwise services are
+# created with blank port mappings.
+_port_env=(
+    WEBSITE_HOST_PORT="$website_host_port"
+    API_HOST_PORT="$api_host_port"
+    STORAGE_HOST_PORT="$storage_host_port"
+    RUSTFS_UI_HOST_PORT="$rustfs_ui_host_port"
+    POSTGRES_HOST_PORT="$postgres_host_port"
+    DASHBOARD_HOST_PORT="$dashboard_host_port"
+)
+
+# Bring up infrastructure first so a brand-new database can be initialised
+# before the API starts. The API container runs a schema-drift check on startup
+# and exits non-zero when tables are missing, which makes `up --wait` fail on a
+# fresh checkout (e.g. CI, where the postgres volume does not exist yet).
+env "${_port_env[@]}" "${DC[@]}" up --detach --wait postgres rustfs
+
+# Bootstrap the schema only when the database is empty. Existing databases are
+# left untouched so the API startup check still surfaces later drift.
+table_count=$(
+    "${DC[@]}" exec -T postgres psql -U postgres -d default -tAc \
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'" 2>/dev/null \
+    | tr -d '[:space:]' || true
+)
+if [ "$table_count" = "0" ]; then
+    echo "Empty database detected - pushing schema..."
+    (
+        cd "$REPO_ROOT/packages/tools"
+        NODE_ENV=development \
+        SQL_DATABASE_URL="postgres://postgres:admin@localhost:${postgres_host_port}/default" \
+            pnpm run push
+    )
+fi
+
+if ! env "${_port_env[@]}" "${DC[@]}" up --detach --build --force-recreate --wait; then
     echo ""
     echo "=============================================="
     echo "  ERROR: one or more services failed to start"
