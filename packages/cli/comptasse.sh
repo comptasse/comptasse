@@ -316,14 +316,41 @@ _years_settle_bs() {
     _api POST "$(_year_path "$id")/settle-balance-sheet" "$(_jbody)"
 }
 
+# Resolve an account id from its number within a year (the API requires the
+# 120/129 accounts when settling the income statement).
+_account_id_by_number() {
+    year="$1"; number="$2"
+    _require_cfg
+    _api GET "$(_accounts_base "$year")" \
+        | sed 's/},{/}\n{/g' \
+        | grep -F "\"number\":\"$number\"" \
+        | head -n1 \
+        | sed -n 's/.*"id":"\([^"]*\)".*/\1/p'
+}
+
 _years_settle_is() {
     id="${1:?Usage: comptasse years settle-income-statement <idYear>}"; shift
-    journal_closing=''
+    journal_closing=''; account_profit=''; account_loss=''
     while [ $# -gt 0 ]; do
-        case "$1" in --journal-closing) journal_closing="$2"; shift ;; *) _die "Unknown: $1" ;; esac; shift
+        case "$1" in
+            --journal-closing) journal_closing="$2"; shift ;;
+            --account-profit)  account_profit="$2";  shift ;;
+            --account-loss)    account_loss="$2";    shift ;;
+            *) _die "Unknown: $1" ;;
+        esac; shift
     done
     [ -n "$journal_closing" ] || _die "--journal-closing is required"
-    _require_cfg; _jbody_reset; _jstr idJournalClosing "$journal_closing"
+    _require_cfg
+    # The API expects the accounts the year result is booked to (120/129).
+    # Resolve them from the chart unless explicitly provided.
+    [ -n "$account_profit" ] || account_profit="$(_account_id_by_number "$id" 120)"
+    [ -n "$account_loss" ] || account_loss="$(_account_id_by_number "$id" 129)"
+    [ -n "$account_profit" ] || _die "Could not resolve account 120 (bénéfice). Pass --account-profit <idAccount>"
+    [ -n "$account_loss" ] || _die "Could not resolve account 129 (perte). Pass --account-loss <idAccount>"
+    _jbody_reset
+    _jstr idJournalClosing "$journal_closing"
+    _jstr idAccountProfit "$account_profit"
+    _jstr idAccountLoss "$account_loss"
     _api POST "$(_year_path "$id")/settle-income-statement" "$(_jbody)"
 }
 
