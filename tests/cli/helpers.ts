@@ -66,6 +66,10 @@ export async function createLoggedInCliEnv(): Promise<{
         ...process.env,
         COMPTASSE_DIR: dir,
         COMPTASSE_URL: API_BASE_URL,
+        // The CLI's update check compares against the version advertised by
+        // production (comptasse.com), which is always older on a version-bump
+        // branch. Opt out so the suite does not depend on the released version.
+        COMPTASSE_SKIP_VERSION_CHECK: "1",
     }
 
     const login = await runCli(

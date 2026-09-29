@@ -44,6 +44,10 @@ _need_cmd() { command -v "$1" >/dev/null 2>&1 || _die "'$1' is required but not 
 _jesc()     { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'; }
 
 _check_version() {
+    # Dev/test (or anyone who opted out) must not be blocked by the version
+    # advertised by production. The test suite sets COMPTASSE_SKIP_VERSION_CHECK=1
+    # so it does not depend on the released version.
+    [ "${COMPTASSE_SKIP_VERSION_CHECK:-}" = "1" ] && return 0
     latest=$(curl -fsSL --max-time 5 "https://comptasse.com/cli/version" 2>/dev/null) || return 0
     latest=$(printf '%s' "$latest" | tr -d '[:space:]')
     # Ignore response if it doesn't look like a semver (e.g. HTML fallback)
