@@ -16,6 +16,14 @@ PORTS_FILE="$SCRIPT_DIR/.ports"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export COMPTASSE_REPO_ROOT="$REPO_ROOT"
 
+# The website/dashboard dev servers import @comptasse/application-metadata
+# through its built entry (see packages/metadata/package.json "exports").
+# Dependencies are installed on the host, but a fresh checkout has no build/
+# directory, so compile it before the containers start; otherwise Vite fails to
+# resolve the package entry and the website service never becomes healthy.
+echo "Building @comptasse/application-metadata..."
+pnpm --filter @comptasse/application-metadata build
+
 DC=(docker compose --project-directory="$SCRIPT_DIR" --file="$COMPOSE_FILE" --project-name=application)
 
 _random_port() {
