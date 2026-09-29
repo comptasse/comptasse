@@ -105,7 +105,7 @@ describe("Settle income statement", () => {
             const linesResponse = await authenticatedRequest({
                 session,
                 method: "GET",
-                path: `/organizations/${idOrganization}/years/${idYear}/entries/${closingEntry.id}/lines`,
+                path: `/organizations/${idOrganization}/years/${idYear}/entries/lines?idYear=${idYear}&idEntry=${closingEntry.id}`,
             })
             expect(linesResponse.status).toBe(200)
 

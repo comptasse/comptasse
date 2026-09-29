@@ -1,5 +1,5 @@
-import { compareAmounts } from "src/utilities/compareAmounts.js"
 import { describe, expect, it } from "vitest"
+import { compareAmounts } from "./compareAmounts.js"
 
 describe("compareAmounts", () => {
     it("returns true for identical values", () => {

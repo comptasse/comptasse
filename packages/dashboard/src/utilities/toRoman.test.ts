@@ -1,5 +1,5 @@
-import { toRoman } from "src/utilities/toRoman.js"
 import { describe, expect, it } from "vitest"
+import { toRoman } from "./toRoman.js"
 
 describe("toRoman", () => {
     it("returns empty string for 0", () => {

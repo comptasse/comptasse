@@ -6,7 +6,7 @@ const documentMock = {
 
 vi.stubGlobal("document", documentMock)
 
-import { getIsAuthenticated } from "src/utilities/cookies/getIsAuthenticated.js"
+import { getIsAuthenticated } from "./getIsAuthenticated.js"
 
 describe("getIsAuthenticated", () => {
     afterEach(() => {

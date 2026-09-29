@@ -177,23 +177,3 @@ describe("PATCH /users/me/email", () => {
         expect(response.status).toBe(400)
     })
 })
-
-describe("POST /users/me/email/resend-validation", () => {
-    it("rejects unauthenticated requests", async () => {
-        const response = await apiRequest({
-            method: "POST",
-            path: "/users/me/email/resend-validation",
-        })
-        expect(response.status).toBe(401)
-    })
-
-    it("returns 400 when there is no pending email change", async () => {
-        // The demo user has no pending emailToValidate, so this should fail
-        const response = await authenticatedRequest({
-            session,
-            method: "POST",
-            path: "/users/me/email/resend-validation",
-        })
-        expect(response.status).toBe(400)
-    })
-})

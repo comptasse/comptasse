@@ -7,7 +7,7 @@ const documentMock = {
 
 vi.stubGlobal("document", documentMock)
 
-import { getCookie } from "src/utilities/cookies/getCookie.js"
+import { getCookie } from "./getCookie.js"
 
 describe("getCookie", () => {
     afterEach(() => {

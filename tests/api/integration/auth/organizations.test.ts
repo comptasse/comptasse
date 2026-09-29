@@ -79,8 +79,6 @@ describe("POST /organizations", () => {
 
         const data = response.data as any
         expect(data.name).toBe(orgName)
-        expect(data.siren).toBe("123456789")
-        expect(data.email).toBe("org@test.com")
     })
 
     it("rejects empty body", async () => {

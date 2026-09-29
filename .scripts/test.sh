@@ -81,9 +81,7 @@ echo "API_BASE_URL=$API_BASE_URL"
 echo "DASHBOARD_BASE_URL=$DASHBOARD_BASE_URL"
 
 if [ "${SKIP_UNIT:-0}" != "1" ]; then
-    echo "Note: website unit tests are stale (they import modules that moved to the"
-    echo "      dashboard/ui packages) and are excluded from this pipeline."
-    step "unit tests (api)" pnpm --filter @comptasse/application-api run test:unit
+    step "unit tests" pnpm --recursive --if-present --filter='./packages/**' run test:unit
 fi
 
 if [ "${SKIP_ENDPOINTS:-0}" != "1" ]; then

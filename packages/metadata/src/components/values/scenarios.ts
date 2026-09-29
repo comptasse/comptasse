@@ -215,16 +215,23 @@ export function buildScenarioEntries(
     definition: ScenarioDefinition,
     example: ScenarioDocExample,
 ): ScenarioEntryDraft[] {
+    // Apply the params schema so defaults (e.g. an account number) are present,
+    // matching what a real execution receives.
+    const parsedParams = (() => {
+        const result = v.safeParse(definition.paramsSchema, example.params)
+        return result.success ? (result.output as Record<string, unknown>) : example.params
+    })()
+
     if (definition.mode === "balances") {
         if (definition.buildEntriesFromBalances === undefined) {
             throw new Error(`Scenario ${definition.slug} is missing buildEntriesFromBalances`)
         }
-        return definition.buildEntriesFromBalances(example.balances ?? [], example.params)
+        return definition.buildEntriesFromBalances(example.balances ?? [], parsedParams)
     }
     if (definition.buildEntries === undefined) {
         throw new Error(`Scenario ${definition.slug} is missing buildEntries`)
     }
-    return definition.buildEntries(example.params)
+    return definition.buildEntries(parsedParams)
 }
 
 const vatRateSchema = v.optional(v.number("Le taux de TVA doit être un nombre"), 20)
