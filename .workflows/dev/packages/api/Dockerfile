@@ -7,7 +7,7 @@
 # ==============================================================================
 
 ARG NODE_VERSION="25.2.1"
-ARG PNPM_VERSION="10.26.1"
+ARG PNPM_VERSION="11.28.2"
 
 FROM node:${NODE_VERSION}-bullseye-slim
 

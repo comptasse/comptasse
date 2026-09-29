@@ -83,7 +83,7 @@ services:
       dockerfile: .workflows/dev/packages/api/Dockerfile
       args:
         NODE_VERSION: "25.2.1"
-        PNPM_VERSION: "10.26.1"
+        PNPM_VERSION: "11.28.2"
     network_mode: host
     volumes:
       - ../..:/workspace:cached
@@ -130,7 +130,7 @@ services:
       dockerfile: .workflows/dev/packages/website/Dockerfile
       args:
         NODE_VERSION: "25.2.1"
-        PNPM_VERSION: "10.26.1"
+        PNPM_VERSION: "11.28.2"
     networks:
       default:
         aliases:
@@ -157,7 +157,7 @@ services:
       dockerfile: .workflows/dev/packages/dashboard/Dockerfile
       args:
         NODE_VERSION: "25.2.1"
-        PNPM_VERSION: "10.26.1"
+        PNPM_VERSION: "11.28.2"
     networks:
       default:
         aliases:
