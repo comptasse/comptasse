@@ -1,5 +1,5 @@
-import { levenshtein } from "src/utilities/levenshtein.js"
 import { describe, expect, it } from "vitest"
+import { levenshtein } from "./levenshtein.js"
 
 describe("levenshtein", () => {
     it("returns 0 for identical strings", () => {

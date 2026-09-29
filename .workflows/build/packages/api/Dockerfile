@@ -22,7 +22,7 @@
 # ---------------------------------------------------------------------------
 FROM node:25.2.1-alpine AS base
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm install -g pnpm@10.26.1
+RUN npm install -g pnpm@11.28.2
 
 FROM base AS build
 WORKDIR /root

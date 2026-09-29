@@ -10,7 +10,7 @@ import { selectOne } from "../../../../../../utilities/sql/selectOne.js"
 export const readOneOrganizationUserRoute = apiFactory
     .createApp()
     .get(readOneOrganizationUserRouteDefinition.path, async (c) => {
-        await checkAuthMiddleware({
+        const auth = await checkAuthMiddleware({
             context: c,
         })
         const body = await validateBodyMiddleware({
@@ -23,7 +23,15 @@ export const readOneOrganizationUserRoute = apiFactory
             table: models.organizationUser,
             where: (table) => and(eq(table.id, body.idOrganizationUser)),
         })
-        if (organizationUser.isAdmin === false) {
+
+        // Authorize against the *requesting* user's membership, not the target's.
+        const requestingOrganizationUser = await selectOne({
+            database: c.var.clients.sql,
+            table: models.organizationUser,
+            where: (table) =>
+                and(eq(table.idUser, auth.user.id), eq(table.idOrganization, organizationUser.idOrganization)),
+        })
+        if (requestingOrganizationUser.isAdmin === false) {
             throw new Exception({
                 statusCode: 401,
                 internalMessage: "User is not admin of the organization",

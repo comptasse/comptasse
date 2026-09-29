@@ -81,7 +81,6 @@ services:
       STORAGE_ACCESS_KEY: rustfsadmin
       STORAGE_SECRET_KEY: rustfsadmin
       STORAGE_REGION: fr-par
-      MOLLIE_API_KEY: test_z8gjjnezmRNx7dretKbEr5vcCfADh9
     depends_on:
       postgres:
         condition: service_healthy

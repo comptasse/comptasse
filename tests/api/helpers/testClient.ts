@@ -49,31 +49,6 @@ export async function apiRequest<T = unknown>(parameters: {
 }
 
 /**
- * Sends a Mollie-style webhook request (application/x-www-form-urlencoded).
- * Mollie POSTs the payment id as a form field, not JSON.
- */
-export async function mollieWebhookRequest<T = unknown>(paymentId: string): Promise<TestResponse<T>> {
-    const response = await fetch(`${API_BASE_URL}/webhooks/mollie`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `id=${encodeURIComponent(paymentId)}`,
-    })
-
-    const setCookieHeaders = response.headers.getSetCookie?.() ?? []
-
-    const data = (await response.json().catch(() => null)) as T
-
-    return {
-        status: response.status,
-        data,
-        headers: response.headers,
-        cookies: setCookieHeaders,
-    }
-}
-
-/**
  * Parses Set-Cookie headers into a cookie string for subsequent requests.
  */
 export function buildCookieString(setCookieHeaders: string[]): string {

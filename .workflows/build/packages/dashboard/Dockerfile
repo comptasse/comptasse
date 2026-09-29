@@ -17,7 +17,7 @@
 # Stage 1: Build
 # ---------------------------------------------------------------------------
 FROM node:25.2.1-alpine AS base
-RUN npm install -g pnpm@10.26.1
+RUN npm install -g pnpm@11.28.2
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 FROM base AS build

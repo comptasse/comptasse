@@ -12,7 +12,7 @@ import { validate } from "./validate.js"
  * body fields (not consumed as path params) are sent as query string for GET
  * requests, or as the JSON body for POST/PATCH/DELETE.
  */
-function buildUrl(
+export function buildUrl(
     apiBaseUrl: string,
     rawPath: string,
     params: Record<string, string> | undefined,
@@ -25,26 +25,22 @@ function buildUrl(
     let path = rawPath
     const consumed = new Set<string>()
 
-    // Interpolate explicit params first
-    if (params) {
-        for (const [key, value] of Object.entries(params)) {
-            const token = `:${key}`
-            if (path.includes(token)) {
-                path = path.replace(token, encodeURIComponent(value))
-                consumed.add(key)
-            }
-        }
-    }
+    // Only tokens actually present in the path are substituted, and each token is
+    // matched with a boundary so a shorter key (e.g. `id`) can never corrupt a
+    // longer one (e.g. `:idOrganization`).
+    const pathParamNames = [
+        ...new Set([
+            ...rawPath.matchAll(/:([A-Za-z0-9_]+)/g),
+        ].map((match) => match[1])),
+    ]
 
-    // Fall back to body fields for any remaining path tokens
-    // so callers don't need to duplicate fields in both body and params
-    for (const [key, value] of Object.entries(body)) {
-        if (consumed.has(key)) continue
-        const token = `:${key}`
-        if (path.includes(token)) {
-            path = path.replace(token, encodeURIComponent(String(value)))
-            consumed.add(key)
-        }
+    for (const name of pathParamNames) {
+        // Interpolate explicit params first, then fall back to body fields so
+        // callers don't need to duplicate fields in both body and params.
+        const value = params?.[name] ?? body[name]
+        if (value === undefined || value === null) continue
+        path = path.replace(new RegExp(`:${name}(?![A-Za-z0-9_])`, "g"), encodeURIComponent(String(value)))
+        consumed.add(name)
     }
 
     const url = new URL(`${apiBaseUrl}${path}`)

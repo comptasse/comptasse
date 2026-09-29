@@ -4,3 +4,9 @@ allowBuilds:
   core-js-pure: true
   esbuild: true
   msgpackr-extract: true
+# Dependencies are installed on the host and bind-mounted into the dev
+# containers (see .workflows/dev). The container pnpm store path differs from
+# the host one, so an automatic "verify deps before run" install would try to
+# purge the bind-mounted node_modules and abort without a TTY.
+verifyDepsBeforeRun: false
+confirmModulesPurge: false

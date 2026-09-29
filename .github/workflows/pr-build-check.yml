@@ -19,5 +19,17 @@ jobs:
       - name: Install just
         uses: extractions/setup-just@v2
 
-      - name: Run CI build (lint + test + build)
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 25
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      # build-ci.sh builds the production images, then runs .scripts/test.sh
+      # (unit + API endpoint coverage + CLI + dashboard frontend).
+      - name: Run CI build + test pipeline
         run: .scripts/build-ci.sh

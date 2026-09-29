@@ -1,4 +1,4 @@
-import { debounce } from "src/utilities/debounce.js"
+import { debounce } from "@comptasse/ui/utilities/debounce.js"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 describe("debounce", () => {

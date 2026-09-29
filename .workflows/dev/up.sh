@@ -16,6 +16,14 @@ PORTS_FILE="$SCRIPT_DIR/.ports"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 export COMPTASSE_REPO_ROOT="$REPO_ROOT"
 
+# The website/dashboard dev servers import @comptasse/application-metadata
+# through its built entry (see packages/metadata/package.json "exports").
+# Dependencies are installed on the host, but a fresh checkout has no build/
+# directory, so compile it before the containers start; otherwise Vite fails to
+# resolve the package entry and the website service never becomes healthy.
+echo "Building @comptasse/application-metadata..."
+pnpm --filter @comptasse/application-metadata build
+
 DC=(docker compose --project-directory="$SCRIPT_DIR" --file="$COMPOSE_FILE" --project-name=application)
 
 _random_port() {
@@ -86,13 +94,41 @@ POSTGRES_HOST_PORT=$postgres_host_port
 DASHBOARD_HOST_PORT=$dashboard_host_port
 EOF
 
-if ! WEBSITE_HOST_PORT="$website_host_port" \
-   API_HOST_PORT="$api_host_port" \
-   STORAGE_HOST_PORT="$storage_host_port" \
-   RUSTFS_UI_HOST_PORT="$rustfs_ui_host_port" \
-   POSTGRES_HOST_PORT="$postgres_host_port" \
-   DASHBOARD_HOST_PORT="$dashboard_host_port" \
-       "${DC[@]}" up --detach --build --force-recreate --wait; then
+# Port values must be passed to every compose invocation, otherwise services are
+# created with blank port mappings.
+_port_env=(
+    WEBSITE_HOST_PORT="$website_host_port"
+    API_HOST_PORT="$api_host_port"
+    STORAGE_HOST_PORT="$storage_host_port"
+    RUSTFS_UI_HOST_PORT="$rustfs_ui_host_port"
+    POSTGRES_HOST_PORT="$postgres_host_port"
+    DASHBOARD_HOST_PORT="$dashboard_host_port"
+)
+
+# Bring up infrastructure first so a brand-new database can be initialised
+# before the API starts. The API container runs a schema-drift check on startup
+# and exits non-zero when tables are missing, which makes `up --wait` fail on a
+# fresh checkout (e.g. CI, where the postgres volume does not exist yet).
+env "${_port_env[@]}" "${DC[@]}" up --detach --wait postgres rustfs
+
+# Bootstrap the schema only when the database is empty. Existing databases are
+# left untouched so the API startup check still surfaces later drift.
+table_count=$(
+    "${DC[@]}" exec -T postgres psql -U postgres -d default -tAc \
+        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'" 2>/dev/null \
+    | tr -d '[:space:]' || true
+)
+if [ "$table_count" = "0" ]; then
+    echo "Empty database detected - pushing schema..."
+    (
+        cd "$REPO_ROOT/packages/tools"
+        NODE_ENV=development \
+        SQL_DATABASE_URL="postgres://postgres:admin@localhost:${postgres_host_port}/default" \
+            pnpm run push
+    )
+fi
+
+if ! env "${_port_env[@]}" "${DC[@]}" up --detach --build --force-recreate --wait; then
     echo ""
     echo "=============================================="
     echo "  ERROR: one or more services failed to start"

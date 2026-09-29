@@ -1,5 +1,5 @@
-import { cookiePrefix } from "src/utilities/variables.js"
 import { describe, expect, it } from "vitest"
+import { cookiePrefix } from "./variables.js"
 
 describe("variables", () => {
     it("exports the correct cookie prefix", () => {

@@ -7,9 +7,7 @@ Docker-based development environment for the Comptasse application.
 ```
 .workflows/dev/
 ├── compose.yml              # Docker Compose config (services + env vars)
-├── compose.tunnel.yml       # Cloudflare tunnel overlay
 ├── up.sh                    # Dev startup script (port allocation + compose up)
-├── tunnel.sh                # Tunnel startup script
 ├── .dockerignore            # Build context exclusions
 └── packages/
     ├── api/

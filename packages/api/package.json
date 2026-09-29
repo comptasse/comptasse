@@ -9,7 +9,8 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "test:unit": "vitest run ../../tests/api/unit",
-        "test:integration": "vitest run ../../tests/api/integration"
+        "test:integration": "vitest run ../../tests/api/integration",
+        "test:cli": "vitest run ../../tests/cli"
     },
     "devDependencies": {
         "@types/node": "26.1.2",
