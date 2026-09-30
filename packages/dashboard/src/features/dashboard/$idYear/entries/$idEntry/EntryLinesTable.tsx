@@ -19,6 +19,7 @@ export function EntryLinesTable(props: {
         <DataTable
             data={props.entryLines}
             isLoading={false}
+            persistKey="entry-lines"
             columns={[
                 {
                     accessorKey: "actions",

@@ -224,6 +224,7 @@ export function InventoryPage() {
                                 data={sorted}
                                 columns={columns}
                                 pageSize={50}
+                                persistKey="inventory"
                             >
                                 <Button
                                     onClick={() =>

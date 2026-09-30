@@ -1,16 +1,7 @@
-import {
-    Button,
-    ButtonGhostContent,
-    ButtonOutlineContent,
-    CircularLoader,
-    FormatNull,
-    InputCheckbox,
-    InputNumber,
-} from "@comptasse/ui"
+import { Button, ButtonGhostContent, CircularLoader, FormatNull, InputCheckbox } from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconChevronDown,
-    IconChevronLeft,
     IconChevronRight,
     IconDatabaseOff,
     IconSortAscending,
@@ -46,11 +37,7 @@ import {
     useRef,
     useState,
 } from "react"
-import { ColumnVisibilityPopover, type VisibilityColumn } from "../ColumnVisibilityPopover.js"
 import { EmptyState } from "../EmptyState.js"
-import { type FilterColumn, FilterPopover } from "../FilterPopover.js"
-import { SearchBar } from "../SearchBar.js"
-import { type SortDirection, SortPopover } from "../SortPopover.js"
 import { DataTablePagination } from "./DataTablePagination.js"
 import { DataTableToolbar } from "./DataTableToolbar.js"
 
@@ -476,6 +463,36 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
+/** localStorage-backed state so a table's sorting/filters/columns survive a refresh. */
+function usePersistentState<T>(key: string | undefined, initial: T) {
+    const [value, setValue] = useState<T>(() => {
+        if (key === undefined || typeof window === "undefined") return initial
+        try {
+            const stored = window.localStorage.getItem(key)
+            return stored === null ? initial : (JSON.parse(stored) as T)
+        } catch {
+            return initial
+        }
+    })
+
+    useEffect(() => {
+        if (key === undefined || typeof window === "undefined") return
+        try {
+            window.localStorage.setItem(key, JSON.stringify(value))
+        } catch {
+            // Ignore storage quota / disabled storage.
+        }
+    }, [
+        key,
+        value,
+    ])
+
+    return [
+        value,
+        setValue,
+    ] as const
+}
+
 function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     data: Array<TData>
     isLoading?: boolean
@@ -486,6 +503,8 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     virtualize?: boolean
     /** Estimated row height in px, used before rows are measured. */
     estimateRowHeight?: number
+    /** localStorage key: persists sorting, filters and column visibility per table. */
+    persistKey?: string
     defaultColumnVisibility?: VisibilityState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
@@ -504,19 +523,29 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
             props.data,
         ],
     )
-    const [globalFilter, setGlobalFilter] = useState("")
-    const [sorting, setSorting] = useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(props.defaultColumnVisibility ?? {})
+    const [globalFilter, setGlobalFilter] = usePersistentState(
+        props.persistKey === undefined ? undefined : `${props.persistKey}:search`,
+        "",
+    )
+    const [sorting, setSorting] = usePersistentState<SortingState>(
+        props.persistKey === undefined ? undefined : `${props.persistKey}:sorting`,
+        [],
+    )
+    const [columnFilters, setColumnFilters] = usePersistentState<ColumnFiltersState>(
+        props.persistKey === undefined ? undefined : `${props.persistKey}:filters`,
+        [],
+    )
+    const [columnVisibility, setColumnVisibility] = usePersistentState<VisibilityState>(
+        props.persistKey === undefined ? undefined : `${props.persistKey}:visibility`,
+        props.defaultColumnVisibility ?? {},
+    )
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
     // Reset selection when the trigger changes (e.g. folder navigation)
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
-    }, [
-        props.resetSelectionTrigger,
-    ])
+    }, [])
 
     const selectColumnDef = useMemo<ColumnDef<TData>>(
         () => ({

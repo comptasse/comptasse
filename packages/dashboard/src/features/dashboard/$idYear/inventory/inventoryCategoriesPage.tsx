@@ -1,5 +1,5 @@
 import { readAllInventoryItemsRouteDefinition } from "@comptasse/application-metadata/routes"
-import { Button, ButtonPlainContent, InputText, toast } from "@comptasse/ui"
+import { Button, ButtonPlainContent, InputText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPlus } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
@@ -146,6 +146,7 @@ export function InventoryCategoriesPage() {
                             <DataTable
                                 data={categories}
                                 columns={columns}
+                                persistKey="inventory-categories"
                             >
                                 <Button onClick={openCreateCategory}>
                                     <ButtonPlainContent
