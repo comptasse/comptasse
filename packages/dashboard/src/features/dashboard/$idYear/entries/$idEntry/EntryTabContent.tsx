@@ -2,6 +2,8 @@ import { Button, ButtonGhostContent, ButtonOutlineContent, FormatError, formatPr
 import { css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconArrowBackUp,
+    IconCircleCheck,
+    IconCircleX,
     IconCopyCheck,
     IconDatabase,
     IconDotsVertical,
@@ -18,6 +20,7 @@ import { Popover } from "../../../../../components/overlays/popover/popover.js"
 import { compareAmounts } from "../../../../../utilities/compareAmounts.ts"
 import type { YearDataKey } from "../../YearDataWrapper.tsx"
 import { YearDataWrapper } from "../../YearDataWrapper.tsx"
+import { EntryClearedToggle } from "../EntryClearedToggle.tsx"
 import { ReverseOneEntry } from "../ReverseOneEntry.tsx"
 import { DeleteOneEntry } from "./DeleteOneEntry.tsx"
 import { DuplicateOneEntry } from "./DuplicateOneEntry.tsx"
@@ -208,6 +211,22 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                 />
                                             </div>
                                         </DuplicateOneEntry>
+                                        <EntryClearedToggle entry={entry} onClick={() => setMenuOpen(false)}>
+                                            <div
+                                                className={css({
+                                                    width: "100%",
+                                                })}
+                                            >
+                                                <ButtonGhostContent
+                                                    leftIcon={entry.isCleared ? <IconCircleX /> : <IconCircleCheck />}
+                                                    text={entry.isCleared ? "Dépointer" : "Pointer"}
+                                                    className={{
+                                                        width: "100%",
+                                                        justifyContent: "start",
+                                                    }}
+                                                />
+                                            </div>
+                                        </EntryClearedToggle>
                                     </Popover.Content>
                                 </Popover.Root>
                                 <DeleteOneEntry entry={entry}>
