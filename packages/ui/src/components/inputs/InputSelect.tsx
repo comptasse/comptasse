@@ -111,6 +111,7 @@ export function InputSelect<TValue extends string>(
                     className={css({
                         height: "fit-content",
                         maxHeight: "256px",
+                        overflowY: "auto",
                         width: "100%",
                         display: "flex",
                         flexDirection: "column",
