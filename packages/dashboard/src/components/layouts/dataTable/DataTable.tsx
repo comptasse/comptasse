@@ -1,16 +1,7 @@
-import {
-    Button,
-    ButtonGhostContent,
-    ButtonOutlineContent,
-    CircularLoader,
-    FormatNull,
-    InputCheckbox,
-    InputNumber,
-} from "@comptasse/ui"
+import { Button, ButtonGhostContent, CircularLoader, FormatNull, InputCheckbox } from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconChevronDown,
-    IconChevronLeft,
     IconChevronRight,
     IconDatabaseOff,
     IconSortAscending,
@@ -18,7 +9,6 @@ import {
 } from "@tabler/icons-react"
 import {
     type ColumnDef,
-    type ColumnFiltersState,
     type ColumnSizingState,
     flexRender,
     getCoreRowModel,
@@ -29,7 +19,6 @@ import {
     type Row,
     type RowData,
     type RowSelectionState,
-    type SortingState,
     type Table,
     useReactTable,
     type VisibilityState,
@@ -41,16 +30,14 @@ import {
     memo,
     type ReactElement,
     type ReactNode,
+    type RefObject,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from "react"
-import { ColumnVisibilityPopover, type VisibilityColumn } from "../ColumnVisibilityPopover.js"
+import { usePersistentDataTableState } from "../../../utilities/usePersistentDataTableState.js"
 import { EmptyState } from "../EmptyState.js"
-import { type FilterColumn, FilterPopover } from "../FilterPopover.js"
-import { SearchBar } from "../SearchBar.js"
-import { type SortDirection, SortPopover } from "../SortPopover.js"
 import { DataTablePagination } from "./DataTablePagination.js"
 import { DataTableToolbar } from "./DataTableToolbar.js"
 
@@ -476,6 +463,70 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
+function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
+    table: Table<TData>
+    columnCount: number
+    rows: Array<Row<TData>>
+    virtualize: boolean
+    virtualItems: Array<{
+        index: number
+    }>
+    virtualPaddingTop: number
+    virtualPaddingBottom: number
+    measureElement: (element: Element | null) => void
+    scrollContainerRef: RefObject<HTMLDivElement | null>
+    renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
+    onRowClick?: (context: Row<TData>) => void
+    getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+    onResetColumnSize: (columnId: string) => void
+}) {
+    return (
+        <div
+            ref={props.scrollContainerRef}
+            className={css({
+                width: "100%",
+                maxWidth: "100%",
+                maxHeight: props.virtualize ? "70vh" : undefined,
+                padding: "0",
+                overflowX: "auto",
+                overflowY: "auto",
+                borderRadius: "lg",
+                border: "1px solid",
+                borderColor: "neutral/10",
+            })}
+        >
+            <table
+                className={css({
+                    width: "fit-content",
+                    minWidth: "100%",
+                    height: "100%",
+                    maxH: "100%",
+                    borderCollapse: "collapse",
+                })}
+            >
+                <DataTableHeader
+                    table={props.table}
+                    renderSubComponent={props.renderSubComponent}
+                    columnCount={props.columnCount}
+                    onResetColumnSize={props.onResetColumnSize}
+                />
+                <DataTableRows
+                    rows={props.rows}
+                    columnCount={props.columnCount}
+                    virtualize={props.virtualize}
+                    virtualItems={props.virtualItems}
+                    virtualPaddingTop={props.virtualPaddingTop}
+                    virtualPaddingBottom={props.virtualPaddingBottom}
+                    measureElement={props.measureElement}
+                    onRowClick={props.onRowClick}
+                    renderSubComponent={props.renderSubComponent}
+                    getRowProps={props.getRowProps}
+                />
+            </table>
+        </div>
+    )
+}
+
 function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     data: Array<TData>
     isLoading?: boolean
@@ -486,6 +537,8 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     virtualize?: boolean
     /** Estimated row height in px, used before rows are measured. */
     estimateRowHeight?: number
+    /** localStorage key: persists sorting, filters and column visibility per table. */
+    persistKey?: string
     defaultColumnVisibility?: VisibilityState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
@@ -504,10 +557,16 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
             props.data,
         ],
     )
-    const [globalFilter, setGlobalFilter] = useState("")
-    const [sorting, setSorting] = useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(props.defaultColumnVisibility ?? {})
+    const {
+        globalFilter,
+        setGlobalFilter,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        columnVisibility,
+        setColumnVisibility,
+    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {})
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
@@ -718,57 +777,29 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                     {props.children}
                 </DataTableToolbar>
             )}
-            <div
-                ref={scrollContainerRef}
-                className={css({
-                    width: "100%",
-                    maxWidth: "100%",
-                    maxHeight: props.virtualize === true ? "70vh" : undefined,
-                    padding: "0",
-                    overflowX: "auto",
-                    overflowY: "auto",
-                    borderRadius: "lg",
-                    border: "1px solid",
-                    borderColor: "neutral/10",
-                })}
-            >
-                <table
-                    className={css({
-                        width: "fit-content",
-                        minWidth: "100%",
-                        height: "100%",
-                        maxH: "100%",
-                        borderCollapse: "collapse",
-                    })}
-                >
-                    <DataTableHeader
-                        table={table}
-                        renderSubComponent={props.renderSubComponent}
-                        columnCount={columnCount}
-                        onResetColumnSize={(columnId) => {
-                            setColumnSizingOverrides((state) => {
-                                const nextState = {
-                                    ...state,
-                                }
-                                delete nextState[columnId]
-                                return nextState
-                            })
-                        }}
-                    />
-                    <DataTableRows
-                        rows={rows}
-                        columnCount={columnCount}
-                        virtualize={props.virtualize === true}
-                        virtualItems={virtualItems}
-                        virtualPaddingTop={virtualPaddingTop}
-                        virtualPaddingBottom={virtualPaddingBottom}
-                        measureElement={virtualizer.measureElement}
-                        onRowClick={props.onRowClick}
-                        renderSubComponent={props.renderSubComponent}
-                        getRowProps={props.getRowProps}
-                    />
-                </table>
-            </div>
+            <DataTableTable
+                table={table}
+                columnCount={columnCount}
+                rows={rows}
+                virtualize={props.virtualize === true}
+                virtualItems={virtualItems}
+                virtualPaddingTop={virtualPaddingTop}
+                virtualPaddingBottom={virtualPaddingBottom}
+                measureElement={virtualizer.measureElement}
+                scrollContainerRef={scrollContainerRef}
+                renderSubComponent={props.renderSubComponent}
+                onRowClick={props.onRowClick}
+                getRowProps={props.getRowProps}
+                onResetColumnSize={(columnId) => {
+                    setColumnSizingOverrides((state) => {
+                        const nextState = {
+                            ...state,
+                        }
+                        delete nextState[columnId]
+                        return nextState
+                    })
+                }}
+            />
             <DataTablePagination
                 table={table}
                 showPageSizeControl={props.showPageSizeControl}

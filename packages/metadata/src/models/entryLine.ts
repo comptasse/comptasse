@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm"
-import { type AnyPgColumn, boolean, index, numeric, pgTable, varchar } from "drizzle-orm/pg-core"
+import { type AnyPgColumn, boolean, index, numeric, pgTable } from "drizzle-orm/pg-core"
 import { dateTimeColumn } from "../components/models/dateTimeColumn.js"
 import { idColumn } from "../components/models/idColumn.js"
 import { accountModel } from "./account.js"
@@ -42,9 +42,6 @@ export const entryLineModel = pgTable(
         isComputedForBalanceReport: boolean("is_computed_for_balance_report").notNull(),
         isComputedForBalanceSheetReport: boolean("is_computed_for_balance_sheet_report").notNull(),
         isComputedForIncomeStatementReport: boolean("is_computed_for_income_statement_report").notNull(),
-        label: varchar("label", {
-            length: 256,
-        }),
         debit: numeric("debit", {
             scale: 2,
         }).notNull(),

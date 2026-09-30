@@ -118,6 +118,7 @@ export function InputCombobox<TValue extends string>(props: {
                     <InputText
                         value={rawQuery}
                         onChange={(value) => setRawQuery(value)}
+                        autoFocus={true}
                     />
                     <div
                         className={css({

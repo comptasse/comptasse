@@ -18,7 +18,6 @@ export const createOneEntryLineRouteDefinition = routeDefinition({
             isComputedForBalanceReport: entryLineSchema.entries.isComputedForBalanceReport,
             isComputedForBalanceSheetReport: entryLineSchema.entries.isComputedForBalanceSheetReport,
             isComputedForIncomeStatementReport: entryLineSchema.entries.isComputedForIncomeStatementReport,
-            label: v.optional(entryLineSchema.entries.label),
             debit: v.optional(entryLineSchema.entries.debit),
             credit: v.optional(entryLineSchema.entries.credit),
         }),

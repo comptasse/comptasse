@@ -18,7 +18,6 @@ export const updateManyEntryLinesRouteDefinition = routeDefinition({
             isComputedForBalanceReport: v.optional(entryLineSchema.entries.isComputedForBalanceReport),
             isComputedForBalanceSheetReport: v.optional(entryLineSchema.entries.isComputedForBalanceSheetReport),
             isComputedForIncomeStatementReport: v.optional(entryLineSchema.entries.isComputedForIncomeStatementReport),
-            label: v.optional(entryLineSchema.entries.label),
         }),
         return: v.array(entryLineSchema),
     },

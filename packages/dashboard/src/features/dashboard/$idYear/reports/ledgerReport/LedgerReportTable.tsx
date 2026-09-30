@@ -66,7 +66,6 @@ function LedgerAccountSection({
                         </FormatText>
                     </div>
                 </Table.Body.Cell>
-                <Table.Body.Cell />
                 <Table.Body.Cell
                     className={css({
                         width: "[1%]",
@@ -105,9 +104,6 @@ function LedgerAccountSection({
                             })}
                         >
                             <Table.Body.Cell />
-                            <Table.Body.Cell>
-                                <FormatText wrap={true}>{entryLine.label}</FormatText>
-                            </Table.Body.Cell>
                             <Table.Body.Cell
                                 className={css({
                                     width: "[1%]",
@@ -150,14 +146,21 @@ export function LedgerReportTable(props: {
             rows.push(entryLine)
         }
         return map
-    }, [props.entryLines])
+    }, [
+        props.entryLines,
+    ])
 
     const sortedAccounts = useMemo(
         () =>
-            [...props.accounts]
+            [
+                ...props.accounts,
+            ]
                 .sort((a, b) => a.number.localeCompare(b.number))
                 .filter((account) => entryLinesByAccountId.has(account.id)),
-        [props.accounts, entryLinesByAccountId],
+        [
+            props.accounts,
+            entryLinesByAccountId,
+        ],
     )
 
     const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -196,16 +199,6 @@ export function LedgerReportTable(props: {
                                 })}
                             >
                                 Compte
-                            </span>
-                        </Table.Header.Cell>
-                        <Table.Header.Cell>
-                            <span
-                                className={css({
-                                    color: "neutral/75",
-                                    fontSize: "sm",
-                                })}
-                            >
-                                Libellé
                             </span>
                         </Table.Header.Cell>
                         <Table.Header.Cell
@@ -255,7 +248,6 @@ export function LedgerReportTable(props: {
                             backgroundColor: "background",
                         })}
                     >
-                        <Table.Body.Cell colSpan={1} />
                         <Table.Body.Cell align="right">
                             <span
                                 className={css({
@@ -314,7 +306,7 @@ export function LedgerReportTable(props: {
                             <tbody>
                                 <tr>
                                     <td
-                                        colSpan={4}
+                                        colSpan={3}
                                         style={{
                                             height: `${paddingTop}px`,
                                             padding: 0,
@@ -341,7 +333,7 @@ export function LedgerReportTable(props: {
                             <tbody>
                                 <tr>
                                     <td
-                                        colSpan={4}
+                                        colSpan={3}
                                         style={{
                                             height: `${paddingBottom}px`,
                                             padding: 0,

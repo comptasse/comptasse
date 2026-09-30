@@ -581,7 +581,6 @@ function FilesTableRaw(props: {
             props.idOrganization,
             props.parentFolderId,
             props.onFolderOpen,
-            suppressClickRef,
         ],
     )
 
@@ -589,6 +588,7 @@ function FilesTableRaw(props: {
         <DataTable
             data={rows}
             isLoading={false}
+            persistKey="files"
             getRowProps={(row) => getRowInteractionProps(row.original)}
             hideSearchBar={false}
             enableRowSelection={(row) => row.original.kind !== "back"}

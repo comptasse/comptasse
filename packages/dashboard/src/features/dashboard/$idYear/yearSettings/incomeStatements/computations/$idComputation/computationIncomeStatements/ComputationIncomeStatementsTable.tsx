@@ -26,6 +26,7 @@ export function ComputationIncomeStatementsTable(props: {
                     <DataTable
                         data={computationIncomeStatements}
                         isLoading={false}
+                        persistKey="computation-income-statements"
                         columns={[
                             {
                                 accessorKey: "actions",

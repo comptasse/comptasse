@@ -3,10 +3,10 @@ import {
     updateManyEntryLinesRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, InputText, InputToggle, toast } from "@comptasse/ui"
+import { Button, InputToggle, toast } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
-import { type JSX } from "react"
+import type { JSX } from "react"
 import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
 import { FormControl } from "../../../../../components/forms/FormControl.tsx"
@@ -71,26 +71,6 @@ export function UpdateManyEntryLines(props: {
         >
             {(form) => (
                 <Fragment>
-                    <FormField
-                        control={form.control}
-                        name="label"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    label="Libellé"
-                                    isRequired={false}
-                                />
-                                <FormControl>
-                                    <InputText
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        autoFocus={true}
-                                    />
-                                </FormControl>
-                                <FormError />
-                            </FormItem>
-                        )}
-                    />
                     <div
                         className={css({
                             width: "100%",

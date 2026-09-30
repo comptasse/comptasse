@@ -45,7 +45,6 @@ export const updateManyEntryLinesRoute = apiFactory
                         isComputedForBalanceReport: body.isComputedForBalanceReport,
                         isComputedForBalanceSheetReport: body.isComputedForBalanceSheetReport,
                         isComputedForIncomeStatementReport: body.isComputedForIncomeStatementReport,
-                        label: body.label,
                         lastUpdatedAt: new Date().toISOString(),
                         lastUpdatedBy: auth.user.id,
                     },
