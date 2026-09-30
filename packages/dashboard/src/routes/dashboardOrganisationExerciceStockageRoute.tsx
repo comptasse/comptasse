@@ -1,11 +1,16 @@
 import { createRoute } from "@tanstack/react-router"
-import { lazy, Suspense } from "react"
-const FilesPage = lazy(() => import("../features/dashboard/$idOrganization/organizationStorage/FilesPage.js").then((m) => ({ default: m.FilesPage })))
+import { lazy } from "react"
+
+const FilesPage = lazy(() =>
+    import("../features/dashboard/$idOrganization/organizationStorage/FilesPage.js").then((m) => ({
+        default: m.FilesPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
-
 function FilesPageWrapper() {
-    return <Suspense fallback={null}><FilesPage /></Suspense>
+    return <FilesPage />
 }
 
 export const dashboardOrganisationExerciceStockageRoute = createRoute({
