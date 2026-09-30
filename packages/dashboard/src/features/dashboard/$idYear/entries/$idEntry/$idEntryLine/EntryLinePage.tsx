@@ -34,9 +34,6 @@ export function EntryLinePage(props: { idYear?: string; idEntryLine?: string } =
                         <DataBlock.Root>
                             <DataBlock.Header title="Informations" />
                             <DataBlock.Content>
-                                <DataBlock.Item label="Libellé">
-                                    <FormatText>{entryLine.label}</FormatText>
-                                </DataBlock.Item>
                                 <DataBlock.Item label="Compte">
                                     {entryLine.idAccount === null ? (
                                         <FormatNull />
