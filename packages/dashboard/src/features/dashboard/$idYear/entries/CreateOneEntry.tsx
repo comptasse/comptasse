@@ -5,6 +5,7 @@ import {
     readAllEntryTagsRouteDefinition,
     readAllFilesRouteDefinition,
     readAllJournalsRouteDefinition,
+    readAllScenariosRouteDefinition,
     readAllTagsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
@@ -17,7 +18,6 @@ import type * as v from "valibot"
 import { FormControl } from "../../../../components/forms/FormControl.js"
 import { FormError } from "../../../../components/forms/FormError.js"
 import { FormField } from "../../../../components/forms/FormField.js"
-import { FormGroup } from "../../../../components/forms/FormGroup.js"
 import { FormItem } from "../../../../components/forms/FormItem.js"
 import { FormLabel } from "../../../../components/forms/FormLabel.js"
 import { FormRoot } from "../../../../components/forms/FormRoot.js"
@@ -27,15 +27,14 @@ import { applicationRouter } from "../../../../routes/applicationRouter.js"
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../utilities/invalidateData.js"
 import { useDataFromAPI } from "../../../../utilities/useHTTPData.js"
-import { type EntryTemplateKey, entryTemplates } from "./entryTemplates/entryTemplates.js"
+import { ScenarioEntryForm } from "./entryTemplates/ScenarioEntryForm.js"
 
-function CreateOneEntryPanel(props: {
+/** Manual entry: free label, journal/file/tags, no pre-filled lines. */
+function ManualEntryForm(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
     idYear: v.InferOutput<typeof returnedSchemas.year>["id"]
 }) {
     const { closePanel } = useRightPanel()
-    const [selectedTemplate, setSelectedTemplate] = useState<EntryTemplateKey | "empty">("empty")
-    const [isTemplateReady, setIsTemplateReady] = useState(false)
     const [selectedTags, setSelectedTags] = useState<
         Array<{
             key: string
@@ -50,9 +49,6 @@ function CreateOneEntryPanel(props: {
         },
     })
 
-    const activeTemplate = entryTemplates.find((t) => t.key === selectedTemplate)
-    const isSubmitDisabled = activeTemplate?.hasActionButton === true && isTemplateReady === false
-
     return (
         <FormRoot
             schema={createOneEntryFromTemplateRouteDefinition.schemas.body}
@@ -66,7 +62,6 @@ function CreateOneEntryPanel(props: {
             submitButtonProps={{
                 leftIcon: <IconPlus />,
                 text: "Ajouter l'écriture",
-                isDisabled: isSubmitDisabled,
             }}
             onSubmit={async (data) => {
                 const createEntryResponse = await getResponseBodyFromAPI({
@@ -248,52 +243,91 @@ function CreateOneEntryPanel(props: {
                             loading={tagsResponse.isPending}
                         />
                     </FormItem>
-                    <FormGroup title="Modèle d'écriture">
-                        <FormItem>
-                            <span
-                                className={css({
-                                    fontSize: "xs",
-                                    color: "neutral/50",
-                                })}
-                            >
-                                Choisir un modèle
-                            </span>
-                            <InputSelect
-                                value={selectedTemplate}
-                                onChange={(value) => {
-                                    const newValue = value ?? "empty"
-                                    setSelectedTemplate(newValue)
-                                    setIsTemplateReady(false)
-                                    form.setValue("entryLines", [])
-                                }}
-                                options={entryTemplates.map((template) => ({
-                                    key: template.key,
-                                    label: template.label,
-                                }))}
-                                placeholder="Sélectionner un modèle"
-                            />
-                        </FormItem>
-                        {activeTemplate === undefined || activeTemplate.key === "empty" ? null : (
-                            <div
-                                className={css({
-                                    paddingLeft: "2rem",
-                                    width: "100%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                })}
-                            >
-                                {activeTemplate?.formComponent({
-                                    form,
-                                    idOrganization: props.idOrganization,
-                                    idYear: props.idYear,
-                                    onTemplateReadyChange: setIsTemplateReady,
-                                })}
-                            </div>
-                        )}
-                    </FormGroup>
                 </Fragment>
             )}
         </FormRoot>
+    )
+}
+
+function CreateOneEntryPanel(props: {
+    idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
+    idYear: v.InferOutput<typeof returnedSchemas.year>["id"]
+}) {
+    const [selectedTemplate, setSelectedTemplate] = useState<string>("empty")
+
+    // The template catalog is the documented scenario list (same source as the
+    // website documentation), so every documented template is selectable.
+    const scenariosResponse = useDataFromAPI({
+        routeDefinition: readAllScenariosRouteDefinition,
+        body: {
+            idYear: props.idYear,
+        },
+    })
+
+    return (
+        <div
+            className={css({
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.5rem",
+            })}
+        >
+            <div
+                className={css({
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.5rem",
+                })}
+            >
+                <span
+                    className={css({
+                        fontSize: "sm",
+                        fontWeight: "semibold",
+                    })}
+                >
+                    Modèle d'écriture
+                </span>
+                <span
+                    className={css({
+                        fontSize: "xs",
+                        color: "neutral/50",
+                    })}
+                >
+                    Choisir un modèle
+                </span>
+                <InputSelect
+                    value={selectedTemplate}
+                    onChange={(value) => setSelectedTemplate(value ?? "empty")}
+                    options={[
+                        {
+                            key: "empty",
+                            label: "Écriture vide",
+                        },
+                        ...(scenariosResponse.data ?? []).map((scenario) => ({
+                            key: scenario.scenario,
+                            label: scenario.title,
+                        })),
+                    ]}
+                    placeholder="Sélectionner un modèle"
+                    isLoading={scenariosResponse.isPending}
+                />
+            </div>
+            {selectedTemplate === "empty" ? (
+                <ManualEntryForm
+                    idOrganization={props.idOrganization}
+                    idYear={props.idYear}
+                />
+            ) : (
+                <ScenarioEntryForm
+                    key={selectedTemplate}
+                    scenario={selectedTemplate}
+                    idOrganization={props.idOrganization}
+                    idYear={props.idYear}
+                />
+            )}
+        </div>
     )
 }
 
@@ -315,7 +349,10 @@ export function CreateOneEntry(props: {
             }}
             onClick={() =>
                 openPanel(
-                    <CreateOneEntryPanel idOrganization={props.idOrganization} idYear={props.idYear} />,
+                    <CreateOneEntryPanel
+                        idOrganization={props.idOrganization}
+                        idYear={props.idYear}
+                    />,
                     "Ajouter une écriture",
                 )
             }
