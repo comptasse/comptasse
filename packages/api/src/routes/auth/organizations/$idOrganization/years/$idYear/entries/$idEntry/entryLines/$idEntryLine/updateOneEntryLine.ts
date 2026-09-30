@@ -32,7 +32,6 @@ export const updateOneEntryLineRoute = apiFactory
                 isComputedForBalanceReport: body.isComputedForBalanceReport,
                 isComputedForBalanceSheetReport: body.isComputedForBalanceSheetReport,
                 isComputedForIncomeStatementReport: body.isComputedForIncomeStatementReport,
-                label: body.label,
                 debit: body.debit,
                 credit: body.credit,
                 lastUpdatedAt: new Date().toISOString(),

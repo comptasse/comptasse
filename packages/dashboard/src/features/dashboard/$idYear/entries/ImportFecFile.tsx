@@ -11,8 +11,8 @@ import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, ButtonPlainContent, InputFile, toast } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconFileImport } from "@tabler/icons-react"
-import { Fragment } from "react/jsx-runtime"
 import { useMemo, useState } from "react"
+import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
 import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.js"
@@ -325,7 +325,6 @@ export function ImportFecFile(props: {
                 isComputedForIncomeStatementReport: boolean
                 isComputedForJournalReport: boolean
                 isComputedForLedgerReport: boolean
-                label: string
             }> = []
 
             for (const line of entry.lines) {
@@ -368,7 +367,6 @@ export function ImportFecFile(props: {
                     isComputedForIncomeStatementReport: true,
                     isComputedForJournalReport: true,
                     isComputedForLedgerReport: true,
-                    label: line.entryLabel,
                 })
             }
 

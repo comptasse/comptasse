@@ -96,7 +96,6 @@ describe("Entry Lines", () => {
                     isComputedForBalanceReport: true,
                     isComputedForBalanceSheetReport: true,
                     isComputedForIncomeStatementReport: true,
-                    label: "Regression Line",
                     debit: "1.00",
                     credit: "0",
                 },
@@ -178,7 +177,6 @@ describe("Entry Lines", () => {
                     isComputedForBalanceReport: true,
                     isComputedForBalanceSheetReport: true,
                     isComputedForIncomeStatementReport: true,
-                    label: "Test Line",
                     debit: "100.00",
                     credit: "0",
                 },
@@ -188,7 +186,6 @@ describe("Entry Lines", () => {
             const data = response.data as any
             expect(data).toHaveProperty("id")
             expect(data.idEntry).toBe(idEntry)
-            expect(data.label).toBe("Test Line")
         })
     })
 })

@@ -182,7 +182,6 @@ export async function createScenarioEntries(parameters: {
                 isComputedForBalanceReport: line.reportFlags?.isComputedForBalanceReport ?? true,
                 isComputedForBalanceSheetReport: line.reportFlags?.isComputedForBalanceSheetReport ?? true,
                 isComputedForIncomeStatementReport: line.reportFlags?.isComputedForIncomeStatementReport ?? true,
-                label: line.label,
                 debit: line.debit,
                 credit: line.credit,
                 createdAt: new Date().toISOString(),

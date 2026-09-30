@@ -77,7 +77,6 @@ export const duplicateOneEntryRoute = registerRoute(duplicateOneEntryRouteDefini
                 isComputedForBalanceReport: entryLine.isComputedForBalanceReport,
                 isComputedForBalanceSheetReport: entryLine.isComputedForBalanceSheetReport,
                 isComputedForIncomeStatementReport: entryLine.isComputedForIncomeStatementReport,
-                label: entryLine.label,
                 debit: entryLine.debit,
                 credit: entryLine.credit,
                 createdAt: new Date().toISOString(),

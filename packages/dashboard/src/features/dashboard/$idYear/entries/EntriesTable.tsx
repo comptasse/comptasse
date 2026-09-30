@@ -58,6 +58,7 @@ export function EntriesTable(props: {
             showPageSizeControl={true}
             virtualize={true}
             estimateRowHeight={56}
+            persistKey="entries"
             enableRowSelection={true}
             getRowId={(row) => row.id}
             selectionActions={(selectedRows) => (
@@ -202,17 +203,6 @@ export function EntriesTable(props: {
                                         fontSize: "xs",
                                         fontWeight: "semibold",
                                         color: "neutral/40",
-                                        textAlign: "left",
-                                    })}
-                                >
-                                    Libellé
-                                </th>
-                                <th
-                                    className={css({
-                                        padding: "0.5rem 1rem",
-                                        fontSize: "xs",
-                                        fontWeight: "semibold",
-                                        color: "neutral/40",
                                         textAlign: "right",
                                     })}
                                 >
@@ -275,13 +265,6 @@ export function EntriesTable(props: {
                                             ) : (
                                                 <FormatNull />
                                             )}
-                                        </td>
-                                        <td
-                                            className={css({
-                                                padding: "0.5rem 1rem",
-                                            })}
-                                        >
-                                            <FormatText>{entryLine.label}</FormatText>
                                         </td>
                                         <td
                                             className={css({

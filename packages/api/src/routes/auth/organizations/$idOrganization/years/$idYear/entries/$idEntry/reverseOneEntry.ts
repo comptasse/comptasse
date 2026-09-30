@@ -77,7 +77,6 @@ export const reverseOneEntryRoute = registerRoute(reverseOneEntryRouteDefinition
                 isComputedForBalanceReport: entryLine.isComputedForBalanceReport,
                 isComputedForBalanceSheetReport: entryLine.isComputedForBalanceSheetReport,
                 isComputedForIncomeStatementReport: entryLine.isComputedForIncomeStatementReport,
-                label: entryLine.label,
                 debit: entryLine.credit,
                 credit: entryLine.debit,
                 createdAt: new Date().toISOString(),

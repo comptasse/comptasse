@@ -181,7 +181,7 @@ export const generateFecRoute = apiFactory.createApp().post(generateFecRouteDefi
                 "", // CompAuxLib - not supported
                 entry.label, // PieceRef
                 pieceDate,
-                row.label ?? entry.label, // EcritureLib
+                entry.label, // EcritureLib
                 formatFecAmount(row.debit),
                 formatFecAmount(row.credit),
                 "", // EcritureLet - not supported

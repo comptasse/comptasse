@@ -6,12 +6,12 @@ import { validateBodyMiddleware } from "../../../../../../../../middlewares/vali
 import { apiFactory } from "../../../../../../../../utilities/apiFactory.js"
 import { Exception } from "../../../../../../../../utilities/exception.js"
 import { response } from "../../../../../../../../utilities/response.js"
+import { selectBalancesByIdAccount } from "../../../../../../../../utilities/scenarios/accountBalances.js"
 import { deleteMany } from "../../../../../../../../utilities/sql/deleteMany.js"
 import { insertMany } from "../../../../../../../../utilities/sql/insertMany.js"
 import { insertOne } from "../../../../../../../../utilities/sql/insertOne.js"
 import { selectMany } from "../../../../../../../../utilities/sql/selectMany.js"
 import { selectOne } from "../../../../../../../../utilities/sql/selectOne.js"
-import { selectBalancesByIdAccount } from "../../../../../../../../utilities/scenarios/accountBalances.js"
 
 /**
  * Idempotency key of the generated balance-sheet closing entry. Used by the
@@ -96,7 +96,6 @@ export const settleBalanceSheetRoute = apiFactory
                     isComputedForBalanceReport: true,
                     isComputedForBalanceSheetReport: false,
                     isComputedForIncomeStatementReport: false,
-                    label: "Solde du compte",
                     debit: algebraicBalance < 0 ? String((-algebraicBalance).toFixed(2)) : "0.00",
                     credit: algebraicBalance > 0 ? String(algebraicBalance.toFixed(2)) : "0.00",
                     createdAt: new Date().toISOString(),

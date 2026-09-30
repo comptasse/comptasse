@@ -19,7 +19,6 @@ export const updateOneEntryLineRouteDefinition = routeDefinition({
             isComputedForBalanceReport: v.optional(entryLineSchema.entries.isComputedForBalanceReport),
             isComputedForBalanceSheetReport: v.optional(entryLineSchema.entries.isComputedForBalanceSheetReport),
             isComputedForIncomeStatementReport: v.optional(entryLineSchema.entries.isComputedForIncomeStatementReport),
-            label: v.optional(entryLineSchema.entries.label),
             debit: v.optional(entryLineSchema.entries.debit),
             credit: v.optional(entryLineSchema.entries.credit),
         }),

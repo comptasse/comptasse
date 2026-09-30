@@ -1,7 +1,6 @@
 import * as v from "valibot"
 import { booleanSchema, dateTimeSchema, numericSchema } from "../components/index.js"
 import { idSchema } from "../components/schemas/idSchema.js"
-import { varcharSchema } from "../components/schemas/varcharSchema.js"
 import type { entryLineModel } from "../models/entryLine.js"
 
 export const entryLineSchema = v.object({
@@ -15,11 +14,6 @@ export const entryLineSchema = v.object({
     isComputedForBalanceReport: v.nonNullable(booleanSchema, "Ce champ est requis"),
     isComputedForBalanceSheetReport: v.nonNullable(booleanSchema, "Ce champ est requis"),
     isComputedForIncomeStatementReport: v.nonNullable(booleanSchema, "Ce champ est requis"),
-    label: v.nullable(
-        varcharSchema({
-            maxLength: 256,
-        }),
-    ),
     debit: v.nonNullable(numericSchema, "Ce champ est requis"),
     credit: v.nonNullable(numericSchema, "Ce champ est requis"),
     createdAt: v.nonNullable(dateTimeSchema, "Ce champ est requis"),
@@ -39,7 +33,6 @@ export const entryLineSchemaReturn = v.pick(entryLineSchema, [
     "isComputedForBalanceReport",
     "isComputedForBalanceSheetReport",
     "isComputedForIncomeStatementReport",
-    "label",
     "debit",
     "credit",
     "createdAt",

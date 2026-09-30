@@ -55,7 +55,6 @@ export const createOneEntryFromTemplateRoute = apiFactory
                         isComputedForBalanceReport: line.isComputedForBalanceReport,
                         isComputedForBalanceSheetReport: line.isComputedForBalanceSheetReport,
                         isComputedForIncomeStatementReport: line.isComputedForIncomeStatementReport,
-                        label: line.label ?? entry.label,
                         debit: line.debit ?? "0.00",
                         credit: line.credit ?? "0.00",
                         createdAt: new Date().toISOString(),

@@ -24,7 +24,9 @@ function JournalEntrySection({
     virtualItem: ReturnType<ReturnType<typeof useVirtualizer>["getVirtualItems"]>[number]
     measureElement: (element: Element | null) => void
 }) {
-    const sortedEntryLines = [...entryLines].sort((a, b) => (a.lastUpdatedAt ?? "").localeCompare(b.lastUpdatedAt ?? ""))
+    const sortedEntryLines = [
+        ...entryLines,
+    ].sort((a, b) => (a.lastUpdatedAt ?? "").localeCompare(b.lastUpdatedAt ?? ""))
 
     const entryTotalDebit = sortedEntryLines.reduce((acc, entryLine) => acc + Number(entryLine.debit), 0)
     const entryTotalCredit = sortedEntryLines.reduce((acc, entryLine) => acc + Number(entryLine.credit), 0)
@@ -116,9 +118,7 @@ function JournalEntrySection({
                     return (
                         <Table.Body.Row key={entryLine.id}>
                             <Table.Body.Cell />
-                            <Table.Body.Cell>
-                                <FormatText wrap={true}>{entryLine.label}</FormatText>
-                            </Table.Body.Cell>
+                            <Table.Body.Cell />
                             <Table.Body.Cell>
                                 <div
                                     className={css({
@@ -186,10 +186,15 @@ export function JournalReportTable(props: {
         for (const entryLine of entryLines) {
             const arr = map.get(entryLine.idEntry)
             if (arr) arr.push(entryLine)
-            else map.set(entryLine.idEntry, [entryLine])
+            else
+                map.set(entryLine.idEntry, [
+                    entryLine,
+                ])
         }
         return map
-    }, [entryLines])
+    }, [
+        entryLines,
+    ])
 
     const totalDebit = entryLines.reduce((acc, entryLine) => acc + Number(entryLine.debit), 0)
     const totalCredit = entryLines.reduce((acc, entryLine) => acc + Number(entryLine.credit), 0)
