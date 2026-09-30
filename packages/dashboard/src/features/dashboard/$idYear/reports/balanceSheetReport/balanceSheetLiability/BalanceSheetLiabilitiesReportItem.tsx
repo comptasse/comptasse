@@ -22,12 +22,13 @@ export function BalanceSheetLiabilitiesReportItem(props: {
 
     const isAmountDisplayed = props.balanceSheet.isComputed === true || props.balanceSheetChildren.length === 0
 
+    const childIds = new Set(props.balanceSheetChildren.map((balanceSheet) => balanceSheet.id))
+
     let netTotalAmount = 0
     for (const account of props.accounts) {
         const hasAccount = account.idBalanceSheetLiability === props.balanceSheet.id
-        const hasChildrenAccount = props.balanceSheetChildren.some(
-            (balanceSheet) => balanceSheet.id === account.idBalanceSheetLiability,
-        )
+        const hasChildrenAccount =
+            account.idBalanceSheetLiability !== null && childIds.has(account.idBalanceSheetLiability)
         if (!hasAccount && !hasChildrenAccount) continue
 
         const totals = props.accountTotals.get(account.id)
