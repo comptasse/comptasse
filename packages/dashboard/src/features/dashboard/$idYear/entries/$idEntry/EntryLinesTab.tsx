@@ -5,7 +5,7 @@ import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconEdit, IconPlus } from "@tabler/icons-react"
 import type * as v from "valibot"
 import { Section } from "../../../../../components/layouts/section/section.tsx"
-import type { YearDataKey } from "../../YearDataWrapper.tsx"
+import type { YearDataKey, YearDataMaps } from "../../YearDataWrapper.tsx"
 import { YearDataWrapper } from "../../YearDataWrapper.tsx"
 import { CreateOneEntryLine } from "./CreateOneEntryLine.tsx"
 import { EntryLinesTable } from "./EntryLinesTable.tsx"
@@ -15,6 +15,7 @@ const requiredKeys = [
     "entries",
     "entryLines",
     "accounts",
+    "matchings",
 ] as const satisfies readonly YearDataKey[]
 
 export function EntryLinesTab(props: { idYear: string; idEntry: string }) {
@@ -26,7 +27,7 @@ export function EntryLinesTab(props: { idYear: string; idEntry: string }) {
             idYear={idYear}
             requiredKeys={requiredKeys}
         >
-            {({ entries, entryLines: allEntryLines, accounts }) => {
+            {({ entries, entryLines: allEntryLines, accounts, matchingById }) => {
                 const entry = entries.find((r) => r.id === idEntry)
                 if (entry === undefined) return null
 
@@ -43,6 +44,7 @@ export function EntryLinesTab(props: { idYear: string; idEntry: string }) {
                         entry={entry}
                         entryLines={entryLines}
                         accounts={accountsMap}
+                        matchingById={matchingById}
                     />
                 )
             }}
@@ -54,6 +56,7 @@ function EntryLinesTabContent(props: {
     entry: v.InferOutput<typeof returnedSchemas.entry>
     entryLines: v.InferOutput<typeof returnedSchemas.entryLine>[]
     accounts: Map<string, v.InferOutput<typeof readAllAccountsRouteDefinition.schemas.return>[number]>
+    matchingById: YearDataMaps["matchingById"]
 }) {
     return (
         <Section.Item>
@@ -83,6 +86,7 @@ function EntryLinesTabContent(props: {
                 entry={props.entry}
                 entryLines={props.entryLines}
                 accounts={props.accounts}
+                matchingById={props.matchingById}
             />
         </Section.Item>
     )

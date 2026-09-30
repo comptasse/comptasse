@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, useState } from "react"
+import { type InputHTMLAttributes, useRef, useState } from "react"
 import type { FieldError } from "react-hook-form"
 import { IMask, IMaskInput } from "react-imask"
 import type { Styles } from "../../../styled-system/css/css"
@@ -45,12 +45,20 @@ export function InputDate(
     const { className } = props
     const [displayValue, setDisplayValue] = useState(() => isoToDisplay(props.value))
     const [prevValue, setPrevValue] = useState(props.value)
+    const isFocusedRef = useRef(false)
+    // Last value we emitted to the parent, so an interrupted typing session can
+    // be reverted on blur instead of leaving a half-written date.
+    const lastEmittedRef = useRef<string | undefined>(props.value ?? undefined)
 
+    // Only mirror external changes while the field is not being edited,
+    // otherwise a round-trip through the parent would clobber the typing.
     if (props.value !== prevValue) {
         setPrevValue(props.value)
-        const externalDisplay = isoToDisplay(props.value)
-        if (externalDisplay !== displayValue) {
-            setDisplayValue(externalDisplay)
+        if (!isFocusedRef.current) {
+            const externalDisplay = isoToDisplay(props.value)
+            if (externalDisplay !== displayValue) {
+                setDisplayValue(externalDisplay)
+            }
         }
     }
 
@@ -114,10 +122,33 @@ export function InputDate(
                 eager="append"
                 unmask="typed"
                 placeholder={"JJ / MM / YYYY"}
+                onFocus={(event) => {
+                    isFocusedRef.current = true
+                    // Select everything so typing replaces a completed date.
+                    event.target.select()
+                }}
+                onBlur={() => {
+                    isFocusedRef.current = false
+                    const iso = displayToIso(displayValue)
+                    if (displayValue.trim() !== "" && iso === undefined) {
+                        setDisplayValue(isoToDisplay(lastEmittedRef.current))
+                    }
+                }}
                 onAccept={(value: unknown) => {
                     const display = String(value)
                     setDisplayValue(display)
-                    props.onChange(displayToIso(display))
+                    if (display.trim() === "") {
+                        lastEmittedRef.current = undefined
+                        props.onChange(undefined)
+                        return
+                    }
+                    const iso = displayToIso(display)
+                    // Do not notify the parent for incomplete input: an
+                    // `undefined` round-trip would wipe what is being typed.
+                    if (iso !== undefined) {
+                        lastEmittedRef.current = iso
+                        props.onChange(iso)
+                    }
                 }}
                 value={displayValue}
                 className={css({

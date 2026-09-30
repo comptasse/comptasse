@@ -1286,12 +1286,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "label": {
-          "name": "label",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "debit": {
           "name": "debit",
           "type": "numeric",

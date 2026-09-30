@@ -11,6 +11,7 @@ import * as incomeStatementModel from "./incomeStatement.js"
 import * as inventoryItemModel from "./inventoryItem.js"
 import * as inventoryMovementModel from "./inventoryMovement.js"
 import * as journalModel from "./journal.js"
+import * as matchingModel from "./matching.js"
 import * as organizationModel from "./organization.js"
 import * as organizationUserModel from "./organizationUser.js"
 import * as tagModel from "./tag.js"
@@ -32,6 +33,7 @@ export const models = {
     inventoryItem: inventoryItemModel.inventoryItemModel,
     inventoryMovement: inventoryMovementModel.inventoryMovementModel,
     journal: journalModel.journalModel,
+    matching: matchingModel.matchingModel,
     organization: organizationModel.organizationModel,
     organizationUser: organizationUserModel.organizationUserModel,
     tag: tagModel.tagModel,
@@ -54,6 +56,7 @@ export const modelSchemas = {
     ...inventoryItemModel,
     ...inventoryMovementModel,
     ...journalModel,
+    ...matchingModel,
     ...organizationModel,
     ...organizationUserModel,
     ...tagModel,

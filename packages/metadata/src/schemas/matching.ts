@@ -1,44 +1,36 @@
 import * as v from "valibot"
-import { booleanSchema, dateTimeSchema } from "../components/index.js"
+import { dateTimeSchema } from "../components/index.js"
 import { idSchema } from "../components/schemas/idSchema.js"
 import { varcharSchema } from "../components/schemas/varcharSchema.js"
-import type { entryModel } from "../models/entry.js"
+import type { matchingModel } from "../models/matching.js"
 
-export const entrySchema = v.object({
+export const matchingSchema = v.object({
     id: v.nonNullable(idSchema, "Ce champ est requis"),
     idOrganization: v.nonNullable(idSchema, "Ce champ est requis"),
     idYear: v.nonNullable(idSchema, "Ce champ est requis"),
-    idJournal: v.nullable(idSchema),
-    idFile: v.nullable(idSchema),
-    idempotencyKey: v.nullable(
-        varcharSchema({
-            maxLength: 256,
-        }),
-    ),
-    label: v.nonNullable(
+    idAccount: v.nonNullable(idSchema, "Ce champ est requis"),
+
+    code: v.nonNullable(
         varcharSchema({
             maxLength: 256,
         }),
         "Ce champ est requis",
     ),
-    isCleared: v.nonNullable(booleanSchema, "Ce champ est requis"),
-    date: v.nonNullable(dateTimeSchema, "Ce champ est requis"),
+
     createdAt: v.nonNullable(dateTimeSchema, "Ce champ est requis"),
     lastUpdatedAt: v.nullable(dateTimeSchema),
     createdBy: v.nullable(idSchema),
     lastUpdatedBy: v.nullable(idSchema),
-}) satisfies v.GenericSchema<typeof entryModel.$inferSelect>
+}) satisfies v.GenericSchema<typeof matchingModel.$inferSelect>
 
-export const entrySchemaReturn = v.pick(entrySchema, [
+export const matchingSchemaReturn = v.pick(matchingSchema, [
     "id",
     "idOrganization",
     "idYear",
-    "idJournal",
-    "idFile",
-    "idempotencyKey",
-    "label",
-    "isCleared",
-    "date",
+    "idAccount",
+
+    "code",
+
     "createdAt",
     "lastUpdatedAt",
     "createdBy",

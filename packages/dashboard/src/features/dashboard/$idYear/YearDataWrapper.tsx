@@ -10,6 +10,7 @@ import {
     readAllFoldersRouteDefinition,
     readAllIncomeStatementsRouteDefinition,
     readAllJournalsRouteDefinition,
+    readAllMatchingsRouteDefinition,
     readAllTagsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import { CircularLoader, FormatError } from "@comptasse/ui"
@@ -28,6 +29,7 @@ const yearQueries = {
     entryLines: readAllEntryLinesRouteDefinition,
     entryTags: readAllEntryTagsRouteDefinition,
     journals: readAllJournalsRouteDefinition,
+    matchings: readAllMatchingsRouteDefinition,
     tags: readAllTagsRouteDefinition,
     files: readAllFilesRouteDefinition,
     folders: readAllFoldersRouteDefinition,
@@ -58,6 +60,7 @@ export type YearDataMaps = {
     accountByNumber: Map<string, YearData["accounts"][number]>
     balanceSheetById: Map<string, YearData["balanceSheets"][number]>
     incomeStatementById: Map<string, YearData["incomeStatements"][number]>
+    matchingById: Map<string, YearData["matchings"][number]>
     computationById: Map<string, YearData["computations"][number]>
 }
 
@@ -91,7 +94,9 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
     requiredKeys: K
     children: (data: Pick<YearData, K[number]> & YearDataMaps) => ReactElement | null
 }) {
-    const urlParams = useParams({ strict: false })
+    const urlParams = useParams({
+        strict: false,
+    })
     const body = useMemo(
         () => ({
             idYear: props.idYear,
@@ -107,20 +112,20 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
             result.idOrganization = urlParams.idOrganization
         }
         return result
-    }, [urlParams.idOrganization])
+    }, [
+        urlParams.idOrganization,
+    ])
 
     const requiredKeySet = useMemo(
         () => new Set<YearDataKey>(props.requiredKeys),
-        [props.requiredKeys],
+        [
+            props.requiredKeys,
+        ],
     )
 
     const results = useQueries({
         queries: yearQueryEntries.map(([key, routeDef]) => ({
-            queryKey: buildQueryKey(
-                routeDef,
-                body as Record<string, unknown>,
-                params,
-            ),
+            queryKey: buildQueryKey(routeDef, body as Record<string, unknown>, params),
             queryFn: async (context: { signal: AbortSignal }) => {
                 const response = await getResponseBodyFromAPI({
                     routeDefinition: routeDef,
@@ -159,6 +164,7 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
     const entryLinesData = results[KEY_INDEX.entryLines].data as YearData["entryLines"] | undefined
     const entryTagsData = results[KEY_INDEX.entryTags].data as YearData["entryTags"] | undefined
     const journalsData = results[KEY_INDEX.journals].data as YearData["journals"] | undefined
+    const matchingsData = results[KEY_INDEX.matchings].data as YearData["matchings"] | undefined
     const tagsData = results[KEY_INDEX.tags].data as YearData["tags"] | undefined
     const filesData = results[KEY_INDEX.files].data as YearData["files"] | undefined
     const foldersData = results[KEY_INDEX.folders].data as YearData["folders"] | undefined
@@ -178,6 +184,7 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
             entryLines: entryLinesData ?? [],
             entryTags: entryTagsData ?? [],
             journals: journalsData ?? [],
+            matchings: matchingsData ?? [],
             tags: tagsData ?? [],
             files: filesData ?? [],
             folders: foldersData ?? [],
@@ -193,6 +200,7 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
             entryLinesData,
             entryTagsData,
             journalsData,
+            matchingsData,
             tagsData,
             filesData,
             foldersData,
@@ -308,6 +316,14 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
         arrays.incomeStatements,
     ])
 
+    const matchingById = useMemo(() => {
+        const m = new Map<string, YearData["matchings"][number]>()
+        for (const matching of arrays.matchings) m.set(matching.id, matching)
+        return m
+    }, [
+        arrays.matchings,
+    ])
+
     const computationById = useMemo(() => {
         const m = new Map<string, YearData["computations"][number]>()
         for (const c of arrays.computations) m.set(c.id, c)
@@ -329,6 +345,7 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
             accountByNumber,
             balanceSheetById,
             incomeStatementById,
+            matchingById,
             computationById,
         }),
         [
@@ -343,6 +360,7 @@ export function YearDataWrapper<const K extends readonly YearDataKey[]>(props: {
             accountByNumber,
             balanceSheetById,
             incomeStatementById,
+            matchingById,
             computationById,
         ],
     )

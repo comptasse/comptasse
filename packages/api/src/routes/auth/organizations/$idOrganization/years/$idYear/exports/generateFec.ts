@@ -72,7 +72,7 @@ export const generateFecRoute = apiFactory.createApp().post(generateFecRouteDefi
         schema: generateFecRouteDefinition.schemas.body,
     })
 
-    const [organization, entries, entryLines, accounts, journals] = await Promise.all([
+    const [organization, entries, entryLines, accounts, journals, matchings] = await Promise.all([
         selectOne({
             database: c.var.clients.sql,
             table: models.organization,
@@ -98,6 +98,11 @@ export const generateFecRoute = apiFactory.createApp().post(generateFecRouteDefi
             table: models.journal,
             where: (t) => eq(t.idOrganization, idOrganization),
         }),
+        selectMany({
+            database: c.var.clients.sql,
+            table: models.matching,
+            where: (t) => and(eq(t.idOrganization, idOrganization), eq(t.idYear, body.idYear)),
+        }),
     ])
 
     const accountsMap = new Map(
@@ -122,6 +127,12 @@ export const generateFecRoute = apiFactory.createApp().post(generateFecRouteDefi
         entries.map((e) => [
             e.id,
             e,
+        ]),
+    )
+    const matchingCodeById = new Map(
+        matchings.map((matching) => [
+            matching.id,
+            matching.code,
         ]),
     )
 
@@ -184,7 +195,7 @@ export const generateFecRoute = apiFactory.createApp().post(generateFecRouteDefi
                 entry.label, // EcritureLib
                 formatFecAmount(row.debit),
                 formatFecAmount(row.credit),
-                "", // EcritureLet - not supported
+                row.idMatching ? (matchingCodeById.get(row.idMatching) ?? "") : "", // EcritureLet
                 "", // DateLet - not supported
                 validDate,
                 "", // Montantdevise

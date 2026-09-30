@@ -15,6 +15,7 @@ export const updateOneEntryRouteDefinition = routeDefinition({
             idJournal: v.optional(entrySchema.entries.idJournal),
             idFile: v.optional(entrySchema.entries.idFile),
             label: v.optional(entrySchema.entries.label),
+            isCleared: v.optional(entrySchema.entries.isCleared),
             date: v.optional(entrySchema.entries.date),
         }),
         return: entrySchemaReturn,

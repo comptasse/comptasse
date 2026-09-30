@@ -177,6 +177,7 @@ export async function createScenarioEntries(parameters: {
                 idYear: parameters.idYear,
                 idEntry: entry.id,
                 idAccount,
+                idMatching: null,
                 isComputedForJournalReport: line.reportFlags?.isComputedForJournalReport ?? true,
                 isComputedForLedgerReport: line.reportFlags?.isComputedForLedgerReport ?? true,
                 isComputedForBalanceReport: line.reportFlags?.isComputedForBalanceReport ?? true,

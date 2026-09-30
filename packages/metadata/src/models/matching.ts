@@ -1,18 +1,14 @@
-import { relations } from "drizzle-orm"
-import { type AnyPgColumn, boolean, index, pgTable, varchar } from "drizzle-orm/pg-core"
+import { type AnyPgColumn, index, pgTable, unique, varchar } from "drizzle-orm/pg-core"
 import { dateTimeColumn } from "../components/models/dateTimeColumn.js"
 import { idColumn } from "../components/models/idColumn.js"
-import { entryLineModel } from "./entryLine.js"
-import { entryTagModel } from "./entryTag.js"
-import { fileModel } from "./file.js"
-import { journalModel } from "./journal.js"
+import { accountModel } from "./account.js"
 import { organizationModel } from "./organization.js"
 import { userModel } from "./user.js"
 import { yearModel } from "./year.js"
 
 // Model
-export const entryModel = pgTable(
-    "table_entry",
+export const matchingModel = pgTable(
+    "table_matching",
     {
         id: idColumn("id").primaryKey(),
         idOrganization: idColumn("id_organization")
@@ -27,22 +23,17 @@ export const entryModel = pgTable(
                 onUpdate: "cascade",
             })
             .notNull(),
-        idJournal: idColumn("id_journal").references(() => journalModel.id, {
-            onDelete: "set null",
-            onUpdate: "cascade",
-        }),
-        idFile: idColumn("id_file").references(() => fileModel.id, {
-            onDelete: "set null",
-            onUpdate: "cascade",
-        }),
-        idempotencyKey: varchar("idempotency_key", {
-            length: 256,
-        }),
-        label: varchar("label", {
+        idAccount: idColumn("id_account")
+            .references(() => accountModel.id, {
+                onDelete: "cascade",
+                onUpdate: "cascade",
+            })
+            .notNull(),
+
+        code: varchar("code", {
             length: 256,
         }).notNull(),
-        isCleared: boolean("is_cleared").notNull().default(false),
-        date: dateTimeColumn("date").notNull(),
+
         createdAt: dateTimeColumn("created_at").notNull(),
         lastUpdatedAt: dateTimeColumn("last_updated_at"),
         createdBy: idColumn("created_by").references((): AnyPgColumn => userModel.id, {
@@ -55,12 +46,8 @@ export const entryModel = pgTable(
         }),
     },
     (t) => [
+        unique().on(t.idOrganization, t.idYear, t.code),
         index().on(t.idOrganization, t.idYear),
+        index().on(t.idAccount),
     ],
 )
-
-// Relations
-export const entryRelations = relations(entryModel, ({ many }) => ({
-    lines: many(entryLineModel),
-    entryTags: many(entryTagModel),
-}))

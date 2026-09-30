@@ -9,6 +9,7 @@ import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
+import { EntryClearedToggle } from "./EntryClearedToggle.js"
 
 export function EntriesTable(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
@@ -73,6 +74,12 @@ export function EntriesTable(props: {
                 subtitle: "Les écritures de votre exercice apparaîtront ici.",
             }}
             columns={[
+                {
+                    accessorKey: "isCleared",
+                    header: "Pointé",
+                    cell: ({ row }) => <EntryClearedToggle entry={row.original} />,
+                    filterFn: "includesString",
+                },
                 {
                     accessorKey: "label",
                     header: "Libellé",

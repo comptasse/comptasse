@@ -1,4 +1,8 @@
-import { deleteOneEntryRouteDefinition, readAllEntriesRouteDefinition } from "@comptasse/application-metadata/routes"
+import {
+    deleteOneEntryRouteDefinition,
+    readAllEntriesRouteDefinition,
+    updateManyEntriesRouteDefinition,
+} from "@comptasse/application-metadata/routes"
 import {
     Button,
     ButtonGhostContent,
@@ -8,7 +12,7 @@ import {
     toast,
     useModalStore,
 } from "@comptasse/ui"
-import { IconChevronDown, IconTrash } from "@tabler/icons-react"
+import { IconChevronDown, IconCircleCheck, IconCircleX, IconTrash } from "@tabler/icons-react"
 import type { Row } from "@tanstack/react-table"
 import { useId } from "react"
 import type * as v from "valibot"
@@ -53,6 +57,34 @@ export function EntriesTableSelectionActions(props: { selectedRows: Array<Row<En
         }
     }
 
+    async function handleClear(isCleared: boolean) {
+        const response = await getResponseBodyFromAPI({
+            routeDefinition: updateManyEntriesRouteDefinition,
+            body: {
+                idYear: props.idYear,
+                idEntryIds: props.selectedRows.map((selectedRow) => selectedRow.original.id),
+                isCleared: isCleared,
+            },
+        })
+        await invalidateData({
+            routeDefinition: readAllEntriesRouteDefinition,
+            body: {
+                idYear: props.idYear,
+            },
+        })
+        if (response.ok === false) {
+            toast({
+                title: "Impossible de mettre à jour le pointage",
+                variant: "error",
+            })
+        } else {
+            toast({
+                title: isCleared ? "Écritures pointées" : "Écritures dépointées",
+                variant: "success",
+            })
+        }
+    }
+
     return (
         <Popover.Root>
             <Popover.Trigger asChild>
@@ -70,6 +102,40 @@ export function EntriesTableSelectionActions(props: { selectedRows: Array<Row<En
                     gap: "0.25rem",
                 }}
             >
+                <Popover.Close asChild>
+                    <Button
+                        className={{
+                            width: "100%",
+                        }}
+                        onClick={() => handleClear(true)}
+                    >
+                        <ButtonGhostContent
+                            leftIcon={<IconCircleCheck />}
+                            text="Pointer"
+                            className={{
+                                width: "100%",
+                                justifyContent: "start",
+                            }}
+                        />
+                    </Button>
+                </Popover.Close>
+                <Popover.Close asChild>
+                    <Button
+                        className={{
+                            width: "100%",
+                        }}
+                        onClick={() => handleClear(false)}
+                    >
+                        <ButtonGhostContent
+                            leftIcon={<IconCircleX />}
+                            text="Dépointer"
+                            className={{
+                                width: "100%",
+                                justifyContent: "start",
+                            }}
+                        />
+                    </Button>
+                </Popover.Close>
                 <Popover.Close asChild>
                     <Button
                         className={{

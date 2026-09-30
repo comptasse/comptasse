@@ -7,12 +7,14 @@ import { createOneEntryRoute } from "./createOneEntry.js"
 import { createOneEntryFromTemplateRoute } from "./createOneEntryFromTemplate.js"
 import { readAllEntriesRoute } from "./readAllEntries.js"
 import { readAllEntryTagsRoute } from "./readAllEntryTags.js"
+import { updateManyEntriesRoute } from "./updateManyEntries.js"
 
 export const entriesRoutes = [
     createOneEntryRoute,
     createOneEntryFromTemplateRoute,
     readAllEntriesRoute,
     readAllEntryTagsRoute,
+    updateManyEntriesRoute,
     auditMissingAttachmentsRoute,
     auditNonBalancedEntriesRoute,
 

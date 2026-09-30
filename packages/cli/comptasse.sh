@@ -576,16 +576,20 @@ _entries_create() {
 }
 
 _entries_update() {
-    id=''; year=''; label=''; date=''; journal=''; file=''
+    id=''; year=''; label=''; date=''; journal=''; file=''; cleared=''
     while [ $# -gt 0 ]; do
         case "$1" in
             --year)    year="$2";    shift ;; --label)   label="$2";   shift ;;
             --date)    date="$2";    shift ;; --journal) journal="$2"; shift ;;
-            --file)    file="$2";    shift ;; -*)         _die "Unknown: $1" ;; *) id="$1" ;;
+            --file)    file="$2";    shift ;;
+            --cleared)   cleared='true' ;;
+            --uncleared) cleared='false' ;;
+            -*)         _die "Unknown: $1" ;; *) id="$1" ;;
         esac; shift
     done
     [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse entries update <idEntry> --year <id>"
     _require_cfg; _jbody_reset; _jstr idYear "$year"; _jstr idEntry "$id"; _jstr label "$label"; _jstr date "$date"; _jstr idJournal "$journal"; _jstr idFile "$file"
+    [ -n "$cleared" ] && _jbool isCleared "$cleared"
     _api PATCH "$(_entries_base "$year")/$id" "$(_jbody)"
 }
 
@@ -1010,6 +1014,79 @@ _scenarios_run() {
     _api POST "$(_year_path "$year")/scenarios/$slug" "$(_jbody)"
 }
 
+# ── matchings ─────────────────────────────────────────────────────────────────
+
+_matchings_base() { printf '%s/matchings' "$(_year_path "$1")"; }
+
+_cmd_matchings() {
+    subcmd="${1:-}"; [ $# -gt 0 ] && shift
+    case "$subcmd" in
+        list)    _matchings_list "$@" ;;
+        get)     _matchings_get "$@" ;;
+        create)  _matchings_create "$@" ;;
+        connect) _matchings_connect "$@" ;;
+        delete)  _matchings_delete "$@" ;;
+        *) _die "comptasse matchings: unknown subcommand '$subcmd'. Use: list, get, create, connect, delete" ;;
+    esac
+}
+
+_matchings_list() {
+    year=''
+    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; *) _die "Unknown: $1" ;; esac; shift; done
+    [ -n "$year" ] || _die "--year is required"
+    _require_cfg; _api GET "$(_matchings_base "$year")"
+}
+
+_matchings_get() {
+    id=''; year=''
+    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
+    [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse matchings get <idMatching> --year <id>"
+    _require_cfg; _api GET "$(_matchings_base "$year")/$id"
+}
+
+# Turn a comma/space separated id list into a JSON array of strings.
+_ids_json() {
+    printf '%s' "$1" | tr ',' ' ' | awk '{for (i = 1; i <= NF; i++) printf "%s\"%s\"", (i > 1 ? "," : ""), $i}'
+}
+
+_matchings_create() {
+    year=''; account=''; lines=''
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --year)    year="$2";    shift ;;
+            --account) account="$2"; shift ;;
+            --lines)   lines="$2";   shift ;;
+            *) _die "Unknown: $1" ;;
+        esac; shift
+    done
+    [ -n "$year" ] && [ -n "$account" ] && [ -n "$lines" ] || \
+        _die "Usage: comptasse matchings create --year <id> --account <idAccount> --lines <id,id,...>"
+    _require_cfg
+    _api POST "$(_matchings_base "$year")" \
+        "{\"idYear\":\"$year\",\"idAccount\":\"$account\",\"entryLineIds\":[$(_ids_json "$lines")]}"
+}
+
+_matchings_connect() {
+    id=''; year=''; lines=''
+    while [ $# -gt 0 ]; do
+        case "$1" in --year) year="$2"; shift ;; --lines) lines="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift
+    done
+    [ -n "$id" ] && [ -n "$year" ] && [ -n "$lines" ] || \
+        _die "Usage: comptasse matchings connect <idMatching> --year <id> --lines <id,id,...>"
+    _require_cfg
+    _api POST "$(_matchings_base "$year")/$id/lines" \
+        "{\"idYear\":\"$year\",\"idMatching\":\"$id\",\"entryLineIds\":[$(_ids_json "$lines")]}"
+}
+
+_matchings_delete() {
+    id=''; year=''
+    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
+    [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse matchings delete <idMatching> --year <id>"
+    _require_cfg
+    _api DELETE "$(_matchings_base "$year")/$id" "{\"idYear\":\"$year\",\"idMatching\":\"$id\"}" > /dev/null
+    printf 'Lettrage %s supprimé.\n' "$id"
+}
+
 # ── members ───────────────────────────────────────────────────────────────────
 
 _cmd_members() {
@@ -1261,6 +1338,7 @@ Commands:
     entries tags    add | remove
    files           list | get | upload | update | delete | download | ocr
   scenarios       list | get | run
+  matchings       list | get | create | connect | delete
     files folders   list | get | create | update | delete
   members         list | get | invite | update | remove
   exports         fec | xbrl-balance-sheet | xbrl-income-statement
@@ -1299,6 +1377,7 @@ main() {
         entries)           _cmd_entries "$@" ;;
         files)             _cmd_files "$@" ;;
         scenarios)         _cmd_scenarios "$@" ;;
+        matchings)         _cmd_matchings "$@" ;;
         members)           _cmd_members "$@" ;;
         exports)           _cmd_exports "$@" ;;
         balance-sheets)    _cmd_balance_sheets "$@" ;;
