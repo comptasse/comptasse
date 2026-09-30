@@ -4,23 +4,12 @@ import { checkAuthMiddleware } from "../../../../../../../middlewares/checkAuthM
 import { requireOrganizationMiddleware } from "../../../../../../../middlewares/requireOrganizationMiddleware.js"
 import { validateBodyMiddleware } from "../../../../../../../middlewares/validateBody.middleware.js"
 import { Exception } from "../../../../../../../utilities/exception.js"
+import { toMatchingCode } from "../../../../../../../utilities/matchingCode.js"
 import { registerRoute } from "../../../../../../../utilities/registerRoute.js"
 import { response } from "../../../../../../../utilities/response.js"
 import { insertOne } from "../../../../../../../utilities/sql/insertOne.js"
 import { selectMany } from "../../../../../../../utilities/sql/selectMany.js"
 import { updateOne } from "../../../../../../../utilities/sql/updateOne.js"
-
-/** 1 -> "A", 26 -> "Z", 27 -> "AA", ... */
-export function toMatchingCode(value: number): string {
-    let code = ""
-    let n = value
-    while (n > 0) {
-        n -= 1
-        code = String.fromCharCode(65 + (n % 26)) + code
-        n = Math.floor(n / 26)
-    }
-    return code
-}
 
 export const createOneMatchingRoute = registerRoute(createOneMatchingRouteDefinition, async (c) => {
     const auth = await checkAuthMiddleware({

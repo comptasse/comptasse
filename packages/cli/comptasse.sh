@@ -576,16 +576,20 @@ _entries_create() {
 }
 
 _entries_update() {
-    id=''; year=''; label=''; date=''; journal=''; file=''
+    id=''; year=''; label=''; date=''; journal=''; file=''; cleared=''
     while [ $# -gt 0 ]; do
         case "$1" in
             --year)    year="$2";    shift ;; --label)   label="$2";   shift ;;
             --date)    date="$2";    shift ;; --journal) journal="$2"; shift ;;
-            --file)    file="$2";    shift ;; -*)         _die "Unknown: $1" ;; *) id="$1" ;;
+            --file)    file="$2";    shift ;;
+            --cleared)   cleared='true' ;;
+            --uncleared) cleared='false' ;;
+            -*)         _die "Unknown: $1" ;; *) id="$1" ;;
         esac; shift
     done
     [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse entries update <idEntry> --year <id>"
     _require_cfg; _jbody_reset; _jstr idYear "$year"; _jstr idEntry "$id"; _jstr label "$label"; _jstr date "$date"; _jstr idJournal "$journal"; _jstr idFile "$file"
+    [ -n "$cleared" ] && _jbool isCleared "$cleared"
     _api PATCH "$(_entries_base "$year")/$id" "$(_jbody)"
 }
 
