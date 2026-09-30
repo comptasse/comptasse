@@ -2,11 +2,12 @@ import type { readAllAccountsRouteDefinition } from "@comptasse/application-meta
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { ButtonGhostContent, FormatDateTime, FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconEye, IconPencil } from "@tabler/icons-react"
+import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
 import type * as v from "valibot"
-import { LinkButton } from "../../../../../components/LinkButton.tsx"
 import { DataTable } from "../../../../../components/layouts/DataTable.tsx"
+import { DeleteOneEntryLine } from "./$idEntryLine/DeleteOneEntryLine.tsx"
 import { UpdateOneEntryLine } from "./$idEntryLine/UpdateOneEntryLine.tsx"
+import { ViewOneEntryLine } from "./$idEntryLine/ViewOneEntryLine.tsx"
 
 export function EntryLinesTable(props: {
     entry: v.InferOutput<typeof returnedSchemas.entry>
@@ -36,19 +37,18 @@ export function EntryLinesTable(props: {
                                     text={undefined}
                                 />
                             </UpdateOneEntryLine>
-                            <LinkButton
-                                to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
-                                params={{
-                                    idOrganization: props.entry.idOrganization,
-                                    idYear: props.entry.idYear,
-                                    idEntry: row.original.idEntry,
-                                }}
-                            >
+                            <ViewOneEntryLine entryLine={row.original}>
                                 <ButtonGhostContent
                                     leftIcon={<IconEye />}
                                     text={undefined}
                                 />
-                            </LinkButton>
+                            </ViewOneEntryLine>
+                            <DeleteOneEntryLine entryLine={row.original}>
+                                <ButtonGhostContent
+                                    leftIcon={<IconTrash />}
+                                    text={undefined}
+                                />
+                            </DeleteOneEntryLine>
                         </div>
                     ),
                     enableSorting: false,

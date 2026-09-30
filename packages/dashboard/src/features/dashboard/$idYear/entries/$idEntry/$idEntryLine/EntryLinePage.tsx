@@ -6,20 +6,22 @@ import { DataWrapper } from "../../../../../../components/layouts/DataWrapper.ts
 import { DataBlock } from "../../../../../../components/layouts/dataBlock/dataBlock.tsx"
 import { Section } from "../../../../../../components/layouts/section/section.tsx"
 
-export function EntryLinePage() {
+export function EntryLinePage(props: { idYear?: string; idEntryLine?: string } = {}) {
     const params = useParams({
         strict: false,
     }) as {
-        idYear: string
-        idEntryLine: string
+        idYear?: string
+        idEntryLine?: string
     }
+    const idYear = props.idYear ?? params.idYear ?? ""
+    const idEntryLine = props.idEntryLine ?? params.idEntryLine ?? ""
 
     return (
         <DataWrapper
             routeDefinition={readOneEntryLineRouteDefinition}
             body={{
-                idYear: params.idYear,
-                idEntryLine: params.idEntryLine,
+                idYear,
+                idEntryLine,
             }}
         >
             {(entryLine) => {
@@ -42,7 +44,7 @@ export function EntryLinePage() {
                                         <DataWrapper
                                             routeDefinition={readOneAccountRouteDefinition}
                                             body={{
-                                                idYear: params.idYear,
+                                                idYear,
                                                 idAccount: entryLine.idAccount,
                                             }}
                                         >
