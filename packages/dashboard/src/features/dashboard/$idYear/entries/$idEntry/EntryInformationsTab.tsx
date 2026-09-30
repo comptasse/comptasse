@@ -1,11 +1,20 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonPlainContent, FormatDate, FormatNull, FormatPrice, FormatText, LinkContent } from "@comptasse/ui"
+import {
+    Button,
+    ButtonPlainContent,
+    FormatBoolean,
+    FormatDate,
+    FormatNull,
+    FormatPrice,
+    FormatText,
+    LinkContent,
+} from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
+import { useRouter } from "@tanstack/react-router"
 import type * as v from "valibot"
 import { DataBlock } from "../../../../../components/layouts/dataBlock/dataBlock.tsx"
 import { Section } from "../../../../../components/layouts/section/section.tsx"
-import { useRouter } from "@tanstack/react-router"
 import { UpdateOneEntry } from "./UpdateOneEntry.tsx"
 
 export function EntryInformationsTab(props: {
@@ -57,6 +66,9 @@ export function EntryInformationsTab(props: {
                         ) : (
                             <FormatNull />
                         )}
+                    </DataBlock.Item>
+                    <DataBlock.Item label="Pointé">
+                        <FormatBoolean boolean={props.entry.isCleared} />
                     </DataBlock.Item>
                     <DataBlock.Item label="Pièce justificative">
                         {props.entry.idFile === null || props.file === null ? (

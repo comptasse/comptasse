@@ -179,7 +179,10 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                             gap: "0.25rem",
                                         }}
                                     >
-                                        <ReverseOneEntry entry={entry} onClick={() => setMenuOpen(false)}>
+                                        <ReverseOneEntry
+                                            entry={entry}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
                                             <div
                                                 className={css({
                                                     width: "100%",
@@ -195,7 +198,10 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                 />
                                             </div>
                                         </ReverseOneEntry>
-                                        <DuplicateOneEntry entry={entry} onClick={() => setMenuOpen(false)}>
+                                        <DuplicateOneEntry
+                                            entry={entry}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
                                             <div
                                                 className={css({
                                                     width: "100%",
@@ -211,7 +217,10 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                 />
                                             </div>
                                         </DuplicateOneEntry>
-                                        <EntryClearedToggle entry={entry} onClick={() => setMenuOpen(false)}>
+                                        <EntryClearedToggle
+                                            entry={entry}
+                                            onClick={() => setMenuOpen(false)}
+                                        >
                                             <div
                                                 className={css({
                                                     width: "100%",
