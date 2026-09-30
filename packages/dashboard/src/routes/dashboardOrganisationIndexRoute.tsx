@@ -1,10 +1,20 @@
 import { createRoute, useParams } from "@tanstack/react-router"
-import { lazy, Suspense } from "react"
-const OrganizationTabContent = lazy(() => import("../features/dashboard/$idOrganization/OrganizationTabContent.js").then((m) => ({ default: m.OrganizationTabContent })))
+import { lazy } from "react"
+
+const OrganizationTabContent = lazy(() =>
+    import("../features/dashboard/$idOrganization/OrganizationTabContent.js").then((m) => ({
+        default: m.OrganizationTabContent,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
 function OrganizationTabContentWrapper() {
-    const { idOrganization } = useParams({ strict: false }) as { idOrganization: string }
+    const { idOrganization } = useParams({
+        strict: false,
+    }) as {
+        idOrganization: string
+    }
     return <OrganizationTabContent idOrganization={idOrganization} />
 }
 

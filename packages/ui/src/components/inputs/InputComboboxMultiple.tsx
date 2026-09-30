@@ -120,7 +120,10 @@ export function InputComboboxMultiple<TValue extends string>(props: {
                                 {option.label}
                             </span>
                             <Button onClick={() => handleUnselect(index)}>
-                                <ButtonGhostContent leftIcon={<IconX />} />
+                                <ButtonGhostContent
+                                    leftIcon={<IconX />}
+                                    color="danger"
+                                />
                             </Button>
                         </div>
                     ))

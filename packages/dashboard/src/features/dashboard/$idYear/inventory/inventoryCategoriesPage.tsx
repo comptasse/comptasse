@@ -13,8 +13,8 @@ import { FormField } from "../../../../components/forms/FormField.js"
 import { FormItem } from "../../../../components/forms/FormItem.js"
 import { FormLabel } from "../../../../components/forms/FormLabel.js"
 import { FormRoot } from "../../../../components/forms/FormRoot.js"
-import { DataTable } from "../../../../components/layouts/DataTable.tsx"
 import { DataWrapper } from "../../../../components/layouts/DataWrapper.js"
+import { DataTable } from "../../../../components/layouts/dataTable/DataTable.tsx"
 import { Page } from "../../../../components/layouts/page/page.js"
 import { CreateInventoryItemForm } from "../../../../components/panels/CreateInventoryItemForm.js"
 import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
@@ -126,7 +126,15 @@ export function InventoryCategoriesPage() {
                 >
                     {(items) => {
                         const categories = [
-                            ...new Set(items.flatMap((i: any) => (i.category ? [i.category] : [])) as string[]),
+                            ...new Set(
+                                items.flatMap((i: any) =>
+                                    i.category
+                                        ? [
+                                              i.category,
+                                          ]
+                                        : [],
+                                ) as string[],
+                            ),
                         ]
                             .sort()
                             .map((cat) => ({

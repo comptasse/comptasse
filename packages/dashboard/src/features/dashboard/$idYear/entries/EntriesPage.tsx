@@ -3,9 +3,9 @@ import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconDotsVertical, IconDownload, IconFileExport, IconFileImport, IconPlus } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
 import { Fragment } from "react"
-import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { Page } from "../../../../components/layouts/page/page.js"
 import { Popover } from "../../../../components/overlays/popover/popover.js"
+import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { YearDataWrapper } from "../YearDataWrapper.tsx"
 import { CreateOneEntry } from "./CreateOneEntry.js"
 import { EntriesTable } from "./EntriesTable.js"
@@ -66,7 +66,7 @@ export function EntriesPage({
                                         </Button>
                                     </Popover.Trigger>
                                     <Popover.Content
-                                        align="end"
+                                        align="start"
                                         className={{
                                             padding: "0.5rem",
                                             gap: "0.25rem",

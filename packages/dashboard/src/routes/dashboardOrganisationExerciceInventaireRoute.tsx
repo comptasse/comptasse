@@ -1,11 +1,16 @@
 import { createRoute } from "@tanstack/react-router"
-import { lazy, Suspense } from "react"
-const InventoryPage = lazy(() => import("../features/dashboard/$idYear/inventory/inventoryPage.js").then((m) => ({ default: m.InventoryPage })))
+import { lazy } from "react"
+
+const InventoryPage = lazy(() =>
+    import("../features/dashboard/$idYear/inventory/inventoryPage.js").then((m) => ({
+        default: m.InventoryPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
-
 function InventoryPageWrapper() {
-    return <Suspense fallback={null}><InventoryPage /></Suspense>
+    return <InventoryPage />
 }
 
 export const dashboardOrganisationExerciceInventaireRoute = createRoute({

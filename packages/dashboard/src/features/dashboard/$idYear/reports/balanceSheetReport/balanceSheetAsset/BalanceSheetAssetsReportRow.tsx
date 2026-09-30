@@ -13,7 +13,10 @@ export function BalanceSheetAssetsReportRow(props: {
     return (
         <Table.Body.Row
             className={cn(
-                "",
+                css({
+                    contentVisibility: "auto",
+                    containIntrinsicSize: "auto 2.5rem",
+                }),
                 props.number
                     ? css({
                           backgroundColor: "neutral/5",

@@ -22,12 +22,12 @@ export function IncomeStatementReportItem(props: {
 
     const isAmountDisplayed = props.incomeStatement.isComputed === true || props.incomeStatementChildren.length === 0
 
+    const childIds = new Set(props.incomeStatementChildren.map((incomeStatement) => incomeStatement.id))
+
     let netAmount = 0
     for (const account of props.accounts) {
         const hasAccount = props.incomeStatement.id === account.idIncomeStatement
-        const hasChildrenAccount = props.incomeStatementChildren.some(
-            (incomeStatement) => incomeStatement.id === account.idIncomeStatement,
-        )
+        const hasChildrenAccount = account.idIncomeStatement !== null && childIds.has(account.idIncomeStatement)
         if (!hasAccount && !hasChildrenAccount) continue
 
         const totals = props.accountTotals.get(account.id)

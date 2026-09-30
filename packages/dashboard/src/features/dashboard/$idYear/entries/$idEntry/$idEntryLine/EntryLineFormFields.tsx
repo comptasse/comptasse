@@ -1,8 +1,8 @@
 import { readAllAccountsRouteDefinition } from "@comptasse/application-metadata/routes"
-import { InputPrice, InputText, InputToggle } from "@comptasse/ui"
+import { InputPrice, InputToggle } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { type UseFormReturn } from "react-hook-form"
 import { Fragment } from "react/jsx-runtime"
+import type { UseFormReturn } from "react-hook-form"
 import { FormControl } from "../../../../../../components/forms/FormControl.tsx"
 import { FormError } from "../../../../../../components/forms/FormError.tsx"
 import { FormField } from "../../../../../../components/forms/FormField.tsx"
@@ -10,7 +10,10 @@ import { FormItem } from "../../../../../../components/forms/FormItem.tsx"
 import { FormLabel } from "../../../../../../components/forms/FormLabel.tsx"
 import { InputDataCombobox } from "../../../../../../components/InputDataCombobox.tsx"
 
-const COMPUTED_TOGGLES: Array<{ name: string; label: string }> = [
+const COMPUTED_TOGGLES: Array<{
+    name: string
+    label: string
+}> = [
     {
         name: "isComputedForJournalReport",
         label: "Journal",
@@ -33,35 +36,9 @@ const COMPUTED_TOGGLES: Array<{ name: string; label: string }> = [
     },
 ]
 
-export function EntryLineFormFields({
-    form,
-    idYear,
-}: {
-    form: UseFormReturn<any>
-    idYear: string
-}) {
+export function EntryLineFormFields({ form, idYear }: { form: UseFormReturn<any>; idYear: string }) {
     return (
         <Fragment>
-            <FormField
-                control={form.control}
-                name="label"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel
-                            label="Libellé"
-                            isRequired={false}
-                        />
-                        <FormControl>
-                            <InputText
-                                value={field.value}
-                                onChange={field.onChange}
-                                autoFocus={true}
-                            />
-                        </FormControl>
-                        <FormError />
-                    </FormItem>
-                )}
-            />
             <FormField
                 control={form.control}
                 name="idAccount"

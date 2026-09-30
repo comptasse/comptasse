@@ -9,9 +9,19 @@ import { Button, ButtonGhostContent, FormatDateTime, FormatFileSize, FormatNull,
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import { IconArrowLeft, IconFile, IconFileTypePdf, IconFolder } from "@tabler/icons-react"
 import type { ColumnDef } from "@tanstack/react-table"
-import { memo, type DragEvent, type MouseEvent, type MutableRefObject, type ReactElement, useEffect, useMemo, useRef, useState } from "react"
+import {
+    type DragEvent,
+    type MouseEvent,
+    type MutableRefObject,
+    memo,
+    type ReactElement,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react"
 import type * as v from "valibot"
-import { DataTable } from "../../../../components/layouts/DataTable.js"
+import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import { applicationRouter } from "../../../../routes/applicationRouter.js"
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../utilities/invalidateData.js"

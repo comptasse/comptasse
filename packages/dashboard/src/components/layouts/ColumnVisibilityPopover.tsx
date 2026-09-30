@@ -15,6 +15,7 @@ export function ColumnVisibilityPopover(props: {
     onColumnVisibilityChange: (columnId: string, isVisible: boolean) => void
     onShowAll: () => void
     onDisableAll: () => void
+    align?: "start" | "center" | "end" | undefined
 }) {
     const hideableColumns = props.columns.filter((column) => column.canHide)
     const hiddenCount = hideableColumns.filter((column) => !column.isVisible).length
@@ -35,7 +36,7 @@ export function ColumnVisibilityPopover(props: {
                 </Button>
             </Popover.Trigger>
             <Popover.Content
-                align="start"
+                align={props.align || "start"}
                 className={{
                     width: "280px",
                     maxHeight: "400px",

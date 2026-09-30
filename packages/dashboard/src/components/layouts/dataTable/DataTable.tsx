@@ -1,4 +1,12 @@
-import { Button, ButtonGhostContent, ButtonOutlineContent, CircularLoader, FormatNull, InputCheckbox } from "@comptasse/ui"
+import {
+    Button,
+    ButtonGhostContent,
+    ButtonOutlineContent,
+    CircularLoader,
+    FormatNull,
+    InputCheckbox,
+    InputNumber,
+} from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconChevronDown,
@@ -26,12 +34,25 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
-import { memo, type ComponentProps, Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useRef, useState } from "react"
-import { ColumnVisibilityPopover, type VisibilityColumn } from "./ColumnVisibilityPopover.js"
-import { EmptyState } from "./EmptyState.js"
-import { type FilterColumn, FilterPopover } from "./FilterPopover.js"
-import { SearchBar } from "./SearchBar.js"
-import { type SortDirection, SortPopover } from "./SortPopover.js"
+import { useVirtualizer } from "@tanstack/react-virtual"
+import {
+    type ComponentProps,
+    Fragment,
+    memo,
+    type ReactElement,
+    type ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react"
+import { ColumnVisibilityPopover, type VisibilityColumn } from "../ColumnVisibilityPopover.js"
+import { EmptyState } from "../EmptyState.js"
+import { type FilterColumn, FilterPopover } from "../FilterPopover.js"
+import { SearchBar } from "../SearchBar.js"
+import { type SortDirection, SortPopover } from "../SortPopover.js"
+import { DataTablePagination } from "./DataTablePagination.js"
+import { DataTableToolbar } from "./DataTableToolbar.js"
 
 declare module "@tanstack/react-table" {
     interface ColumnMeta<TData extends RowData, TValue> {
@@ -87,166 +108,6 @@ function computeAutoColumnSizing<TData extends Record<keyof TData, unknown>>(
     }
 
     return computedSizing
-}
-
-function DataTableToolbar<TData extends Record<keyof TData, unknown>>({
-    table,
-    globalFilter,
-    onGlobalFilterChange,
-    children,
-}: {
-    table: Table<TData>
-    globalFilter: string
-    onGlobalFilterChange: (value: string) => void
-    children?: ReactNode
-}) {
-    return (
-        <div
-            className={css({
-                width: "100%",
-                display: "flex",
-                justifyContent: "start",
-                alignItems: "center",
-                gap: "0.25rem",
-                fontSize: "sm",
-                color: "neutral/60",
-            })}
-        >
-            <SearchBar
-                value={globalFilter ?? ""}
-                onChange={onGlobalFilterChange}
-            />
-            {(() => {
-                const filterableColumns: Array<FilterColumn> = []
-                for (const col of table.getAllColumns()) {
-                    if (col.getCanFilter() && col.columnDef.header && col.columnDef.header !== " ") {
-                        filterableColumns.push({
-                            id: col.id,
-                            header: col.columnDef.header?.toString() ?? "",
-                        })
-                    }
-                }
-
-                if (filterableColumns.length === 0) return null
-
-                const filterRecord: Record<string, string> = {}
-                for (const col of table.getAllColumns()) {
-                    const val = col.getFilterValue()
-                    if (val !== undefined) filterRecord[col.id] = String(val)
-                }
-
-                return (
-                    <FilterPopover
-                        columns={filterableColumns}
-                        columnFilters={filterRecord}
-                        onFilterChange={(columnId, value) => {
-                            table.getColumn(columnId)?.setFilterValue(value)
-                        }}
-                        onClearAll={() => {
-                            for (const col of table.getAllColumns()) {
-                                col.setFilterValue(undefined)
-                            }
-                        }}
-                    />
-                )
-            })()}
-            {(() => {
-                const sortableColumns: Array<{ id: string; header: string }> = []
-                for (const col of table.getAllColumns()) {
-                    if (col.getCanSort() && col.columnDef.header && col.columnDef.header !== " ") {
-                        sortableColumns.push({
-                            id: col.id,
-                            header: col.columnDef.header?.toString() ?? "",
-                        })
-                    }
-                }
-
-                if (sortableColumns.length === 0) return null
-
-                const currentSorting = table.getState().sorting
-
-                function getSortDirection(columnId: string): SortDirection {
-                    const existing = currentSorting.find((s) => s.id === columnId)
-                    if (!existing) return false
-                    return existing.desc ? "desc" : "asc"
-                }
-
-                function toggleSort(columnId: string) {
-                    const existing = currentSorting.find((s) => s.id === columnId)
-                    if (!existing) {
-                        table.setSorting([
-                            ...currentSorting,
-                            {
-                                id: columnId,
-                                desc: false,
-                            },
-                        ])
-                    } else if (!existing.desc) {
-                        table.setSorting(
-                            currentSorting.map((s) =>
-                                s.id === columnId
-                                    ? {
-                                          ...s,
-                                          desc: true,
-                                      }
-                                    : s,
-                            ),
-                        )
-                    } else {
-                        table.setSorting(currentSorting.filter((s) => s.id !== columnId))
-                    }
-                }
-
-                return (
-                    <SortPopover
-                        columns={sortableColumns}
-                        getSortDirection={getSortDirection}
-                        onToggleSort={toggleSort}
-                        onClearAll={() => table.setSorting([])}
-                        activeSortCount={currentSorting.length}
-                    />
-                )
-            })()}
-            {(() => {
-                const visibilityColumns: Array<VisibilityColumn> = []
-                for (const col of table.getAllLeafColumns()) {
-                    if (col.columnDef.header && col.columnDef.header !== " ") {
-                        visibilityColumns.push({
-                            id: col.id,
-                            header: col.columnDef.header?.toString() ?? "",
-                            isVisible: col.getIsVisible(),
-                            canHide: col.getCanHide(),
-                        })
-                    }
-                }
-
-                const hasHideableColumns = visibilityColumns.some((column) => column.canHide)
-                if (!hasHideableColumns) return null
-
-                return (
-                    <ColumnVisibilityPopover
-                        columns={visibilityColumns}
-                        onColumnVisibilityChange={(columnId, isVisible) => {
-                            table.getColumn(columnId)?.toggleVisibility(isVisible)
-                        }}
-                        onShowAll={() => {
-                            for (const col of table.getAllLeafColumns()) {
-                                if (!col.getCanHide()) continue
-                                col.toggleVisibility(true)
-                            }
-                        }}
-                        onDisableAll={() => {
-                            for (const col of table.getAllLeafColumns()) {
-                                if (!col.getCanHide()) continue
-                                col.toggleVisibility(false)
-                            }
-                        }}
-                    />
-                )
-            })()}
-            <div className={css({ marginLeft: "auto", display: "flex", gap: "0.5rem" })}>{children}</div>
-        </div>
-    )
 }
 
 function DataTableHeader<TData extends Record<keyof TData, unknown>>({
@@ -376,21 +237,24 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
     onRowClick,
     renderSubComponent,
     getRowProps,
+    dataIndex,
+    measureElement,
 }: {
     row: Row<TData>
     columnCount: number
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
     getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+    dataIndex?: number
+    measureElement?: (element: Element | null) => void
 }) {
-    const {
-        className: rowExtraClassName,
-        onClick: _rowOnClick,
-        ...rowExtraProps
-    } = getRowProps?.(row) ?? {}
+    const { className: rowExtraClassName, onClick: _rowOnClick, ...rowExtraProps } = getRowProps?.(row) ?? {}
 
     return (
-        <Fragment>
+        <tbody
+            data-index={dataIndex}
+            ref={measureElement}
+        >
             <tr
                 {...rowExtraProps}
                 onClick={(event) => {
@@ -444,9 +308,7 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
                                 }}
                             >
                                 <ButtonGhostContent
-                                    leftIcon={
-                                        row.getIsExpanded() ? <IconChevronDown /> : <IconChevronRight />
-                                    }
+                                    leftIcon={row.getIsExpanded() ? <IconChevronDown /> : <IconChevronRight />}
                                     text={undefined}
                                 />
                             </Button>
@@ -516,65 +378,101 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
                     </td>
                 </tr>
             )}
-        </Fragment>
+        </tbody>
     )
 }
 
-function DataTablePagination<TData extends Record<keyof TData, unknown>>({ table }: { table: Table<TData> }) {
-    if (table.getPageCount() <= 1) return null
+function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
+    rows: Array<Row<TData>>
+    columnCount: number
+    virtualize: boolean
+    virtualItems: Array<{
+        index: number
+    }>
+    virtualPaddingTop: number
+    virtualPaddingBottom: number
+    measureElement: (element: Element | null) => void
+    onRowClick?: (context: Row<TData>) => void
+    renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
+    getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+}) {
+    if (props.virtualize) {
+        return (
+            <Fragment>
+                {props.virtualPaddingTop > 0 && (
+                    <tbody>
+                        <tr>
+                            <td
+                                colSpan={props.columnCount}
+                                style={{
+                                    height: `${props.virtualPaddingTop}px`,
+                                    padding: 0,
+                                    border: 0,
+                                }}
+                            />
+                        </tr>
+                    </tbody>
+                )}
+                {props.virtualItems.map((virtualItem) => {
+                    const row = props.rows[virtualItem.index]
+                    return (
+                        <DataTableRow
+                            key={row.id}
+                            row={row}
+                            columnCount={props.columnCount}
+                            onRowClick={props.onRowClick}
+                            renderSubComponent={props.renderSubComponent}
+                            getRowProps={props.getRowProps}
+                            dataIndex={virtualItem.index}
+                            measureElement={props.measureElement}
+                        />
+                    )
+                })}
+                {props.virtualPaddingBottom > 0 && (
+                    <tbody>
+                        <tr>
+                            <td
+                                colSpan={props.columnCount}
+                                style={{
+                                    height: `${props.virtualPaddingBottom}px`,
+                                    padding: 0,
+                                    border: 0,
+                                }}
+                            />
+                        </tr>
+                    </tbody>
+                )}
+            </Fragment>
+        )
+    }
 
     return (
-        <div
-            className={css({
-                flexShrink: "0",
-                width: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: "4",
-            })}
-        >
-            <span
-                className={css({
-                    fontSize: "sm",
-                    color: "neutral/50",
-                })}
-            >
-                {table.getFilteredRowModel().rows.length} résultat
-                {table.getFilteredRowModel().rows.length > 1 ? "s" : ""}
-            </span>
-            <div
-                className={css({
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                })}
-            >
-                <Button onClick={() => table.previousPage()} isDisabled={!table.getCanPreviousPage()}>
-                    <ButtonOutlineContent
-                        leftIcon={<IconChevronLeft />}
-                        text={undefined}
-                        isDisabled={!table.getCanPreviousPage()}
-                    />
-                </Button>
-                <span
-                    className={css({
-                        fontSize: "sm",
-                        color: "neutral/50",
-                    })}
-                >
-                    Page {table.getState().pagination.pageIndex + 1} sur {table.getPageCount()}
-                </span>
-                <Button onClick={() => table.nextPage()} isDisabled={!table.getCanNextPage()}>
-                    <ButtonOutlineContent
-                        leftIcon={<IconChevronRight />}
-                        text={undefined}
-                        isDisabled={!table.getCanNextPage()}
-                    />
-                </Button>
-            </div>
-        </div>
+        <Fragment>
+            {props.rows.length > 0 ? null : (
+                <tbody>
+                    <tr>
+                        <td>
+                            <FormatNull
+                                text="Aucun résultat"
+                                className={{
+                                    padding: "1rem",
+                                }}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            )}
+            {props.rows.map((row) => (
+                <DataTableRow
+                    key={row.id}
+                    row={row}
+                    columnCount={props.columnCount}
+                    onRowClick={props.onRowClick}
+                    renderSubComponent={props.renderSubComponent}
+                    getRowProps={props.getRowProps}
+                />
+            ))}
+        </Fragment>
     )
 }
 
@@ -583,6 +481,11 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     isLoading?: boolean
     columns: Array<ColumnDef<TData>>
     pageSize?: number
+    showPageSizeControl?: boolean
+    /** Only mount the rows currently in view (for large pages). */
+    virtualize?: boolean
+    /** Estimated row height in px, used before rows are measured. */
+    estimateRowHeight?: number
     defaultColumnVisibility?: VisibilityState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
@@ -611,7 +514,9 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     // Reset selection when the trigger changes (e.g. folder navigation)
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
-    }, [props.resetSelectionTrigger])
+    }, [
+        props.resetSelectionTrigger,
+    ])
 
     const selectColumnDef = useMemo<ColumnDef<TData>>(
         () => ({
@@ -742,6 +647,21 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
         },
     })
 
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+    const rows = table.getRowModel().rows
+    const estimateRowHeight = props.estimateRowHeight ?? 45
+    const virtualizer = useVirtualizer({
+        count: props.virtualize === true ? rows.length : 0,
+        getScrollElement: () => scrollContainerRef.current,
+        estimateSize: () => estimateRowHeight,
+        measureElement: (element) => element?.getBoundingClientRect().height ?? estimateRowHeight,
+        overscan: 8,
+    })
+    const virtualItems = props.virtualize === true ? virtualizer.getVirtualItems() : []
+    const virtualPaddingTop = virtualItems.length > 0 ? virtualItems[0].start : 0
+    const virtualPaddingBottom =
+        virtualItems.length > 0 ? virtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end : 0
+
     if (props.isLoading)
         return (
             <CircularLoader
@@ -799,10 +719,11 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                 </DataTableToolbar>
             )}
             <div
+                ref={scrollContainerRef}
                 className={css({
                     width: "100%",
                     maxWidth: "100%",
-                    // maxHeight: "70vh",
+                    maxHeight: props.virtualize === true ? "70vh" : undefined,
                     padding: "0",
                     overflowX: "auto",
                     overflowY: "auto",
@@ -834,38 +755,24 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                             })
                         }}
                     />
-                    <tbody
-                        className={css({
-                            width: "100%",
-                            height: "fit",
-                        })}
-                    >
-                        {table.getRowModel().rows.length > 0 ? null : (
-                            <tr>
-                                <td>
-                                    <FormatNull
-                                        text="Aucun résultat"
-                                        className={{
-                                            padding: "1rem",
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                        )}
-                        {table.getRowModel().rows.map((row) => (
-                            <DataTableRow
-                                key={row.id}
-                                row={row}
-                                columnCount={columnCount}
-                                onRowClick={props.onRowClick}
-                                renderSubComponent={props.renderSubComponent}
-                                getRowProps={props.getRowProps}
-                            />
-                        ))}
-                    </tbody>
+                    <DataTableRows
+                        rows={rows}
+                        columnCount={columnCount}
+                        virtualize={props.virtualize === true}
+                        virtualItems={virtualItems}
+                        virtualPaddingTop={virtualPaddingTop}
+                        virtualPaddingBottom={virtualPaddingBottom}
+                        measureElement={virtualizer.measureElement}
+                        onRowClick={props.onRowClick}
+                        renderSubComponent={props.renderSubComponent}
+                        getRowProps={props.getRowProps}
+                    />
                 </table>
             </div>
-            <DataTablePagination table={table} />
+            <DataTablePagination
+                table={table}
+                showPageSizeControl={props.showPageSizeControl}
+            />
         </div>
     )
 }

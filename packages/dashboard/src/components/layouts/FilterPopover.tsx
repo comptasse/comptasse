@@ -20,6 +20,7 @@ export type FilterColumn = {
         key: string
         label: string
     }>
+    align?: "start" | "center" | "end" | undefined
 }
 
 export function FilterPopover(props: {
@@ -27,6 +28,7 @@ export function FilterPopover(props: {
     columnFilters: Record<string, string>
     onFilterChange: (columnId: string, value: string | undefined) => void
     onClearAll: () => void
+    align?: "start" | "center" | "end" | undefined
 }) {
     const activeFilterCount = Object.values(props.columnFilters).filter(Boolean).length
 
@@ -49,7 +51,7 @@ export function FilterPopover(props: {
                 </Button>
             </Popover.Trigger>
             <Popover.Content
-                align="start"
+                align={props.align || "start"}
                 className={{
                     width: "280px",
                     maxHeight: "400px",

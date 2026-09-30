@@ -1,11 +1,21 @@
 import { createRoute, useParams } from "@tanstack/react-router"
+import { lazy } from "react"
 import { Page } from "../components/layouts/page/page.js"
-import { lazy, Suspense } from "react"
-const OrganizationSettingsPage = lazy(() => import("../features/dashboard/$idOrganization/organizationSettings/OrganizationSettingsPage.js").then((m) => ({ default: m.OrganizationSettingsPage })))
+
+const OrganizationSettingsPage = lazy(() =>
+    import("../features/dashboard/$idOrganization/organizationSettings/OrganizationSettingsPage.js").then((m) => ({
+        default: m.OrganizationSettingsPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
 function OrganizationSettingsPageWrapper() {
-    const { idOrganization } = useParams({ strict: false }) as { idOrganization: string }
+    const { idOrganization } = useParams({
+        strict: false,
+    }) as {
+        idOrganization: string
+    }
     return (
         <Page.Root>
             <Page.Content>

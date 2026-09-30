@@ -3,10 +3,10 @@ import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, FormatDate, FormatDateTime, FormatNull, FormatPrice, FormatText, LinkContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
+import { useRouter } from "@tanstack/react-router"
 import { useMemo } from "react"
 import type * as v from "valibot"
-import { DataTable } from "../../../../components/layouts/DataTable.js"
-import { useRouter } from "@tanstack/react-router"
+import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
 
@@ -54,6 +54,10 @@ export function EntriesTable(props: {
         <DataTable
             data={entriesData}
             isLoading={false}
+            pageSize={100}
+            showPageSizeControl={true}
+            virtualize={true}
+            estimateRowHeight={56}
             enableRowSelection={true}
             getRowId={(row) => row.id}
             selectionActions={(selectedRows) => (
