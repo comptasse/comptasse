@@ -4,7 +4,7 @@ import { ButtonGhostContent, FormatDateTime, FormatNull, FormatPrice, FormatText
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
 import type * as v from "valibot"
-import { DataTable } from "../../../../../components/layouts/DataTable.tsx"
+import { DataTable } from "../../../../../components/layouts/dataTable/DataTable.tsx"
 import { DeleteOneEntryLine } from "./$idEntryLine/DeleteOneEntryLine.tsx"
 import { UpdateOneEntryLine } from "./$idEntryLine/UpdateOneEntryLine.tsx"
 import { ViewOneEntryLine } from "./$idEntryLine/ViewOneEntryLine.tsx"
@@ -47,6 +47,7 @@ export function EntryLinesTable(props: {
                                 <ButtonGhostContent
                                     leftIcon={<IconTrash />}
                                     text={undefined}
+                                    color="danger"
                                 />
                             </DeleteOneEntryLine>
                         </div>

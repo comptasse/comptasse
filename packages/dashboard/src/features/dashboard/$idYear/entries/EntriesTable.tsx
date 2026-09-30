@@ -6,7 +6,7 @@ import { IconPencil } from "@tabler/icons-react"
 import { useRouter } from "@tanstack/react-router"
 import { useMemo } from "react"
 import type * as v from "valibot"
-import { DataTable } from "../../../../components/layouts/DataTable.js"
+import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
 

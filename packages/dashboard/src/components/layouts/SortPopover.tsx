@@ -16,6 +16,7 @@ export function SortPopover(props: {
     onToggleSort: (columnId: string) => void
     onClearAll: () => void
     activeSortCount: number
+    align?: "start" | "center" | "end" | undefined
 }) {
     return (
         <Popover.Root>
@@ -36,7 +37,7 @@ export function SortPopover(props: {
                 </Button>
             </Popover.Trigger>
             <Popover.Content
-                align="start"
+                align={props.align || "start"}
                 className={{
                     width: "280px",
                     maxHeight: "400px",
