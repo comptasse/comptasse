@@ -1,6 +1,6 @@
 import { readAllEntriesRouteDefinition, updateOneEntryRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonOutlineContent, toast } from "@comptasse/ui"
+import { Button, ButtonGhostContent, ButtonOutlineContent, toast } from "@comptasse/ui"
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react"
 import { useState } from "react"
 import type * as v from "valibot"
@@ -8,7 +8,11 @@ import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFro
 import { invalidateData } from "../../../../utilities/invalidateData.js"
 
 /** Action button toggling the “pointé” (cleared) flag of an entry. */
-export function EntryClearedToggle(props: { entry: v.InferOutput<typeof returnedSchemas.entry> }) {
+export function EntryClearedToggle(props: {
+    entry: v.InferOutput<typeof returnedSchemas.entry>
+    /** Compact icon-only rendering, for table rows. */
+    iconOnly?: boolean
+}) {
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     async function toggle(isCleared: boolean) {
@@ -40,15 +44,26 @@ export function EntryClearedToggle(props: { entry: v.InferOutput<typeof returned
         }
     }
 
+    const icon = props.entry.isCleared ? <IconCircleX /> : <IconCircleCheck />
+    const label = props.entry.isCleared ? "Dépointer" : "Pointer"
+
     return (
         <Button
             hasLoader={isSubmitting}
             onClick={() => toggle(!props.entry.isCleared)}
         >
-            <ButtonOutlineContent
-                leftIcon={props.entry.isCleared ? <IconCircleX /> : <IconCircleCheck />}
-                text={props.entry.isCleared ? "Dépointer" : "Pointer"}
-            />
+            {props.iconOnly ? (
+                <ButtonGhostContent
+                    leftIcon={icon}
+                    text={undefined}
+                    title={label}
+                />
+            ) : (
+                <ButtonOutlineContent
+                    leftIcon={icon}
+                    text={label}
+                />
+            )}
         </Button>
     )
 }

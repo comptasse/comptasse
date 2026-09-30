@@ -18,6 +18,7 @@ import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
+import { EntryClearedToggle } from "./EntryClearedToggle.tsx"
 
 export function EntriesTable(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
@@ -178,6 +179,18 @@ export function EntriesTable(props: {
                     header: "Dernière mise à jour le",
                     cell: ({ row }) => <FormatDateTime date={row.original.lastUpdatedAt} />,
                     filterFn: "includesString",
+                },
+                {
+                    accessorKey: "actions",
+                    header: " ",
+                    enableSorting: false,
+                    enableGlobalFilter: false,
+                    cell: ({ row }) => (
+                        <EntryClearedToggle
+                            entry={row.original}
+                            iconOnly={true}
+                        />
+                    ),
                 },
             ]}
             renderSubComponent={({ row }) => {
