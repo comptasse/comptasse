@@ -12,7 +12,10 @@ export function IncomeStatementReportRow(props: {
     return (
         <Table.Body.Row
             className={cn(
-                css({}),
+                css({
+                    contentVisibility: "auto",
+                    containIntrinsicSize: "auto 2.5rem",
+                }),
                 props.number
                     ? css({
                           backgroundColor: "neutral/5",
