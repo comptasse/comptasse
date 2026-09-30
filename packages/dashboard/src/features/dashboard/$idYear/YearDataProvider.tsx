@@ -1,15 +1,15 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import { useMemo, type ReactNode } from "react"
+import { type ReactNode, useMemo } from "react"
 import { ClientError } from "../../../utilities/clientError.ts"
 import { getResponseBodyFromAPI } from "../../../utilities/getResponseBodyFromAPI.ts"
 import { buildQueryKey } from "../../../utilities/queryKey.ts"
 import {
     type YearData,
+    YearDataContext,
     type YearDataContextValue,
     type YearDataKey,
-    YearDataContext,
-    yearQueries,
     type YearScopedRouteDefinition,
+    yearQueries,
 } from "./YearDataContext.js"
 
 function useYearQuery<K extends YearDataKey>(
@@ -21,10 +21,7 @@ function useYearQuery<K extends YearDataKey>(
     const routeDefinition = yearQueries[key] as YearScopedRouteDefinition
 
     return useQuery({
-        queryKey: buildQueryKey(
-            routeDefinition,
-            body as Record<string, unknown>,
-        ),
+        queryKey: buildQueryKey(routeDefinition, body as Record<string, unknown>),
         queryFn: async (context) => {
             const response = await getResponseBodyFromAPI({
                 routeDefinition,
@@ -58,6 +55,7 @@ export function YearDataProvider(props: { idYear: string; children: ReactNode })
     const entryLines = useYearQuery("entryLines", body)
     const entryTags = useYearQuery("entryTags", body)
     const journals = useYearQuery("journals", body)
+    const matchings = useYearQuery("matchings", body)
     const tags = useYearQuery("tags", body)
     const files = useYearQuery("files", body)
     const folders = useYearQuery("folders", body)
@@ -73,6 +71,7 @@ export function YearDataProvider(props: { idYear: string; children: ReactNode })
             entryLines,
             entryTags,
             journals,
+            matchings,
             tags,
             files,
             folders,
@@ -87,6 +86,7 @@ export function YearDataProvider(props: { idYear: string; children: ReactNode })
             entryLines,
             entryTags,
             journals,
+            matchings,
             tags,
             files,
             folders,

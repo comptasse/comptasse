@@ -8,6 +8,7 @@ import { Popover } from "../../../../components/overlays/popover/popover.js"
 import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { YearDataWrapper } from "../YearDataWrapper.tsx"
 import { CreateOneEntry } from "./CreateOneEntry.js"
+import { EntriesMatchings } from "./EntriesMatchings.js"
 import { EntriesTable } from "./EntriesTable.js"
 import { ExportEntryLines } from "./ExportEntryLines.js"
 import { ExportFecFile } from "./ExportFecFile.js"
@@ -43,6 +44,7 @@ export function EntriesPage({
                         "tags",
                         "files",
                         "accounts",
+                        "matchings",
                     ]}
                 >
                     {(data) => (
@@ -165,6 +167,18 @@ export function EntriesPage({
                                         />
                                     </Button>
                                 </CreateOneEntry>
+                                <EntriesMatchings
+                                    idYear={idYear}
+                                    matchings={data.matchings}
+                                    accountLabelById={
+                                        new Map(
+                                            data.accounts.map((account) => [
+                                                account.id,
+                                                `${account.number} ${account.label}`,
+                                            ]),
+                                        )
+                                    }
+                                />
                             </div>
                             <EntriesTable
                                 idOrganization={idOrganization}

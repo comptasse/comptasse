@@ -2,10 +2,12 @@ import type { readAllAccountsRouteDefinition } from "@comptasse/application-meta
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { ButtonGhostContent, FormatDateTime, FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
+import { IconEye, IconLink, IconPencil, IconTrash } from "@tabler/icons-react"
 import type * as v from "valibot"
 import { DataTable } from "../../../../../components/layouts/dataTable/DataTable.tsx"
+import type { YearDataMaps } from "../../YearDataWrapper.tsx"
 import { DeleteOneEntryLine } from "./$idEntryLine/DeleteOneEntryLine.tsx"
+import { EntryLineMatching } from "./$idEntryLine/EntryLineMatching.tsx"
 import { UpdateOneEntryLine } from "./$idEntryLine/UpdateOneEntryLine.tsx"
 import { ViewOneEntryLine } from "./$idEntryLine/ViewOneEntryLine.tsx"
 
@@ -13,6 +15,7 @@ export function EntryLinesTable(props: {
     entry: v.InferOutput<typeof returnedSchemas.entry>
     entryLines: Array<v.InferOutput<typeof returnedSchemas.entryLine>>
     accounts: Map<string, v.InferOutput<typeof readAllAccountsRouteDefinition.schemas.return>[number]>
+    matchingById: YearDataMaps["matchingById"]
     isLoading?: boolean
 }) {
     return (
@@ -44,6 +47,15 @@ export function EntryLinesTable(props: {
                                     text={undefined}
                                 />
                             </ViewOneEntryLine>
+                            <EntryLineMatching
+                                entryLine={row.original}
+                                matchings={Array.from(props.matchingById.values())}
+                            >
+                                <ButtonGhostContent
+                                    leftIcon={<IconLink />}
+                                    text={undefined}
+                                />
+                            </EntryLineMatching>
                             <DeleteOneEntryLine entryLine={row.original}>
                                 <ButtonGhostContent
                                     leftIcon={<IconTrash />}
@@ -101,6 +113,18 @@ export function EntryLinesTable(props: {
                     accessorKey: "credit",
                     header: "Crédit",
                     cell: ({ row }) => <FormatPrice price={row.original.credit} />,
+                    filterFn: "includesString",
+                },
+                {
+                    accessorKey: "idMatching",
+                    header: "Lettrage",
+                    cell: ({ row }) => {
+                        const matching = row.original.idMatching
+                            ? props.matchingById.get(row.original.idMatching)
+                            : undefined
+                        if (!matching) return <FormatNull />
+                        return <FormatText>{matching.code}</FormatText>
+                    },
                     filterFn: "includesString",
                 },
                 {

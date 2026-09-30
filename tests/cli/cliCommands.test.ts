@@ -406,6 +406,24 @@ describe("cli: scenarios / members / statements / exports", () => {
         ).toBe(true)
     })
 
+    it("matchings list", async () => {
+        expect(
+            Array.isArray(
+                parseJson(
+                    await runCli(
+                        [
+                            "matchings",
+                            "list",
+                            "--year",
+                            idYear,
+                        ],
+                        env,
+                    ),
+                ),
+            ),
+        ).toBe(true)
+    })
+
     it("members list", async () => {
         const result = await runCli(
             [

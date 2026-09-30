@@ -10,6 +10,7 @@ import {
     readAllFoldersRouteDefinition,
     readAllIncomeStatementsRouteDefinition,
     readAllJournalsRouteDefinition,
+    readAllMatchingsRouteDefinition,
     readAllTagsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { UseQueryResult } from "@tanstack/react-query"
@@ -22,6 +23,7 @@ export const yearQueries = {
     entryLines: readAllEntryLinesRouteDefinition,
     entryTags: readAllEntryTagsRouteDefinition,
     journals: readAllJournalsRouteDefinition,
+    matchings: readAllMatchingsRouteDefinition,
     tags: readAllTagsRouteDefinition,
     files: readAllFilesRouteDefinition,
     folders: readAllFoldersRouteDefinition,

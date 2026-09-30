@@ -4,6 +4,7 @@ import { dateTimeColumn } from "../components/models/dateTimeColumn.js"
 import { idColumn } from "../components/models/idColumn.js"
 import { accountModel } from "./account.js"
 import { entryModel } from "./entry.js"
+import { matchingModel } from "./matching.js"
 import { organizationModel } from "./organization.js"
 import { userModel } from "./user.js"
 import { yearModel } from "./year.js"
@@ -37,6 +38,10 @@ export const entryLineModel = pgTable(
                 onUpdate: "cascade",
             })
             .notNull(),
+        idMatching: idColumn("id_matching").references(() => matchingModel.id, {
+            onDelete: "set null",
+            onUpdate: "cascade",
+        }),
         isComputedForJournalReport: boolean("is_computed_for_journal_report").notNull(),
         isComputedForLedgerReport: boolean("is_computed_for_ledger_report").notNull(),
         isComputedForBalanceReport: boolean("is_computed_for_balance_report").notNull(),
