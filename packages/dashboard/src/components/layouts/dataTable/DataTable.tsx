@@ -9,7 +9,6 @@ import {
 } from "@tabler/icons-react"
 import {
     type ColumnDef,
-    type ColumnFiltersState,
     type ColumnSizingState,
     flexRender,
     getCoreRowModel,
@@ -20,7 +19,6 @@ import {
     type Row,
     type RowData,
     type RowSelectionState,
-    type SortingState,
     type Table,
     useReactTable,
     type VisibilityState,
@@ -32,11 +30,13 @@ import {
     memo,
     type ReactElement,
     type ReactNode,
+    type RefObject,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from "react"
+import { usePersistentDataTableState } from "../../../utilities/usePersistentDataTableState.js"
 import { EmptyState } from "../EmptyState.js"
 import { DataTablePagination } from "./DataTablePagination.js"
 import { DataTableToolbar } from "./DataTableToolbar.js"
@@ -463,34 +463,68 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
-/** localStorage-backed state so a table's sorting/filters/columns survive a refresh. */
-function usePersistentState<T>(key: string | undefined, initial: T) {
-    const [value, setValue] = useState<T>(() => {
-        if (key === undefined || typeof window === "undefined") return initial
-        try {
-            const stored = window.localStorage.getItem(key)
-            return stored === null ? initial : (JSON.parse(stored) as T)
-        } catch {
-            return initial
-        }
-    })
-
-    useEffect(() => {
-        if (key === undefined || typeof window === "undefined") return
-        try {
-            window.localStorage.setItem(key, JSON.stringify(value))
-        } catch {
-            // Ignore storage quota / disabled storage.
-        }
-    }, [
-        key,
-        value,
-    ])
-
-    return [
-        value,
-        setValue,
-    ] as const
+function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
+    table: Table<TData>
+    columnCount: number
+    rows: Array<Row<TData>>
+    virtualize: boolean
+    virtualItems: Array<{
+        index: number
+    }>
+    virtualPaddingTop: number
+    virtualPaddingBottom: number
+    measureElement: (element: Element | null) => void
+    scrollContainerRef: RefObject<HTMLDivElement | null>
+    renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
+    onRowClick?: (context: Row<TData>) => void
+    getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+    onResetColumnSize: (columnId: string) => void
+}) {
+    return (
+        <div
+            ref={props.scrollContainerRef}
+            className={css({
+                width: "100%",
+                maxWidth: "100%",
+                maxHeight: props.virtualize ? "70vh" : undefined,
+                padding: "0",
+                overflowX: "auto",
+                overflowY: "auto",
+                borderRadius: "lg",
+                border: "1px solid",
+                borderColor: "neutral/10",
+            })}
+        >
+            <table
+                className={css({
+                    width: "fit-content",
+                    minWidth: "100%",
+                    height: "100%",
+                    maxH: "100%",
+                    borderCollapse: "collapse",
+                })}
+            >
+                <DataTableHeader
+                    table={props.table}
+                    renderSubComponent={props.renderSubComponent}
+                    columnCount={props.columnCount}
+                    onResetColumnSize={props.onResetColumnSize}
+                />
+                <DataTableRows
+                    rows={props.rows}
+                    columnCount={props.columnCount}
+                    virtualize={props.virtualize}
+                    virtualItems={props.virtualItems}
+                    virtualPaddingTop={props.virtualPaddingTop}
+                    virtualPaddingBottom={props.virtualPaddingBottom}
+                    measureElement={props.measureElement}
+                    onRowClick={props.onRowClick}
+                    renderSubComponent={props.renderSubComponent}
+                    getRowProps={props.getRowProps}
+                />
+            </table>
+        </div>
+    )
 }
 
 function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
@@ -523,29 +557,25 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
             props.data,
         ],
     )
-    const [globalFilter, setGlobalFilter] = usePersistentState(
-        props.persistKey === undefined ? undefined : `${props.persistKey}:search`,
-        "",
-    )
-    const [sorting, setSorting] = usePersistentState<SortingState>(
-        props.persistKey === undefined ? undefined : `${props.persistKey}:sorting`,
-        [],
-    )
-    const [columnFilters, setColumnFilters] = usePersistentState<ColumnFiltersState>(
-        props.persistKey === undefined ? undefined : `${props.persistKey}:filters`,
-        [],
-    )
-    const [columnVisibility, setColumnVisibility] = usePersistentState<VisibilityState>(
-        props.persistKey === undefined ? undefined : `${props.persistKey}:visibility`,
-        props.defaultColumnVisibility ?? {},
-    )
+    const {
+        globalFilter,
+        setGlobalFilter,
+        sorting,
+        setSorting,
+        columnFilters,
+        setColumnFilters,
+        columnVisibility,
+        setColumnVisibility,
+    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {})
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
     // Reset selection when the trigger changes (e.g. folder navigation)
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
-    }, [])
+    }, [
+        props.resetSelectionTrigger,
+    ])
 
     const selectColumnDef = useMemo<ColumnDef<TData>>(
         () => ({
@@ -747,57 +777,29 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                     {props.children}
                 </DataTableToolbar>
             )}
-            <div
-                ref={scrollContainerRef}
-                className={css({
-                    width: "100%",
-                    maxWidth: "100%",
-                    maxHeight: props.virtualize === true ? "70vh" : undefined,
-                    padding: "0",
-                    overflowX: "auto",
-                    overflowY: "auto",
-                    borderRadius: "lg",
-                    border: "1px solid",
-                    borderColor: "neutral/10",
-                })}
-            >
-                <table
-                    className={css({
-                        width: "fit-content",
-                        minWidth: "100%",
-                        height: "100%",
-                        maxH: "100%",
-                        borderCollapse: "collapse",
-                    })}
-                >
-                    <DataTableHeader
-                        table={table}
-                        renderSubComponent={props.renderSubComponent}
-                        columnCount={columnCount}
-                        onResetColumnSize={(columnId) => {
-                            setColumnSizingOverrides((state) => {
-                                const nextState = {
-                                    ...state,
-                                }
-                                delete nextState[columnId]
-                                return nextState
-                            })
-                        }}
-                    />
-                    <DataTableRows
-                        rows={rows}
-                        columnCount={columnCount}
-                        virtualize={props.virtualize === true}
-                        virtualItems={virtualItems}
-                        virtualPaddingTop={virtualPaddingTop}
-                        virtualPaddingBottom={virtualPaddingBottom}
-                        measureElement={virtualizer.measureElement}
-                        onRowClick={props.onRowClick}
-                        renderSubComponent={props.renderSubComponent}
-                        getRowProps={props.getRowProps}
-                    />
-                </table>
-            </div>
+            <DataTableTable
+                table={table}
+                columnCount={columnCount}
+                rows={rows}
+                virtualize={props.virtualize === true}
+                virtualItems={virtualItems}
+                virtualPaddingTop={virtualPaddingTop}
+                virtualPaddingBottom={virtualPaddingBottom}
+                measureElement={virtualizer.measureElement}
+                scrollContainerRef={scrollContainerRef}
+                renderSubComponent={props.renderSubComponent}
+                onRowClick={props.onRowClick}
+                getRowProps={props.getRowProps}
+                onResetColumnSize={(columnId) => {
+                    setColumnSizingOverrides((state) => {
+                        const nextState = {
+                            ...state,
+                        }
+                        delete nextState[columnId]
+                        return nextState
+                    })
+                }}
+            />
             <DataTablePagination
                 table={table}
                 showPageSizeControl={props.showPageSizeControl}
