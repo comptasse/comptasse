@@ -56,6 +56,8 @@ export function EntriesTable(props: {
             isLoading={false}
             pageSize={100}
             showPageSizeControl={true}
+            virtualize={true}
+            estimateRowHeight={56}
             enableRowSelection={true}
             getRowId={(row) => row.id}
             selectionActions={(selectedRows) => (

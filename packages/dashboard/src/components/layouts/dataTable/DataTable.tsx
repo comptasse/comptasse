@@ -34,6 +34,7 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
+import { useVirtualizer } from "@tanstack/react-virtual"
 import {
     type ComponentProps,
     Fragment,
@@ -236,17 +237,24 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
     onRowClick,
     renderSubComponent,
     getRowProps,
+    dataIndex,
+    measureElement,
 }: {
     row: Row<TData>
     columnCount: number
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
     getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+    dataIndex?: number
+    measureElement?: (element: Element | null) => void
 }) {
     const { className: rowExtraClassName, onClick: _rowOnClick, ...rowExtraProps } = getRowProps?.(row) ?? {}
 
     return (
-        <Fragment>
+        <tbody
+            data-index={dataIndex}
+            ref={measureElement}
+        >
             <tr
                 {...rowExtraProps}
                 onClick={(event) => {
@@ -370,6 +378,100 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
                     </td>
                 </tr>
             )}
+        </tbody>
+    )
+}
+
+function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
+    rows: Array<Row<TData>>
+    columnCount: number
+    virtualize: boolean
+    virtualItems: Array<{
+        index: number
+    }>
+    virtualPaddingTop: number
+    virtualPaddingBottom: number
+    measureElement: (element: Element | null) => void
+    onRowClick?: (context: Row<TData>) => void
+    renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
+    getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
+}) {
+    if (props.virtualize) {
+        return (
+            <Fragment>
+                {props.virtualPaddingTop > 0 && (
+                    <tbody>
+                        <tr>
+                            <td
+                                colSpan={props.columnCount}
+                                style={{
+                                    height: `${props.virtualPaddingTop}px`,
+                                    padding: 0,
+                                    border: 0,
+                                }}
+                            />
+                        </tr>
+                    </tbody>
+                )}
+                {props.virtualItems.map((virtualItem) => {
+                    const row = props.rows[virtualItem.index]
+                    return (
+                        <DataTableRow
+                            key={row.id}
+                            row={row}
+                            columnCount={props.columnCount}
+                            onRowClick={props.onRowClick}
+                            renderSubComponent={props.renderSubComponent}
+                            getRowProps={props.getRowProps}
+                            dataIndex={virtualItem.index}
+                            measureElement={props.measureElement}
+                        />
+                    )
+                })}
+                {props.virtualPaddingBottom > 0 && (
+                    <tbody>
+                        <tr>
+                            <td
+                                colSpan={props.columnCount}
+                                style={{
+                                    height: `${props.virtualPaddingBottom}px`,
+                                    padding: 0,
+                                    border: 0,
+                                }}
+                            />
+                        </tr>
+                    </tbody>
+                )}
+            </Fragment>
+        )
+    }
+
+    return (
+        <Fragment>
+            {props.rows.length > 0 ? null : (
+                <tbody>
+                    <tr>
+                        <td>
+                            <FormatNull
+                                text="Aucun résultat"
+                                className={{
+                                    padding: "1rem",
+                                }}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            )}
+            {props.rows.map((row) => (
+                <DataTableRow
+                    key={row.id}
+                    row={row}
+                    columnCount={props.columnCount}
+                    onRowClick={props.onRowClick}
+                    renderSubComponent={props.renderSubComponent}
+                    getRowProps={props.getRowProps}
+                />
+            ))}
         </Fragment>
     )
 }
@@ -380,6 +482,10 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     columns: Array<ColumnDef<TData>>
     pageSize?: number
     showPageSizeControl?: boolean
+    /** Only mount the rows currently in view (for large pages). */
+    virtualize?: boolean
+    /** Estimated row height in px, used before rows are measured. */
+    estimateRowHeight?: number
     defaultColumnVisibility?: VisibilityState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
@@ -541,6 +647,21 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
         },
     })
 
+    const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+    const rows = table.getRowModel().rows
+    const estimateRowHeight = props.estimateRowHeight ?? 45
+    const virtualizer = useVirtualizer({
+        count: props.virtualize === true ? rows.length : 0,
+        getScrollElement: () => scrollContainerRef.current,
+        estimateSize: () => estimateRowHeight,
+        measureElement: (element) => element?.getBoundingClientRect().height ?? estimateRowHeight,
+        overscan: 8,
+    })
+    const virtualItems = props.virtualize === true ? virtualizer.getVirtualItems() : []
+    const virtualPaddingTop = virtualItems.length > 0 ? virtualItems[0].start : 0
+    const virtualPaddingBottom =
+        virtualItems.length > 0 ? virtualizer.getTotalSize() - virtualItems[virtualItems.length - 1].end : 0
+
     if (props.isLoading)
         return (
             <CircularLoader
@@ -598,10 +719,11 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                 </DataTableToolbar>
             )}
             <div
+                ref={scrollContainerRef}
                 className={css({
                     width: "100%",
                     maxWidth: "100%",
-                    // maxHeight: "70vh",
+                    maxHeight: props.virtualize === true ? "70vh" : undefined,
                     padding: "0",
                     overflowX: "auto",
                     overflowY: "auto",
@@ -633,35 +755,18 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                             })
                         }}
                     />
-                    <tbody
-                        className={css({
-                            width: "100%",
-                            height: "fit",
-                        })}
-                    >
-                        {table.getRowModel().rows.length > 0 ? null : (
-                            <tr>
-                                <td>
-                                    <FormatNull
-                                        text="Aucun résultat"
-                                        className={{
-                                            padding: "1rem",
-                                        }}
-                                    />
-                                </td>
-                            </tr>
-                        )}
-                        {table.getRowModel().rows.map((row) => (
-                            <DataTableRow
-                                key={row.id}
-                                row={row}
-                                columnCount={columnCount}
-                                onRowClick={props.onRowClick}
-                                renderSubComponent={props.renderSubComponent}
-                                getRowProps={props.getRowProps}
-                            />
-                        ))}
-                    </tbody>
+                    <DataTableRows
+                        rows={rows}
+                        columnCount={columnCount}
+                        virtualize={props.virtualize === true}
+                        virtualItems={virtualItems}
+                        virtualPaddingTop={virtualPaddingTop}
+                        virtualPaddingBottom={virtualPaddingBottom}
+                        measureElement={virtualizer.measureElement}
+                        onRowClick={props.onRowClick}
+                        renderSubComponent={props.renderSubComponent}
+                        getRowProps={props.getRowProps}
+                    />
                 </table>
             </div>
             <DataTablePagination
