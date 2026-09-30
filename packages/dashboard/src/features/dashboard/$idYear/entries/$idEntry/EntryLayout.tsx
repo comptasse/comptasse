@@ -3,6 +3,8 @@ import { css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconArrowBackUp,
     IconChevronLeft,
+    IconCircleCheck,
+    IconCircleX,
     IconCopyCheck,
     IconDatabase,
     IconDotsVertical,
@@ -162,9 +164,29 @@ export function EntryLayout() {
                                                     />
                                                 </div>
                                             </DuplicateOneEntry>
+                                            <EntryClearedToggle
+                                                entry={entry}
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                <div
+                                                    className={css({
+                                                        width: "100%",
+                                                    })}
+                                                >
+                                                    <ButtonGhostContent
+                                                        leftIcon={
+                                                            entry.isCleared ? <IconCircleX /> : <IconCircleCheck />
+                                                        }
+                                                        text={entry.isCleared ? "Dépointer" : "Pointer"}
+                                                        className={{
+                                                            width: "100%",
+                                                            justifyContent: "start",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </EntryClearedToggle>
                                         </Popover.Content>
                                     </Popover.Root>
-                                    <EntryClearedToggle entry={entry} />
                                     <DeleteOneEntry entry={entry}>
                                         <ButtonOutlineContent
                                             leftIcon={<IconTrash />}
