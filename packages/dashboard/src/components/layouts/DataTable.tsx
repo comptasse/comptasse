@@ -1,4 +1,12 @@
-import { Button, ButtonGhostContent, ButtonOutlineContent, CircularLoader, FormatNull, InputCheckbox } from "@comptasse/ui"
+import {
+    Button,
+    ButtonGhostContent,
+    ButtonOutlineContent,
+    CircularLoader,
+    FormatNull,
+    InputCheckbox,
+    InputNumber,
+} from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import {
     IconChevronDown,
@@ -26,7 +34,17 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
-import { memo, type ComponentProps, Fragment, type ReactElement, type ReactNode, useEffect, useMemo, useRef, useState } from "react"
+import {
+    type ComponentProps,
+    Fragment,
+    memo,
+    type ReactElement,
+    type ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react"
 import { ColumnVisibilityPopover, type VisibilityColumn } from "./ColumnVisibilityPopover.js"
 import { EmptyState } from "./EmptyState.js"
 import { type FilterColumn, FilterPopover } from "./FilterPopover.js"
@@ -151,7 +169,10 @@ function DataTableToolbar<TData extends Record<keyof TData, unknown>>({
                 )
             })()}
             {(() => {
-                const sortableColumns: Array<{ id: string; header: string }> = []
+                const sortableColumns: Array<{
+                    id: string
+                    header: string
+                }> = []
                 for (const col of table.getAllColumns()) {
                     if (col.getCanSort() && col.columnDef.header && col.columnDef.header !== " ") {
                         sortableColumns.push({
@@ -244,7 +265,15 @@ function DataTableToolbar<TData extends Record<keyof TData, unknown>>({
                     />
                 )
             })()}
-            <div className={css({ marginLeft: "auto", display: "flex", gap: "0.5rem" })}>{children}</div>
+            <div
+                className={css({
+                    marginLeft: "auto",
+                    display: "flex",
+                    gap: "0.5rem",
+                })}
+            >
+                {children}
+            </div>
         </div>
     )
 }
@@ -383,11 +412,7 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
     getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
 }) {
-    const {
-        className: rowExtraClassName,
-        onClick: _rowOnClick,
-        ...rowExtraProps
-    } = getRowProps?.(row) ?? {}
+    const { className: rowExtraClassName, onClick: _rowOnClick, ...rowExtraProps } = getRowProps?.(row) ?? {}
 
     return (
         <Fragment>
@@ -444,9 +469,7 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
                                 }}
                             >
                                 <ButtonGhostContent
-                                    leftIcon={
-                                        row.getIsExpanded() ? <IconChevronDown /> : <IconChevronRight />
-                                    }
+                                    leftIcon={row.getIsExpanded() ? <IconChevronDown /> : <IconChevronRight />}
                                     text={undefined}
                                 />
                             </Button>
@@ -520,8 +543,18 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
     )
 }
 
-function DataTablePagination<TData extends Record<keyof TData, unknown>>({ table }: { table: Table<TData> }) {
-    if (table.getPageCount() <= 1) return null
+function DataTablePagination<TData extends Record<keyof TData, unknown>>({
+    table,
+    showPageSizeControl,
+}: {
+    table: Table<TData>
+    showPageSizeControl?: boolean
+}) {
+    const pageCount = table.getPageCount()
+    if (pageCount <= 1 && showPageSizeControl !== true) return null
+
+    const rowCount = table.getFilteredRowModel().rows.length
+    const pageSize = table.getState().pagination.pageSize
 
     return (
         <div
@@ -534,15 +567,50 @@ function DataTablePagination<TData extends Record<keyof TData, unknown>>({ table
                 gap: "4",
             })}
         >
-            <span
+            <div
                 className={css({
-                    fontSize: "sm",
-                    color: "neutral/50",
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    flexWrap: "wrap",
                 })}
             >
-                {table.getFilteredRowModel().rows.length} résultat
-                {table.getFilteredRowModel().rows.length > 1 ? "s" : ""}
-            </span>
+                <span
+                    className={css({
+                        fontSize: "sm",
+                        color: "neutral/50",
+                    })}
+                >
+                    {rowCount} résultat
+                    {rowCount > 1 ? "s" : ""}
+                </span>
+                {showPageSizeControl === true ? (
+                    <div
+                        className={css({
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                        })}
+                    >
+                        <span
+                            className={css({
+                                fontSize: "sm",
+                                color: "neutral/50",
+                            })}
+                        >
+                            Lignes par page
+                        </span>
+                        <InputNumber
+                            value={pageSize}
+                            min={1}
+                            label="Lignes par page"
+                            onChange={(value) => table.setPageSize(Math.max(1, value))}
+                        />
+                    </div>
+                ) : null}
+            </div>
             <div
                 className={css({
                     display: "flex",
@@ -551,7 +619,10 @@ function DataTablePagination<TData extends Record<keyof TData, unknown>>({ table
                     gap: "0.5rem",
                 })}
             >
-                <Button onClick={() => table.previousPage()} isDisabled={!table.getCanPreviousPage()}>
+                <Button
+                    onClick={() => table.previousPage()}
+                    isDisabled={!table.getCanPreviousPage()}
+                >
                     <ButtonOutlineContent
                         leftIcon={<IconChevronLeft />}
                         text={undefined}
@@ -564,9 +635,12 @@ function DataTablePagination<TData extends Record<keyof TData, unknown>>({ table
                         color: "neutral/50",
                     })}
                 >
-                    Page {table.getState().pagination.pageIndex + 1} sur {table.getPageCount()}
+                    Page {table.getState().pagination.pageIndex + 1} sur {pageCount}
                 </span>
-                <Button onClick={() => table.nextPage()} isDisabled={!table.getCanNextPage()}>
+                <Button
+                    onClick={() => table.nextPage()}
+                    isDisabled={!table.getCanNextPage()}
+                >
                     <ButtonOutlineContent
                         leftIcon={<IconChevronRight />}
                         text={undefined}
@@ -583,6 +657,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     isLoading?: boolean
     columns: Array<ColumnDef<TData>>
     pageSize?: number
+    showPageSizeControl?: boolean
     defaultColumnVisibility?: VisibilityState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
@@ -611,7 +686,9 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     // Reset selection when the trigger changes (e.g. folder navigation)
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
-    }, [props.resetSelectionTrigger])
+    }, [
+        props.resetSelectionTrigger,
+    ])
 
     const selectColumnDef = useMemo<ColumnDef<TData>>(
         () => ({
@@ -865,7 +942,10 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
                     </tbody>
                 </table>
             </div>
-            <DataTablePagination table={table} />
+            <DataTablePagination
+                table={table}
+                showPageSizeControl={props.showPageSizeControl}
+            />
         </div>
     )
 }
