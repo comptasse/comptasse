@@ -56,12 +56,6 @@ export function EntryLinesTable(props: {
                     enableGlobalFilter: false,
                 },
                 {
-                    accessorKey: "label",
-                    header: "Libellé",
-                    cell: ({ row }) => <FormatText>{row.original.label}</FormatText>,
-                    filterFn: "includesString",
-                },
-                {
                     accessorKey: "idAccount",
                     header: "Compte",
                     cell: ({ row }) => {
