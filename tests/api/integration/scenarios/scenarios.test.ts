@@ -190,7 +190,6 @@ describe("Scenarios", () => {
                         isComputedForBalanceReport: true,
                         isComputedForBalanceSheetReport: false,
                         isComputedForIncomeStatementReport: true,
-                        label: line.number,
                         debit: line.debit ?? "0.00",
                         credit: line.credit ?? "0.00",
                     },
@@ -198,6 +197,20 @@ describe("Scenarios", () => {
                 expect(lineResponse.status).toBe(200)
             }
             return entry.id
+        }
+
+        async function getAccountIdByNumberInYear(year: string, number: string): Promise<string | undefined> {
+            const accountsResponse = await authenticatedRequest({
+                session,
+                method: "GET",
+                path: `/organizations/${idOrganization}/years/${year}/accounts`,
+            })
+            expect(accountsResponse.status).toBe(200)
+            const accounts = accountsResponse.data as Array<{
+                id: string
+                number: string
+            }>
+            return accounts.find((candidate) => candidate.number === number)?.id
         }
 
         async function countClotureEntries(): Promise<number> {
@@ -255,7 +268,8 @@ describe("Scenarios", () => {
                             id: string
                         }
                         lines: Array<{
-                            number: string
+                            idAccount: string
+                            debit: string
                             credit: string
                             isComputedForIncomeStatementReport: boolean
                         }>
@@ -263,9 +277,36 @@ describe("Scenarios", () => {
                 }
                 expect(firstResult.entries).toHaveLength(1)
                 const [closing] = firstResult.entries
-                const resultLine = closing.lines.find((line) => line.number === "120")
+                // The result is booked on 120 (profit) or 129 (loss); entry
+                // lines no longer carry a label, so identify them by account.
+                const profitAccount = await getAccountIdByNumberInYear(idYear, "120")
+                const lossAccount = await getAccountIdByNumberInYear(idYear, "129")
+                expect(profitAccount).toBeDefined()
+                expect(lossAccount).toBeDefined()
+                const resultLine = closing.lines.find(
+                    (line) => line.idAccount === profitAccount || line.idAccount === lossAccount,
+                )
                 expect(resultLine).toBeDefined()
-                expect(resultLine!.credit).toBe("50.00")
+                const managementLines = closing.lines.filter(
+                    (line) => line.idAccount !== profitAccount && line.idAccount !== lossAccount,
+                )
+                // The closing entry balances and the result offsets the
+                // management lines, whatever the demo year's activity is.
+                const managementDebit = managementLines.reduce((sum, line) => sum + Number(line.debit), 0)
+                const managementCredit = managementLines.reduce((sum, line) => sum + Number(line.credit), 0)
+                const algebraicResult = managementDebit - managementCredit
+                if (algebraicResult > 0) {
+                    expect(resultLine!.idAccount).toBe(profitAccount)
+                    expect(Number(resultLine!.debit)).toBe(0)
+                    expect(Number(resultLine!.credit)).toBeCloseTo(algebraicResult, 2)
+                } else {
+                    expect(resultLine!.idAccount).toBe(lossAccount)
+                    expect(Number(resultLine!.credit)).toBe(0)
+                    expect(Number(resultLine!.debit)).toBeCloseTo(-algebraicResult, 2)
+                }
+                const closingDebit = closing.lines.reduce((sum, line) => sum + Number(line.debit), 0)
+                const closingCredit = closing.lines.reduce((sum, line) => sum + Number(line.credit), 0)
+                expect(closingDebit).toBeCloseTo(closingCredit, 2)
                 expect(closing.lines.every((line) => line.isComputedForIncomeStatementReport === false)).toBe(true)
 
                 const countAfterFirstRun = await countClotureEntries()
@@ -311,26 +352,53 @@ describe("Scenarios", () => {
         })
 
         it("ouverture-exercice carries the previous balance sheet into a new year", async () => {
-            const yearResponse = await authenticatedRequest({
+            // The à-nouveaux require the previous income statement to be
+            // settled (result booked on 120/129); settle it here, and clean up
+            // the generated closing entry once the opening entry is checked.
+            const settleResponse = await authenticatedRequest({
                 session,
                 method: "POST",
-                path: `/organizations/${idOrganization}/years`,
+                path: `/organizations/${idOrganization}/years/${idYear}/scenarios/cloture-exercice`,
                 body: {
-                    idYearPrevious: idYear,
-                    startingAt: "2030-01-01T00:00:00.000Z",
-                    endingAt: "2030-12-31T00:00:00.000Z",
+                    idYear,
+                    idJournal: idJournalOd,
                 },
             })
-            expect(yearResponse.status).toBe(200)
-            const newYear = yearResponse.data as {
-                id: string
-            }
+            expect(settleResponse.status).toBe(200)
+            const settleEntryIds = (
+                settleResponse.data as {
+                    entries: Array<{
+                        entry: {
+                            id: string
+                        }
+                    }>
+                }
+            ).entries.map((created) => created.entry.id)
 
+            let newYearId: string | undefined
             try {
+                const yearResponse = await authenticatedRequest({
+                    session,
+                    method: "POST",
+                    path: `/organizations/${idOrganization}/years`,
+                    body: {
+                        idYearPrevious: idYear,
+                        startingAt: "2030-01-01T00:00:00.000Z",
+                        endingAt: "2030-12-31T00:00:00.000Z",
+                    },
+                })
+                expect(yearResponse.status).toBe(200)
+                const createdYearId = (
+                    yearResponse.data as {
+                        id: string
+                    }
+                ).id
+                newYearId = createdYearId
+
                 const journalsResponse = await authenticatedRequest({
                     session,
                     method: "GET",
-                    path: `/organizations/${idOrganization}/years/${newYear.id}/journals`,
+                    path: `/organizations/${idOrganization}/years/${createdYearId}/journals`,
                 })
                 expect(journalsResponse.status).toBe(200)
                 const journals = journalsResponse.data as Array<{
@@ -343,9 +411,9 @@ describe("Scenarios", () => {
                 const run = await authenticatedRequest({
                     session,
                     method: "POST",
-                    path: `/organizations/${idOrganization}/years/${newYear.id}/scenarios/ouverture-exercice`,
+                    path: `/organizations/${idOrganization}/years/${createdYearId}/scenarios/ouverture-exercice`,
                     body: {
-                        idYear: newYear.id,
+                        idYear: createdYearId,
                         idJournal: anJournal.id,
                     },
                 })
@@ -353,33 +421,47 @@ describe("Scenarios", () => {
                 const result = run.data as {
                     entries: Array<{
                         lines: Array<{
-                            number: string
+                            idAccount: string
                             debit: string
                             credit: string
+                            isComputedForIncomeStatementReport: boolean
                         }>
                     }>
                 }
                 expect(result.entries).toHaveLength(1)
                 const [opening] = result.entries
 
-                // The previous year result (120) is carried forward as a credit
-                const resultLine = opening.lines.find((line) => line.number === "120")
+                // The previous result (120 profit / 129 loss) is carried forward.
+                const profitAccount = await getAccountIdByNumberInYear(createdYearId, "120")
+                const lossAccount = await getAccountIdByNumberInYear(createdYearId, "129")
+                const resultLine = opening.lines.find(
+                    (line) => line.idAccount === profitAccount || line.idAccount === lossAccount,
+                )
                 expect(resultLine).toBeDefined()
-                expect(resultLine!.debit).toBe("0.00")
-                expect(Number(resultLine!.credit)).toBeGreaterThan(0)
-                // Opening lines are excluded from the income statement report
+                expect(Number(resultLine!.debit) + Number(resultLine!.credit)).toBeGreaterThan(0)
+
+                // The opening entry balances and its lines are excluded from
+                // the income statement report.
+                const openingDebit = opening.lines.reduce((sum, line) => sum + Number(line.debit), 0)
+                const openingCredit = opening.lines.reduce((sum, line) => sum + Number(line.credit), 0)
+                expect(openingDebit).toBeCloseTo(openingCredit, 2)
                 for (const line of opening.lines) {
                     expect(line.isComputedForIncomeStatementReport).toBe(false)
                 }
             } finally {
-                await authenticatedRequest({
-                    session,
-                    method: "DELETE",
-                    path: `/organizations/${idOrganization}/years/${newYear.id}`,
-                    body: {
-                        idYear: newYear.id,
-                    },
-                })
+                if (newYearId) {
+                    await authenticatedRequest({
+                        session,
+                        method: "DELETE",
+                        path: `/organizations/${idOrganization}/years/${newYearId}`,
+                        body: {
+                            idYear: newYearId,
+                        },
+                    })
+                }
+                for (const id of settleEntryIds) {
+                    await deleteEntry(id)
+                }
             }
         })
     })

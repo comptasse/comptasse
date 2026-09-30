@@ -114,10 +114,17 @@ describe("Settle income statement", () => {
             const totalCredit = lines.reduce((sum, line) => sum + Number(line.credit), 0)
             expect(totalDebit).toBeCloseTo(totalCredit, 2)
 
-            const closingLines = lines.filter((line) => line.label === "Solde du compte")
-            const resultLine = lines.find((line) => line.label === "Résultat de l'exercice")
+            // Entry lines no longer carry a label: the result line is the one
+            // booked on the profit/loss account (120/129), the rest are the
+            // management-account closing lines.
+            const resultLine = lines.find(
+                (line) => line.idAccount === profitAccount.id || line.idAccount === lossAccount.id,
+            )
             expect(resultLine).toBeDefined()
 
+            const closingLines = lines.filter(
+                (line) => line.idAccount !== profitAccount.id && line.idAccount !== lossAccount.id,
+            )
             const closingDebit = closingLines.reduce((sum, line) => sum + Number(line.debit), 0)
             const closingCredit = closingLines.reduce((sum, line) => sum + Number(line.credit), 0)
             const algebraicResult = closingDebit - closingCredit
