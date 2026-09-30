@@ -5,6 +5,7 @@ import {
     IconCalendar,
     IconChartBar,
     IconHome,
+    IconLink,
     IconListNumbers,
     IconPackage,
     IconPencil,
@@ -77,6 +78,14 @@ export function SidebarYearNode({ orgId, year }: { orgId: string; year: Year }) 
                 to="/organisation/$idOrganization/exercice/$idYear/écritures"
                 params={params}
                 active={isActive("/organisation/$idOrganization/exercice/$idYear/écritures")}
+            />
+            <TreeNodeLink
+                icon={<IconLink />}
+                label="Lettrages"
+                depth={2}
+                to="/organisation/$idOrganization/exercice/$idYear/lettrages"
+                params={params}
+                active={isActive("/organisation/$idOrganization/exercice/$idYear/lettrages")}
             />
             <TreeNode
                 icon={<IconReport />}

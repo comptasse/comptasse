@@ -22,6 +22,7 @@ import { Popover } from "../../../../../components/overlays/popover/popover.js"
 import { compareAmounts } from "../../../../../utilities/compareAmounts.ts"
 import type { YearDataKey } from "../../YearDataWrapper.tsx"
 import { YearDataWrapper } from "../../YearDataWrapper.tsx"
+import { EntryClearedToggle } from "../EntryClearedToggle.tsx"
 import { ReverseOneEntry } from "../ReverseOneEntry.tsx"
 import { DeleteOneEntry } from "./DeleteOneEntry.tsx"
 import { DuplicateOneEntry } from "./DuplicateOneEntry.tsx"
@@ -123,40 +124,47 @@ export function EntryLayout() {
                                                 gap: "0.25rem",
                                             }}
                                         >
-                                        <ReverseOneEntry entry={entry} onClick={() => setMenuOpen(false)}>
-                                            <div
-                                                className={css({
-                                                    width: "100%",
-                                                })}
+                                            <ReverseOneEntry
+                                                entry={entry}
+                                                onClick={() => setMenuOpen(false)}
                                             >
-                                                <ButtonGhostContent
-                                                    leftIcon={<IconArrowBackUp />}
-                                                    text="Extourner"
-                                                    className={{
+                                                <div
+                                                    className={css({
                                                         width: "100%",
-                                                        justifyContent: "start",
-                                                    }}
-                                                />
-                                            </div>
-                                        </ReverseOneEntry>
-                                        <DuplicateOneEntry entry={entry} onClick={() => setMenuOpen(false)}>
-                                            <div
-                                                className={css({
-                                                    width: "100%",
-                                                })}
+                                                    })}
+                                                >
+                                                    <ButtonGhostContent
+                                                        leftIcon={<IconArrowBackUp />}
+                                                        text="Extourner"
+                                                        className={{
+                                                            width: "100%",
+                                                            justifyContent: "start",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </ReverseOneEntry>
+                                            <DuplicateOneEntry
+                                                entry={entry}
+                                                onClick={() => setMenuOpen(false)}
                                             >
-                                                <ButtonGhostContent
-                                                    leftIcon={<IconCopyCheck />}
-                                                    text="Dupliquer"
-                                                    className={{
+                                                <div
+                                                    className={css({
                                                         width: "100%",
-                                                        justifyContent: "start",
-                                                    }}
-                                                />
-                                            </div>
-                                        </DuplicateOneEntry>
+                                                    })}
+                                                >
+                                                    <ButtonGhostContent
+                                                        leftIcon={<IconCopyCheck />}
+                                                        text="Dupliquer"
+                                                        className={{
+                                                            width: "100%",
+                                                            justifyContent: "start",
+                                                        }}
+                                                    />
+                                                </div>
+                                            </DuplicateOneEntry>
                                         </Popover.Content>
                                     </Popover.Root>
+                                    <EntryClearedToggle entry={entry} />
                                     <DeleteOneEntry entry={entry}>
                                         <ButtonOutlineContent
                                             leftIcon={<IconTrash />}
