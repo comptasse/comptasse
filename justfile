@@ -119,9 +119,15 @@ test:
     {{DC}} exec api sh -c "pnpm --recursive --if-present --filter='./packages/**' run test && pnpm run test:e2e"
 
 # Run the full test pipeline (unit + API + CLI + dashboard [+ e2e]).
-# Starts a fresh dev environment and tears it down afterwards (see .scripts/test.sh).
+# Starts a fresh dev environment, or reuses one if it is already running
+# (in which case it is left running afterwards).
 test-all:
     bash .scripts/test.sh
+
+# Run the full test pipeline against the currently-running dev environment,
+# without starting, resetting or stopping anything.
+test-live:
+    START_ENV=0 bash .scripts/test.sh
 
 # Build the production images, then run the full test pipeline.
 build-and-test:

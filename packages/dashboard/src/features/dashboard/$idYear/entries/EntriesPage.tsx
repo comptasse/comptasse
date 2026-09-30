@@ -166,18 +166,6 @@ export function EntriesPage({
                                         />
                                     </Button>
                                 </CreateOneEntry>
-                                <LinkButton
-                                    to="/organisation/$idOrganization/exercice/$idYear/lettrages"
-                                    params={{
-                                        idOrganization: idOrganization,
-                                        idYear: idYear,
-                                    }}
-                                >
-                                    <ButtonGhostContent
-                                        leftIcon={<IconLink />}
-                                        text="Lettrages"
-                                    />
-                                </LinkButton>
                             </div>
                             <EntriesTable
                                 idOrganization={idOrganization}
