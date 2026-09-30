@@ -2,6 +2,7 @@ import { Button, ButtonGhostContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import type { Icon, IconProps } from "@tabler/icons-react"
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react"
+import { Link } from "@tanstack/react-router"
 import type { ReactElement, ReactNode } from "react"
 
 type TreeNodeProps = {
@@ -90,22 +91,36 @@ export function TreeNode({
     )
 }
 
-export function TreeNodeLink({ icon, label, active = false, depth = 0, onClick }: {
+export function TreeNodeLink({
+    icon,
+    label,
+    active = false,
+    depth = 0,
+    to,
+    params,
+}: {
     icon?: ReactElement<IconProps & React.RefAttributes<Icon>>
     label: string
     active?: boolean
     depth?: number
-    onClick: () => void
+    to: string
+    params?: Record<string, string | null | undefined>
 }) {
     return (
-        <Button
-            onClick={onClick}
+        <Link
+            to={to as never}
+            params={params as never}
             style={{
                 paddingLeft: `${depth * 1}rem`,
             }}
-            className={{
+            className={css({
                 width: "100%",
-            }}
+                maxWidth: "100%",
+                display: "flex",
+                alignItems: "center",
+                textDecoration: "none",
+                color: "inherit",
+            })}
         >
             <ButtonGhostContent
                 leftIcon={icon}
@@ -116,6 +131,6 @@ export function TreeNodeLink({ icon, label, active = false, depth = 0, onClick }
                     justifyContent: "start",
                 }}
             />
-        </Button>
+        </Link>
     )
 }

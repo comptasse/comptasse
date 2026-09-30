@@ -1,6 +1,6 @@
 import { readAllYearsRouteDefinition } from "@comptasse/application-metadata/routes"
 import { IconBuilding, IconCalendar, IconCloud, IconHome, IconLock, IconSettings, IconUsers } from "@tabler/icons-react"
-import { useRouter, useRouterState } from "@tanstack/react-router"
+import { useRouterState } from "@tanstack/react-router"
 import { useMemo } from "react"
 import { TreeNode, TreeNodeLink } from "../../../components/layouts/tree/TreeNode.js"
 import { useCollapsibleState } from "../../../components/layouts/tree/useCollapsibleState.js"
@@ -13,11 +13,12 @@ type Org = {
 }
 
 function usePathname() {
-    return useRouterState({ select: (s) => s.location.pathname })
+    return useRouterState({
+        select: (s) => s.location.pathname,
+    })
 }
 
 export function SidebarOrganizationNode({ org }: { org: Org }) {
-    const router = useRouter()
     const pathname = usePathname()
     const orgPrefix = `/organisation/${org.id}`
     const orgMatch = pathname.startsWith(orgPrefix + "/")
@@ -29,6 +30,9 @@ export function SidebarOrganizationNode({ org }: { org: Org }) {
     const p = (path: string) => path.replace("$idOrganization", org.id)
     const isActive = (path: string) => pathname === p(path)
     const anyOrgChildActive = isExpanded || orgMatch
+    const params = {
+        idOrganization: org.id,
+    }
 
     const yearsResponse = useDataFromAPI({
         routeDefinition: readAllYearsRouteDefinition,
@@ -69,13 +73,9 @@ export function SidebarOrganizationNode({ org }: { org: Org }) {
                 icon={<IconCloud />}
                 label="Stockage"
                 depth={1}
+                to="/organisation/$idOrganization/stockage"
+                params={params}
                 active={isActive("/organisation/$idOrganization/stockage")}
-                onClick={() =>
-                    router.navigate({
-                        to: "/organisation/$idOrganization/stockage",
-                        params: { idOrganization: org.id },
-                    })
-                }
             />
             {years.map((year: any) => (
                 <SidebarYearNode
@@ -96,49 +96,33 @@ export function SidebarOrganizationNode({ org }: { org: Org }) {
                     icon={<IconHome />}
                     label="Général"
                     depth={2}
+                    to="/organisation/$idOrganization/paramètres"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/paramètres")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/paramètres",
-                            params: { idOrganization: org.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconLock />}
                     label="Sécurité"
                     depth={2}
+                    to="/organisation/$idOrganization/paramètres/sécurité"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/paramètres/sécurité")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/paramètres/sécurité",
-                            params: { idOrganization: org.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconCalendar />}
                     label="Exercices"
                     depth={2}
+                    to="/organisation/$idOrganization/exercices"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercices")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercices",
-                            params: { idOrganization: org.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconUsers />}
                     label="Membres"
                     depth={2}
+                    to="/organisation/$idOrganization/paramètres/membres"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/paramètres/membres")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/paramètres/membres",
-                            params: { idOrganization: org.id },
-                        })
-                    }
                 />
             </TreeNode>
         </TreeNode>

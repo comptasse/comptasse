@@ -1,5 +1,20 @@
-import { IconBook, IconBook2, IconCalculator, IconCalendar, IconChartBar, IconHome, IconListNumbers, IconPackage, IconPencil, IconReport, IconReportMoney, IconScale, IconSettings, IconTag } from "@tabler/icons-react"
-import { useRouter, useRouterState } from "@tanstack/react-router"
+import {
+    IconBook,
+    IconBook2,
+    IconCalculator,
+    IconCalendar,
+    IconChartBar,
+    IconHome,
+    IconListNumbers,
+    IconPackage,
+    IconPencil,
+    IconReport,
+    IconReportMoney,
+    IconScale,
+    IconSettings,
+    IconTag,
+} from "@tabler/icons-react"
+import { useRouterState } from "@tanstack/react-router"
 import { TreeNode, TreeNodeLink } from "../../../components/layouts/tree/TreeNode.js"
 import { useCollapsibleState } from "../../../components/layouts/tree/useCollapsibleState.js"
 
@@ -9,17 +24,12 @@ type Year = {
 }
 
 function usePathname() {
-    return useRouterState({ select: (s) => s.location.pathname })
+    return useRouterState({
+        select: (s) => s.location.pathname,
+    })
 }
 
-export function SidebarYearNode({
-    orgId,
-    year,
-}: {
-    orgId: string
-    year: Year
-}) {
-    const router = useRouter()
+export function SidebarYearNode({ orgId, year }: { orgId: string; year: Year }) {
     const pathname = usePathname()
     const yearPrefix = `/organisation/${orgId}/exercice/${year.id}`
     const isSettingsPath =
@@ -46,6 +56,10 @@ export function SidebarYearNode({
 
     const p = (path: string) => path.replace("$idOrganization", orgId).replace("$idYear", year.id)
     const isActive = (path: string) => pathname === p(path) || pathname.startsWith(`${p(path)}/`)
+    const params = {
+        idOrganization: orgId,
+        idYear: year.id,
+    }
 
     return (
         <TreeNode
@@ -54,19 +68,15 @@ export function SidebarYearNode({
             depth={1}
             expanded={isExpanded}
             onToggle={() => setExpanded(!isExpanded)}
-            onClick={() =>{}}
+            onClick={() => {}}
         >
             <TreeNodeLink
                 icon={<IconPencil />}
                 label="Écritures"
                 depth={2}
+                to="/organisation/$idOrganization/exercice/$idYear/écritures"
+                params={params}
                 active={isActive("/organisation/$idOrganization/exercice/$idYear/écritures")}
-                onClick={() =>
-                    router.navigate({
-                        to: "/organisation/$idOrganization/exercice/$idYear/écritures",
-                        params: { idOrganization: orgId, idYear: year.id },
-                    })
-                }
             />
             <TreeNode
                 icon={<IconReport />}
@@ -80,61 +90,47 @@ export function SidebarYearNode({
                     icon={<IconBook />}
                     label="Livre-journal"
                     depth={3}
-                    active={isActive("/organisation/$idOrganization/exercice/$idYear/documents") && !isActive("/organisation/$idOrganization/exercice/$idYear/documents/grand-livre") && !isActive("/organisation/$idOrganization/exercice/$idYear/documents/balance") && !isActive("/organisation/$idOrganization/exercice/$idYear/documents/bilan") && !isActive("/organisation/$idOrganization/exercice/$idYear/documents/compte-de-résultat")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/documents",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
+                    to="/organisation/$idOrganization/exercice/$idYear/documents"
+                    params={params}
+                    active={
+                        isActive("/organisation/$idOrganization/exercice/$idYear/documents") &&
+                        !isActive("/organisation/$idOrganization/exercice/$idYear/documents/grand-livre") &&
+                        !isActive("/organisation/$idOrganization/exercice/$idYear/documents/balance") &&
+                        !isActive("/organisation/$idOrganization/exercice/$idYear/documents/bilan") &&
+                        !isActive("/organisation/$idOrganization/exercice/$idYear/documents/compte-de-résultat")
                     }
                 />
                 <TreeNodeLink
                     icon={<IconBook2 />}
                     label="Grand livre"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/documents/grand-livre"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/documents/grand-livre")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/documents/grand-livre",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconChartBar />}
                     label="Balance"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/documents/balance"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/documents/balance")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/documents/balance",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconReport />}
                     label="Bilan"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/documents/bilan"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/documents/bilan")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/documents/bilan",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconReportMoney />}
                     label="Compte de résultat"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/documents/compte-de-résultat"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/documents/compte-de-résultat")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/documents/compte-de-résultat",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
             </TreeNode>
             <TreeNode
@@ -149,25 +145,20 @@ export function SidebarYearNode({
                     icon={<IconPackage />}
                     label="Articles"
                     depth={3}
-                    active={isActive("/organisation/$idOrganization/exercice/$idYear/inventaire") && !isActive("/organisation/$idOrganization/exercice/$idYear/inventaire/catégories")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/inventaire",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
+                    to="/organisation/$idOrganization/exercice/$idYear/inventaire"
+                    params={params}
+                    active={
+                        isActive("/organisation/$idOrganization/exercice/$idYear/inventaire") &&
+                        !isActive("/organisation/$idOrganization/exercice/$idYear/inventaire/catégories")
                     }
                 />
                 <TreeNodeLink
                     icon={<IconTag />}
                     label="Catégories"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/inventaire/catégories"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/inventaire/catégories")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/inventaire/catégories",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
             </TreeNode>
             <TreeNode
@@ -182,61 +173,41 @@ export function SidebarYearNode({
                     icon={<IconHome />}
                     label="Général"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/paramètres"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/paramètres")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/paramètres",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconListNumbers />}
                     label="Comptes"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/comptes"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/comptes")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconBook />}
                     label="Journaux"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/journaux"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/journaux")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/journaux",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconTag />}
                     label="Catégories"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/catégories"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/catégories")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/catégories",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNodeLink
                     icon={<IconScale />}
                     label="Bilan"
                     depth={3}
+                    to="/organisation/$idOrganization/exercice/$idYear/bilan"
+                    params={params}
                     active={isActive("/organisation/$idOrganization/exercice/$idYear/bilan")}
-                    onClick={() =>
-                        router.navigate({
-                            to: "/organisation/$idOrganization/exercice/$idYear/bilan",
-                            params: { idOrganization: orgId, idYear: year.id },
-                        })
-                    }
                 />
                 <TreeNode
                     icon={<IconReportMoney />}
@@ -250,25 +221,20 @@ export function SidebarYearNode({
                         icon={<IconReportMoney />}
                         label="Postes"
                         depth={4}
-                        active={isActive("/organisation/$idOrganization/exercice/$idYear/compte-de-résultat") && !isActive("/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs")}
-                        onClick={() =>
-                            router.navigate({
-                                to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat",
-                                params: { idOrganization: orgId, idYear: year.id },
-                            })
+                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat"
+                        params={params}
+                        active={
+                            isActive("/organisation/$idOrganization/exercice/$idYear/compte-de-résultat") &&
+                            !isActive("/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs")
                         }
                     />
                     <TreeNodeLink
                         icon={<IconCalculator />}
                         label="Calculs"
                         depth={4}
+                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
+                        params={params}
                         active={isActive("/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs")}
-                        onClick={() =>
-                            router.navigate({
-                                to: "/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs",
-                                params: { idOrganization: orgId, idYear: year.id },
-                            })
-                        }
                     />
                 </TreeNode>
             </TreeNode>
