@@ -1025,8 +1025,9 @@ _cmd_matchings() {
         get)     _matchings_get "$@" ;;
         create)  _matchings_create "$@" ;;
         connect) _matchings_connect "$@" ;;
+        update)  _matchings_update "$@" ;;
         delete)  _matchings_delete "$@" ;;
-        *) _die "comptasse matchings: unknown subcommand '$subcmd'. Use: list, get, create, connect, delete" ;;
+        *) _die "comptasse matchings: unknown subcommand '$subcmd'. Use: list, get, create, connect, update, delete" ;;
     esac
 }
 
@@ -1050,20 +1051,40 @@ _ids_json() {
 }
 
 _matchings_create() {
-    year=''; account=''; lines=''
+    year=''; account=''; lines=''; code=''
     while [ $# -gt 0 ]; do
         case "$1" in
             --year)    year="$2";    shift ;;
             --account) account="$2"; shift ;;
             --lines)   lines="$2";   shift ;;
+            --code)    code="$2";    shift ;;
             *) _die "Unknown: $1" ;;
         esac; shift
     done
     [ -n "$year" ] && [ -n "$account" ] && [ -n "$lines" ] || \
-        _die "Usage: comptasse matchings create --year <id> --account <idAccount> --lines <id,id,...>"
+        _die "Usage: comptasse matchings create --year <id> --account <idAccount> --lines <id,id,...> [--code <code>]"
     _require_cfg
-    _api POST "$(_matchings_base "$year")" \
-        "{\"idYear\":\"$year\",\"idAccount\":\"$account\",\"entryLineIds\":[$(_ids_json "$lines")]}"
+    _jbody_reset
+    _jstr idYear "$year"
+    _jstr idAccount "$account"
+    _jstr code "$code"
+    _jbody_raw entryLineIds "[$(_ids_json "$lines")]"
+    _api POST "$(_matchings_base "$year")" "$(_jbody)"
+}
+
+_matchings_update() {
+    id=''; year=''; code=''
+    while [ $# -gt 0 ]; do
+        case "$1" in --year) year="$2"; shift ;; --code) code="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift
+    done
+    [ -n "$id" ] && [ -n "$year" ] && [ -n "$code" ] || \
+        _die "Usage: comptasse matchings update <idMatching> --year <id> --code <code>"
+    _require_cfg
+    _jbody_reset
+    _jstr idYear "$year"
+    _jstr idMatching "$id"
+    _jstr code "$code"
+    _api PATCH "$(_matchings_base "$year")/$id" "$(_jbody)"
 }
 
 _matchings_connect() {
@@ -1338,7 +1359,7 @@ Commands:
     entries tags    add | remove
    files           list | get | upload | update | delete | download | ocr
   scenarios       list | get | run
-  matchings       list | get | create | connect | delete
+  matchings       list | get | create | connect | update | delete
     files folders   list | get | create | update | delete
   members         list | get | invite | update | remove
   exports         fec | xbrl-balance-sheet | xbrl-income-statement

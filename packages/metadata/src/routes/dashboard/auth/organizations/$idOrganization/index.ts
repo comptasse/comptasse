@@ -48,6 +48,7 @@ export { readAllFoldersRouteDefinition } from "./years/$idYear/folders/readAllFo
 export { connectEntryLinesToMatchingRouteDefinition } from "./years/$idYear/matchings/$idMatching/connectEntryLinesToMatching.js"
 export { deleteOneMatchingRouteDefinition } from "./years/$idYear/matchings/$idMatching/deleteOneMatching.js"
 export { readOneMatchingRouteDefinition } from "./years/$idYear/matchings/$idMatching/readOneMatching.js"
+export { updateOneMatchingRouteDefinition } from "./years/$idYear/matchings/$idMatching/updateOneMatching.js"
 export { createOneMatchingRouteDefinition } from "./years/$idYear/matchings/createOneMatching.js"
 export { readAllMatchingsRouteDefinition } from "./years/$idYear/matchings/readAllMatchings.js"
 // year

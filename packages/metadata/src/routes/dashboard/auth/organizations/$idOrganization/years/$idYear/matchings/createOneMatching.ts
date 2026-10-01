@@ -14,6 +14,7 @@ export const createOneMatchingRouteDefinition = routeDefinition({
             idYear: matchingSchema.entries.idYear,
             idAccount: matchingSchema.entries.idAccount,
             entryLineIds: v.array(entryLineSchema.entries.id, "Au moins un mouvement est requis"),
+            code: v.optional(matchingSchema.entries.code),
         }),
         return: matchingSchemaReturn,
     },

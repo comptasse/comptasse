@@ -979,6 +979,61 @@ export const scenarioCatalog: Record<string, ScenarioDefinition> = {
             ]
         },
     }),
+    "caution-depot-garantie": defineScenario({
+        slug: "caution-depot-garantie",
+        title: "Caution – dépôt de garantie (versement et récupération)",
+        description:
+            "Un dépôt de garantie versé (bail, marché, abonnement) est une créance : il est enregistré au débit du compte 275 « Dépôts et cautionnements versés », en contrepartie de la banque (512). À sa récupération, l'écriture est inversée : débit 512 « Banques », crédit 275.",
+        paramsSchema: v.object({
+            mode: v.picklist(
+                [
+                    "deposit",
+                    "recovery",
+                ],
+                "Le mode doit être « deposit » ou « recovery »",
+            ),
+            amount: amountSchema,
+        }),
+        docExamples: [
+            {
+                description: "Versement d'un dépôt de garantie de 1 200 € (bail commercial)",
+                params: {
+                    mode: "deposit",
+                    amount: "1200",
+                },
+            },
+            {
+                description: "Récupération du dépôt de garantie de 1 200 €",
+                params: {
+                    mode: "recovery",
+                    amount: "1200",
+                },
+            },
+        ],
+        buildEntries: (params) => {
+            const amount = Number(params.amount)
+            if (params.mode === "recovery") {
+                return [
+                    {
+                        label: "Récupération du dépôt de garantie",
+                        lines: [
+                            line("512", "Banques", amount),
+                            line("275", "Dépôts et cautionnements versés", 0, amount),
+                        ],
+                    },
+                ]
+            }
+            return [
+                {
+                    label: "Dépôt de garantie",
+                    lines: [
+                        line("275", "Dépôts et cautionnements versés", amount),
+                        line("512", "Banques", 0, amount),
+                    ],
+                },
+            ]
+        },
+    }),
     "affectation-resultat-benefice": defineScenario({
         slug: "affectation-resultat-benefice",
         title: "Affectation du résultat : bénéfice",
