@@ -184,6 +184,7 @@ function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<M
                             text="Générer un lettrage"
                         />
                     </Button>
+                    <span>ou</span>
                     <div
                         style={{
                             display: "flex",

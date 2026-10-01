@@ -4,7 +4,7 @@ import {
     readAllMatchingsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonPlainContent, FormatDateTime, FormatNull, FormatPrice, FormatText, toast } from "@comptasse/ui"
+import { Button, ButtonOutlineContent, FormatDateTime, FormatNull, FormatPrice, FormatText, toast } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconLink, IconTrash } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
@@ -158,7 +158,7 @@ function MatchingsTable(props: {
                             hasLoader={submittingId === row.original.id}
                             onClick={() => remove(row.original.id)}
                         >
-                            <ButtonPlainContent
+                            <ButtonOutlineContent
                                 color="danger"
                                 leftIcon={<IconTrash />}
                                 text={undefined}
