@@ -7,6 +7,7 @@ import {
     IconSortAscending,
     IconSortDescending,
 } from "@tabler/icons-react"
+import { useParams } from "@tanstack/react-router"
 import {
     type ColumnDef,
     type ColumnSizingState,
@@ -535,7 +536,7 @@ function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
-function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
+type DataTableProps<TData extends Record<keyof TData, unknown>> = {
     data: Array<TData>
     isLoading?: boolean
     columns: Array<ColumnDef<TData>>
@@ -558,7 +559,9 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     selectionActions?: (selectedRows: Array<Row<TData>>) => ReactElement | null
     resetSelectionTrigger?: unknown
     emptyStateProps?: Parameters<typeof EmptyState>[0]
-}) {
+}
+
+function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTableProps<TData>) {
     const memoizedData = useMemo(
         () => props.data,
         [
@@ -817,4 +820,29 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
-export const DataTable = memo(DataTableRaw) as typeof DataTableRaw
+function DataTableScoped<TData extends Record<keyof TData, unknown>>(props: DataTableProps<TData>) {
+    // Scope the persisted state to the current organization + year so tables
+    // with the same key (e.g. the org and year "Stockage" pages) stay independent.
+    const params = useParams({
+        strict: false,
+    }) as {
+        idOrganization?: string
+        idYear?: string
+    }
+    const persistKey =
+        props.persistKey === undefined
+            ? undefined
+            : `${params.idOrganization ?? ""}:${params.idYear ?? ""}:${props.persistKey}`
+
+    // `key` forces a full remount (and thus a fresh read from localStorage) when
+    // the scope changes, so a reused instance can't carry state across tables.
+    return (
+        <DataTableRaw
+            key={persistKey}
+            {...props}
+            persistKey={persistKey}
+        />
+    )
+}
+
+export const DataTable = memo(DataTableScoped) as typeof DataTableRaw
