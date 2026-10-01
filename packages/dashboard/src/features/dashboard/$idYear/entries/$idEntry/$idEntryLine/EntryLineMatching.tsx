@@ -7,7 +7,7 @@ import {
     readAllMatchingsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonOutlineContent, ButtonPlainContent, InputSelect, toast } from "@comptasse/ui"
+import { Button, ButtonOutlineContent, ButtonPlainContent, InputCombobox, toast } from "@comptasse/ui"
 import { IconLink, IconUnlink } from "@tabler/icons-react"
 import type { JSX } from "react"
 import { useState } from "react"
@@ -192,7 +192,7 @@ function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<M
                             gap: "0.5rem",
                         }}
                     >
-                        <InputSelect
+                        <InputCombobox
                             value={selectedMatchingId}
                             onChange={(value) => setSelectedMatchingId(value ?? null)}
                             options={availableMatchings.map((matching) => ({

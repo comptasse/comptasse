@@ -2,6 +2,7 @@ import type { readAllEntriesRouteDefinition } from "@comptasse/application-metad
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import {
     Button,
+    ButtonGhostContent,
     FormatBoolean,
     FormatDate,
     FormatDateTime,
@@ -11,7 +12,7 @@ import {
     LinkContent,
 } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconPencil } from "@tabler/icons-react"
+import { IconCircleCheck, IconCircleX, IconPencil } from "@tabler/icons-react"
 import { useRouter } from "@tanstack/react-router"
 import { useMemo } from "react"
 import type * as v from "valibot"
@@ -186,10 +187,15 @@ export function EntriesTable(props: {
                     enableSorting: false,
                     enableGlobalFilter: false,
                     cell: ({ row }) => (
-                        <EntryClearedToggle
-                            entry={row.original}
-                            iconOnly={true}
-                        />
+                        <EntryClearedToggle entry={row.original}>
+                            <Button>
+                                <ButtonGhostContent
+                                    leftIcon={row.original.isCleared ? <IconCircleX /> : <IconCircleCheck />}
+                                    text={undefined}
+                                    title={row.original.isCleared ? "Dépointer" : "Pointer"}
+                                />
+                            </Button>
+                        </EntryClearedToggle>
                     ),
                 },
             ]}

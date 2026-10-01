@@ -36,6 +36,11 @@ const COMPUTED_TOGGLES: Array<{
     },
 ]
 
+/** Amounts default to "0" when the field is empty or unset. */
+function amountOrZero(value: string | null | undefined): string {
+    return value === null || value === undefined || value === "" ? "0" : value
+}
+
 export function EntryLineFormFields({ form, idYear }: { form: UseFormReturn<any>; idYear: string }) {
     return (
         <Fragment>
@@ -86,8 +91,8 @@ export function EntryLineFormFields({ form, idYear }: { form: UseFormReturn<any>
                             />
                             <FormControl>
                                 <InputPrice
-                                    value={field.value}
-                                    onChange={field.onChange}
+                                    value={amountOrZero(field.value)}
+                                    onChange={(value) => field.onChange(amountOrZero(value))}
                                 />
                             </FormControl>
                             <FormError />
@@ -105,8 +110,8 @@ export function EntryLineFormFields({ form, idYear }: { form: UseFormReturn<any>
                             />
                             <FormControl>
                                 <InputPrice
-                                    value={field.value}
-                                    onChange={field.onChange}
+                                    value={amountOrZero(field.value)}
+                                    onChange={(value) => field.onChange(amountOrZero(value))}
                                 />
                             </FormControl>
                             <FormError />

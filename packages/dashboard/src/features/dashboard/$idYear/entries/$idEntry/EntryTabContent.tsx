@@ -183,8 +183,8 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                             entry={entry}
                                             onClick={() => setMenuOpen(false)}
                                         >
-                                            <div
-                                                className={css({
+                                            <Button
+                                                className={css.raw({
                                                     width: "100%",
                                                 })}
                                             >
@@ -196,14 +196,14 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                         justifyContent: "start",
                                                     }}
                                                 />
-                                            </div>
+                                            </Button>
                                         </ReverseOneEntry>
                                         <DuplicateOneEntry
                                             entry={entry}
                                             onClick={() => setMenuOpen(false)}
                                         >
-                                            <div
-                                                className={css({
+                                            <Button
+                                                className={css.raw({
                                                     width: "100%",
                                                 })}
                                             >
@@ -215,14 +215,14 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                         justifyContent: "start",
                                                     }}
                                                 />
-                                            </div>
+                                            </Button>
                                         </DuplicateOneEntry>
                                         <EntryClearedToggle
                                             entry={entry}
                                             onClick={() => setMenuOpen(false)}
                                         >
-                                            <div
-                                                className={css({
+                                            <Button
+                                                className={css.raw({
                                                     width: "100%",
                                                 })}
                                             >
@@ -234,7 +234,7 @@ export function EntryTabContent(props: { idOrganization: string; idYear: string;
                                                         justifyContent: "start",
                                                     }}
                                                 />
-                                            </div>
+                                            </Button>
                                         </EntryClearedToggle>
                                     </Popover.Content>
                                 </Popover.Root>
