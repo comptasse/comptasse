@@ -39,9 +39,13 @@ function key(persistKey: string | undefined, suffix: string): string | undefined
  * Per-table persisted UI state: global search, sorting, column filters and
  * column visibility. Pass a stable `persistKey` to enable persistence.
  */
-export function usePersistentDataTableState(persistKey: string | undefined, defaultColumnVisibility: VisibilityState) {
+export function usePersistentDataTableState(
+    persistKey: string | undefined,
+    defaultColumnVisibility: VisibilityState,
+    defaultSorting: SortingState = [],
+) {
     const [globalFilter, setGlobalFilter] = usePersistentState(key(persistKey, "search"), "")
-    const [sorting, setSorting] = usePersistentState<SortingState>(key(persistKey, "sorting"), [])
+    const [sorting, setSorting] = usePersistentState<SortingState>(key(persistKey, "sorting"), defaultSorting)
     const [columnFilters, setColumnFilters] = usePersistentState<ColumnFiltersState>(key(persistKey, "filters"), [])
     const [columnVisibility, setColumnVisibility] = usePersistentState<VisibilityState>(
         key(persistKey, "visibility"),

@@ -589,6 +589,14 @@ function FilesTableRaw(props: {
             data={rows}
             isLoading={false}
             persistKey="files"
+            pageSize={100}
+            showPageSizeControl={true}
+            defaultSorting={[
+                {
+                    id: "createdAt",
+                    desc: true,
+                },
+            ]}
             getRowProps={(row) => getRowInteractionProps(row.original)}
             hideSearchBar={false}
             enableRowSelection={(row) => row.original.kind !== "back"}

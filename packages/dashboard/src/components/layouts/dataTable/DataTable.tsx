@@ -20,6 +20,7 @@ import {
     type Row,
     type RowData,
     type RowSelectionState,
+    type SortingState,
     type Table,
     useReactTable,
     type VisibilityState,
@@ -549,6 +550,8 @@ type DataTableProps<TData extends Record<keyof TData, unknown>> = {
     /** localStorage key: persists sorting, filters and column visibility per table. */
     persistKey?: string
     defaultColumnVisibility?: VisibilityState
+    /** Initial sorting applied when nothing is persisted yet. */
+    defaultSorting?: SortingState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
     getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
@@ -577,7 +580,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTab
         setColumnFilters,
         columnVisibility,
         setColumnVisibility,
-    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {})
+    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {}, props.defaultSorting)
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
