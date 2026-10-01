@@ -14,6 +14,10 @@
 # By default it starts a fresh dev environment, runs the suites and tears it
 # back down. This is what `build-ci.sh` runs after the build.
 #
+# If a dev environment is ALREADY running (e.g. `just dev up`), the pipeline
+# reuses it instead: it skips the start/reset and leaves it running at the end,
+# so your dev server stays online across build/test runs.
+#
 # The suites run on the HOST (they need `curl` for the CLI tests, which the dev
 # API container does not ship), pointed at the dev API/dashboard ports.
 #
@@ -23,8 +27,10 @@
 # can no longer write to it (EACCES on a fresh CI checkout).
 #
 # Environment:
-#   START_ENV=1          start + reset/seed the dev env, tear it down afterwards (default 1)
+#   START_ENV=1          start + reset/seed the dev env if none is running (default 1);
+#                        if one is already running, reuse it and leave it running
 #   KEEP_ENV=1           do not tear the environment down (default 0)
+#   RESET_ENV=1          reseed the running dev env before the suites (default 0)
 #   RUN_E2E=1            also run the Playwright E2E suite (default 0)
 #   RUN_INTEGRATION=1    also run the full legacy API integration suite (default 0,
 #                        it currently contains pre-existing failures in billing /
@@ -43,8 +49,29 @@ PORTS_FILE=".workflows/dev/.ports"
 
 START_ENV="${START_ENV:-1}"
 KEEP_ENV="${KEEP_ENV:-0}"
+RESET_ENV="${RESET_ENV:-0}"
 RUN_E2E="${RUN_E2E:-0}"
 RUN_INTEGRATION="${RUN_INTEGRATION:-0}"
+
+# Reuse an already-running dev environment (e.g. started with `just dev up`)
+# instead of recreating, resetting and then tearing it down. This keeps the dev
+# server online across build/test runs. Detection happens before any step so it
+# also drives the teardown decision at the end.
+DEV_WAS_RUNNING=0
+if "${DC[@]}" ps --status running --services 2>/dev/null | grep -q .; then
+    DEV_WAS_RUNNING=1
+fi
+
+# Seed the running dev database (also used when starting a fresh environment).
+dev_reset() {
+    "${DC[@]}" exec -T api sh -c "cd /workspace/packages/tools && pnpm run reset"
+}
+
+# Start the dev environment, then seed it.
+dev_start() {
+    bash .workflows/dev/up.sh
+    dev_reset
+}
 
 FAILED=0
 declare -a RESULTS=()
@@ -83,11 +110,16 @@ if [ "${SKIP_DASHBOARD:-0}" != "1" ]; then
 fi
 
 if [ "$START_ENV" = "1" ]; then
-    step "start environment (build + up + reset/seed)" bash -c '
-        set -e
-        bash .workflows/dev/up.sh
-        '"${DC[*]}"' exec -T api sh -c "cd /workspace/packages/tools && pnpm run reset"
-    '
+    if [ "$DEV_WAS_RUNNING" = "1" ]; then
+        if [ "$RESET_ENV" = "1" ]; then
+            step "reset environment (reusing running dev env)" dev_reset
+        else
+            echo ""
+            echo "Dev environment already running — reusing it (no reset, no teardown)."
+        fi
+    else
+        step "start environment (build + up + reset/seed)" dev_start
+    fi
 fi
 
 if [ -f "$PORTS_FILE" ]; then
@@ -116,7 +148,7 @@ if [ "$RUN_E2E" = "1" ]; then
     step "e2e tests" pnpm run test:e2e
 fi
 
-if [ "$START_ENV" = "1" ] && [ "$KEEP_ENV" != "1" ]; then
+if [ "$START_ENV" = "1" ] && [ "$DEV_WAS_RUNNING" != "1" ] && [ "$KEEP_ENV" != "1" ]; then
     echo ""
     echo "Stopping environment..."
     "${DC[@]}" down --remove-orphans >/dev/null 2>&1 || true

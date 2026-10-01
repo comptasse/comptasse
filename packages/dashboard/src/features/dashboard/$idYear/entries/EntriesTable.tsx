@@ -1,6 +1,15 @@
 import type { readAllEntriesRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, FormatDate, FormatDateTime, FormatNull, FormatPrice, FormatText, LinkContent } from "@comptasse/ui"
+import {
+    Button,
+    FormatBoolean,
+    FormatDate,
+    FormatDateTime,
+    FormatNull,
+    FormatPrice,
+    FormatText,
+    LinkContent,
+} from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
 import { useRouter } from "@tanstack/react-router"
@@ -9,7 +18,7 @@ import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
-import { EntryClearedToggle } from "./EntryClearedToggle.js"
+import { EntryClearedToggle } from "./EntryClearedToggle.tsx"
 
 export function EntriesTable(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
@@ -77,7 +86,7 @@ export function EntriesTable(props: {
                 {
                     accessorKey: "isCleared",
                     header: "Pointé",
-                    cell: ({ row }) => <EntryClearedToggle entry={row.original} />,
+                    cell: ({ row }) => <FormatBoolean boolean={row.original.isCleared} />,
                     filterFn: "includesString",
                 },
                 {
@@ -170,6 +179,18 @@ export function EntriesTable(props: {
                     header: "Dernière mise à jour le",
                     cell: ({ row }) => <FormatDateTime date={row.original.lastUpdatedAt} />,
                     filterFn: "includesString",
+                },
+                {
+                    accessorKey: "actions",
+                    header: " ",
+                    enableSorting: false,
+                    enableGlobalFilter: false,
+                    cell: ({ row }) => (
+                        <EntryClearedToggle
+                            entry={row.original}
+                            iconOnly={true}
+                        />
+                    ),
                 },
             ]}
             renderSubComponent={({ row }) => {

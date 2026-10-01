@@ -1,14 +1,14 @@
 import { Button, ButtonGhostContent, ButtonPlainContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconDotsVertical, IconDownload, IconFileExport, IconFileImport, IconPlus } from "@tabler/icons-react"
+import { IconDotsVertical, IconDownload, IconFileExport, IconFileImport, IconLink, IconPlus } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
 import { Fragment } from "react"
+import { LinkButton } from "../../../../components/LinkButton.js"
 import { Page } from "../../../../components/layouts/page/page.js"
 import { Popover } from "../../../../components/overlays/popover/popover.js"
 import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { YearDataWrapper } from "../YearDataWrapper.tsx"
 import { CreateOneEntry } from "./CreateOneEntry.js"
-import { EntriesMatchings } from "./EntriesMatchings.js"
 import { EntriesTable } from "./EntriesTable.js"
 import { ExportEntryLines } from "./ExportEntryLines.js"
 import { ExportFecFile } from "./ExportFecFile.js"
@@ -44,7 +44,6 @@ export function EntriesPage({
                         "tags",
                         "files",
                         "accounts",
-                        "matchings",
                     ]}
                 >
                     {(data) => (
@@ -167,18 +166,18 @@ export function EntriesPage({
                                         />
                                     </Button>
                                 </CreateOneEntry>
-                                <EntriesMatchings
-                                    idYear={idYear}
-                                    matchings={data.matchings}
-                                    accountLabelById={
-                                        new Map(
-                                            data.accounts.map((account) => [
-                                                account.id,
-                                                `${account.number} ${account.label}`,
-                                            ]),
-                                        )
-                                    }
-                                />
+                                <LinkButton
+                                    to="/organisation/$idOrganization/exercice/$idYear/lettrages"
+                                    params={{
+                                        idOrganization: idOrganization,
+                                        idYear: idYear,
+                                    }}
+                                >
+                                    <ButtonGhostContent
+                                        leftIcon={<IconLink />}
+                                        text="Lettrages"
+                                    />
+                                </LinkButton>
                             </div>
                             <EntriesTable
                                 idOrganization={idOrganization}
