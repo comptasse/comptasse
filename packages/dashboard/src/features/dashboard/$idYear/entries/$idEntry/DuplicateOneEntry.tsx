@@ -1,6 +1,7 @@
 import {
     duplicateOneEntryRouteDefinition,
     readAllEntriesRouteDefinition,
+    readAllEntryLinesRouteDefinition,
     readAllEntryTagsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
@@ -41,6 +42,12 @@ export function DuplicateOneEntry(props: {
         await Promise.all([
             invalidateData({
                 routeDefinition: readAllEntriesRouteDefinition,
+                body: {
+                    idYear: props.entry.idYear,
+                },
+            }),
+            invalidateData({
+                routeDefinition: readAllEntryLinesRouteDefinition,
                 body: {
                     idYear: props.entry.idYear,
                 },
