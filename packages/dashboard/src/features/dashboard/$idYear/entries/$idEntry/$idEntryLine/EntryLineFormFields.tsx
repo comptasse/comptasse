@@ -62,6 +62,7 @@ export function EntryLineFormFields({ form, idYear }: { form: UseFormReturn<any>
                                     idYear: idYear,
                                 }}
                                 placeholder="Sélectionner un compte"
+                                filter={(account) => account.isSelectable === true && account.number.length > 2}
                                 getOption={(journal) => ({
                                     key: journal.id,
                                     label: `${journal.number} - ${journal.label}`,

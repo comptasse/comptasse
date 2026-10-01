@@ -9,6 +9,7 @@ import {
     FormatNull,
     FormatPrice,
     FormatText,
+    LinkButton,
     LinkContent,
 } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
@@ -95,20 +96,16 @@ export function EntriesTable(props: {
                     accessorKey: "label",
                     header: "Libellé",
                     cell: ({ row }) => (
-                        <Button
-                            onClick={() =>
-                                router.navigate({
-                                    to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
-                                    params: {
-                                        idOrganization: row.original.idOrganization,
-                                        idYear: row.original.idYear,
-                                        idEntry: row.original.id,
-                                    },
-                                })
-                            }
+                        <LinkButton
+                            to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
+                            params={{
+                                idOrganization: row.original.idOrganization,
+                                idYear: row.original.idYear,
+                                idEntry: row.original.id,
+                            }}
                         >
                             <LinkContent>{row.original.label}</LinkContent>
-                        </Button>
+                        </LinkButton>
                     ),
                     filterFn: "includesString",
                 },

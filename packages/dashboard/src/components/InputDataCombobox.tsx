@@ -11,6 +11,8 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
         key: string
         label: string
     }
+    /** Restrict the offered options (e.g. only selectable accounts). */
+    filter?: (data: v.InferOutput<TRouteDefinition["schemas"]["return"]>[number]) => boolean
     value?: string | null
     onChange: (value?: string | null) => void
 }) {
@@ -18,6 +20,16 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
         routeDefinition: props.routeDefinition,
         body: props.body,
     })
+
+    const items: Array<v.InferOutput<TRouteDefinition["schemas"]["return"]>[number]> =
+        response.data === undefined
+            ? []
+            : Array.isArray(response.data)
+              ? response.data
+              : [
+                    response.data,
+                ]
+    const filteredItems = props.filter === undefined ? items : items.filter(props.filter)
 
     return (
         <InputCombobox
@@ -27,15 +39,7 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
             isLoading={response.isPending}
             allowEmpty={true}
             placeholder={props.placeholder ?? "Sélectionner un élément"}
-            options={
-                response.data === undefined
-                    ? []
-                    : Array.isArray(response.data)
-                      ? response.data?.map((item) => props.getOption(item))
-                      : [
-                            props.getOption(response.data),
-                        ]
-            }
+            options={filteredItems.map((item) => props.getOption(item))}
         />
     )
 }
