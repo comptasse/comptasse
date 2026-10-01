@@ -40,10 +40,18 @@ import { usePersistentDataTableState } from "../../../utilities/usePersistentDat
 import { EmptyState } from "../EmptyState.js"
 import { DataTablePagination } from "./DataTablePagination.js"
 import { DataTableToolbar } from "./DataTableToolbar.js"
+import { includesStringOrBoolean } from "./filterFns.js"
 
 declare module "@tanstack/react-table" {
     interface ColumnMeta<TData extends RowData, TValue> {
         fit?: boolean
+        /** Labels matched by the filters for boolean values (defaults to Oui / Non). */
+        booleanLabels?: {
+            true?: string
+            false?: string
+        }
+        /** Extra text matched by the filters in addition to the raw value. */
+        filterText?: (value: TValue, row: TData) => string
     }
 }
 
@@ -678,6 +686,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: includesStringOrBoolean,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,

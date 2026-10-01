@@ -17,6 +17,7 @@ import { useRouter } from "@tanstack/react-router"
 import { useMemo } from "react"
 import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
+import { includesStringOrBoolean } from "../../../../components/layouts/dataTable/filterFns.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
 import { EntryClearedToggle } from "./EntryClearedToggle.tsx"
@@ -88,7 +89,7 @@ export function EntriesTable(props: {
                     accessorKey: "isCleared",
                     header: "Pointé",
                     cell: ({ row }) => <FormatBoolean boolean={row.original.isCleared} />,
-                    filterFn: "includesString",
+                    filterFn: includesStringOrBoolean,
                 },
                 {
                     accessorKey: "label",
