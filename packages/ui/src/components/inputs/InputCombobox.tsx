@@ -27,6 +27,8 @@ export function InputCombobox<TValue extends string>(props: {
     autoFocus?: boolean
     className?: Styles
     allowEmpty?: boolean
+    /** Allow long option/trigger labels to wrap onto multiple lines. */
+    wrapLabels?: boolean
 }) {
     const popoverContentId = useId().replace(/:/g, "")
     const [open, setOpen] = useState(false)
@@ -104,6 +106,19 @@ export function InputCombobox<TValue extends string>(props: {
                                       },
                                   }
                                 : undefined,
+                            props.wrapLabels === true
+                                ? {
+                                      height: "auto",
+                                      minHeight: "2rem",
+                                      alignItems: "flex-start",
+                                      paddingBlock: "0.25rem",
+                                      "& span": {
+                                          whiteSpace: "normal",
+                                          overflow: "visible",
+                                          textOverflow: "clip",
+                                      },
+                                  }
+                                : undefined,
                         )}
                     />
                 </Button>
@@ -173,6 +188,19 @@ export function InputCombobox<TValue extends string>(props: {
                                                 isSelected
                                                     ? {
                                                           backgroundColor: "background",
+                                                      }
+                                                    : undefined,
+                                                props.wrapLabels === true
+                                                    ? {
+                                                          height: "auto",
+                                                          minHeight: "2rem",
+                                                          alignItems: "flex-start",
+                                                          paddingBlock: "0.25rem",
+                                                          "& span": {
+                                                              whiteSpace: "normal",
+                                                              overflow: "visible",
+                                                              textOverflow: "clip",
+                                                          },
                                                       }
                                                     : undefined,
                                             )}

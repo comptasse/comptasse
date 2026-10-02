@@ -13,6 +13,8 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
     }
     /** Restrict the offered options (e.g. only selectable accounts). */
     filter?: (data: v.InferOutput<TRouteDefinition["schemas"]["return"]>[number]) => boolean
+    /** Allow long option/trigger labels to wrap onto multiple lines. */
+    wrapLabels?: boolean
     value?: string | null
     onChange: (value?: string | null) => void
 }) {
@@ -38,6 +40,7 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
             onChange={props.onChange}
             isLoading={response.isPending}
             allowEmpty={true}
+            wrapLabels={props.wrapLabels}
             placeholder={props.placeholder ?? "Sélectionner un élément"}
             options={filteredItems.map((item) => props.getOption(item))}
         />

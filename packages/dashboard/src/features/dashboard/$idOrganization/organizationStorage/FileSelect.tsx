@@ -1,6 +1,6 @@
 import { readAllFilesRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { InputCombobox } from "@comptasse/ui"
+import { formatDate, InputCombobox } from "@comptasse/ui"
 import type * as v from "valibot"
 import { useDataFromAPI } from "../../../../utilities/useHTTPData.ts"
 
@@ -23,16 +23,16 @@ export function FileSelect(props: {
             onChange={props.onChange}
             isLoading={filesResponse.isPending}
             allowEmpty={true}
+            wrapLabels={true}
             placeholder="Sélectionner une pièce justificative"
             options={
                 filesResponse.data === undefined
                     ? []
                     : filesResponse.data.map((file) => ({
                           key: file.id,
-                          label:
-                              file.reference && file.reference !== file.name
-                                  ? `${file.name} (${file.reference})`
-                                  : file.name,
+                          label: `${file.name}${
+                              file.reference && file.reference !== file.name ? ` (${file.reference})` : ""
+                          } · ${formatDate(file.createdAt)}`,
                       }))
             }
         />

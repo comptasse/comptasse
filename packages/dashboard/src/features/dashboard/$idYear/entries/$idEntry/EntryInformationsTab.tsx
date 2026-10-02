@@ -1,17 +1,16 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import {
-    Button,
     ButtonPlainContent,
     FormatBoolean,
     FormatDate,
     FormatNull,
     FormatPrice,
     FormatText,
+    LinkButton,
     LinkContent,
 } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
-import { useRouter } from "@tanstack/react-router"
 import type * as v from "valibot"
 import { DataBlock } from "../../../../../components/layouts/dataBlock/dataBlock.tsx"
 import { Section } from "../../../../../components/layouts/section/section.tsx"
@@ -25,8 +24,6 @@ export function EntryInformationsTab(props: {
     totalDebit: number
     totalCredit: number
 }) {
-    const router = useRouter()
-
     return (
         <Section.Item
             className={css({
@@ -55,6 +52,13 @@ export function EntryInformationsTab(props: {
                     <DataBlock.Item label="Libellé">
                         <FormatText>{props.entry.label}</FormatText>
                     </DataBlock.Item>
+                    <DataBlock.Item label="Description">
+                        {props.entry.description === null || props.entry.description === "" ? (
+                            <FormatNull />
+                        ) : (
+                            <FormatText wrap={true}>{props.entry.description}</FormatText>
+                        )}
+                    </DataBlock.Item>
                     <DataBlock.Item label="Date">
                         <FormatDate date={props.entry.date} />
                     </DataBlock.Item>
@@ -74,19 +78,15 @@ export function EntryInformationsTab(props: {
                         {props.entry.idFile === null || props.file === null ? (
                             <FormatNull />
                         ) : (
-                            <Button
-                                onClick={() => {
-                                    router.navigate({
-                                        to: "/organisation/$idOrganization/fichier/$idFile",
-                                        params: {
-                                            idOrganization: props.entry.idOrganization,
-                                            idFile: props.file!.id,
-                                        },
-                                    })
+                            <LinkButton
+                                to="/organisation/$idOrganization/fichier/$idFile"
+                                params={{
+                                    idOrganization: props.entry.idOrganization,
+                                    idFile: props.file.id,
                                 }}
                             >
                                 <LinkContent>{props.file.name}</LinkContent>
-                            </Button>
+                            </LinkButton>
                         )}
                     </DataBlock.Item>
                 </DataBlock.Content>
