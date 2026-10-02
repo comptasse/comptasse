@@ -165,7 +165,10 @@ export function UpdateOneEntry(props: { entry: v.InferOutput<typeof returnedSche
                                         placeholder="Sélectionner une pièce justificative"
                                         getOption={(file) => ({
                                             key: file.id,
-                                            label: file.reference ? `${file.name} (${file.reference})` : file.name,
+                                            label:
+                                                file.reference && file.reference !== file.name
+                                                    ? `${file.name} (${file.reference})`
+                                                    : file.name,
                                         })}
                                     />
                                 </FormControl>

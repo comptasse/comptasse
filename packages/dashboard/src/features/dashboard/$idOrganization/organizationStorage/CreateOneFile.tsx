@@ -44,7 +44,7 @@ async function uploadOneFile(params: {
 
     const formData = new FormData()
     formData.append("file", file)
-    formData.append("name", file.name)
+    formData.append("name", referenceFromFileName(file.name))
     formData.append("reference", referenceFromFileName(file.name))
     formData.append("hash", hash)
     if (idFolder) {

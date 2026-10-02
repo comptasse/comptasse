@@ -29,7 +29,10 @@ export function FileSelect(props: {
                     ? []
                     : filesResponse.data.map((file) => ({
                           key: file.id,
-                          label: file.reference ? `${file.name} (${file.reference})` : file.name,
+                          label:
+                              file.reference && file.reference !== file.name
+                                  ? `${file.name} (${file.reference})`
+                                  : file.name,
                       }))
             }
         />
