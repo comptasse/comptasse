@@ -28,12 +28,11 @@ export const addOneEntryTagRoute = registerRoute(addOneEntryTagRouteDefinition, 
             and(eq(table.idOrganization, idOrganization), eq(table.idYear, body.idYear), eq(table.id, body.idEntry)),
     })
 
-    // Verify tag exists
+    // Verify tag exists (categories are organization-scoped)
     await selectOne({
         database: c.var.clients.sql,
         table: models.tag,
-        where: (table) =>
-            and(eq(table.idOrganization, idOrganization), eq(table.idYear, body.idYear), eq(table.id, body.idTag)),
+        where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.id, body.idTag)),
     })
 
     const addOneEntryTag = await insertOne({

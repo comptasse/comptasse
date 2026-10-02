@@ -1,5 +1,14 @@
 import { readAllYearsRouteDefinition } from "@comptasse/application-metadata/routes"
-import { IconBuilding, IconCalendar, IconCloud, IconHome, IconLock, IconSettings, IconUsers } from "@tabler/icons-react"
+import {
+    IconBuilding,
+    IconCalendar,
+    IconCloud,
+    IconHome,
+    IconLock,
+    IconSettings,
+    IconTag,
+    IconUsers,
+} from "@tabler/icons-react"
 import { useRouterState } from "@tanstack/react-router"
 import { useMemo } from "react"
 import { TreeNode, TreeNodeLink } from "../../../components/layouts/tree/TreeNode.js"
@@ -76,6 +85,14 @@ export function SidebarOrganizationNode({ org }: { org: Org }) {
                 to="/organisation/$idOrganization/stockage"
                 params={params}
                 active={isActive("/organisation/$idOrganization/stockage")}
+            />
+            <TreeNodeLink
+                icon={<IconTag />}
+                label="Catégories"
+                depth={1}
+                to="/organisation/$idOrganization/catégories"
+                params={params}
+                active={isActive("/organisation/$idOrganization/catégories")}
             />
             {years.map((year: any) => (
                 <SidebarYearNode

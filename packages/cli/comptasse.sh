@@ -502,10 +502,10 @@ _tags_list() {
 }
 
 _tags_get() {
-    id=''; year=''
-    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
-    [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse tags get <idTag> --year <id>"
-    _require_cfg; _api GET "$(_tags_base "$year")/$id"
+    id=''
+    while [ $# -gt 0 ]; do case "$1" in --year) shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
+    [ -n "$id" ] || _die "Usage: comptasse tags get <idTag>"
+    _require_cfg; _api GET "$(_org_path)/tags/$id"
 }
 
 _tags_create() {
@@ -517,18 +517,18 @@ _tags_create() {
 }
 
 _tags_update() {
-    id=''; year=''; label=''
-    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; --label) label="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
-    [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse tags update <idTag> --year <id>"
-    _require_cfg; _jbody_reset; _jstr label "$label"
-    _api PATCH "$(_tags_base "$year")/$id" "$(_jbody)"
+    id=''; label=''
+    while [ $# -gt 0 ]; do case "$1" in --year) shift ;; --label) label="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
+    [ -n "$id" ] || _die "Usage: comptasse tags update <idTag> [--label <label>]"
+    _require_cfg; _jbody_reset; _jstr idTag "$id"; _jstr label "$label"
+    _api PATCH "$(_org_path)/tags/$id" "$(_jbody)"
 }
 
 _tags_delete() {
-    id=''; year=''
-    while [ $# -gt 0 ]; do case "$1" in --year) year="$2"; shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
-    [ -n "$id" ] && [ -n "$year" ] || _die "Usage: comptasse tags delete <idTag> --year <id>"
-    _require_cfg; _api DELETE "$(_tags_base "$year")/$id" > /dev/null
+    id=''
+    while [ $# -gt 0 ]; do case "$1" in --year) shift ;; -*) _die "Unknown: $1" ;; *) id="$1" ;; esac; shift; done
+    [ -n "$id" ] || _die "Usage: comptasse tags delete <idTag>"
+    _require_cfg; _api DELETE "$(_org_path)/tags/$id" "{\"idTag\":\"$id\"}" > /dev/null
     printf 'Tag %s deleted.\n' "$id"
 }
 

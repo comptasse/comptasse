@@ -1,6 +1,6 @@
 import * as v from "valibot"
-import { routePath } from "../../../../../../../../../components/index.js"
-import { tagSchema, tagSchemaReturn } from "../../../../../../../../../schemas/tag.js"
+import { idSchema, routePath } from "../../../../../../../../../components/index.js"
+import { tagSchemaReturn } from "../../../../../../../../../schemas/tag.js"
 import { routeDefinition } from "../../../../../../../../../utilities/routeDefinition.js"
 
 export const readAllTagsRouteDefinition = routeDefinition({
@@ -10,7 +10,7 @@ export const readAllTagsRouteDefinition = routeDefinition({
     name: "read-all-tags",
     schemas: {
         body: v.object({
-            idYear: tagSchema.entries.idYear,
+            idYear: idSchema,
         }),
         return: v.array(tagSchemaReturn),
     },

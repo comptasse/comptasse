@@ -1,5 +1,5 @@
 import { models, readAllTagsRouteDefinition } from "@comptasse/application-metadata"
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import { checkAuthMiddleware } from "../../../../../../../../middlewares/checkAuthMiddleware.js"
 import { requireOrganizationMiddleware } from "../../../../../../../../middlewares/requireOrganizationMiddleware.js"
 import { validateBodyMiddleware } from "../../../../../../../../middlewares/validateBody.middleware.js"
@@ -19,11 +19,29 @@ export const readAllTagsRoute = registerRoute(readAllTagsRouteDefinition, async 
         schema: readAllTagsRouteDefinition.schemas.body,
     })
 
-    const readAllTags = await selectMany({
+    // Categories are organization-scoped: a year's categories are the tags linked
+    // to it through `table_tag_year`.
+    const tagYears = await selectMany({
         database: c.var.clients.sql,
-        table: models.tag,
+        table: models.tagYear,
         where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.idYear, body.idYear)),
     })
+
+    const readAllTags =
+        tagYears.length === 0
+            ? []
+            : await selectMany({
+                  database: c.var.clients.sql,
+                  table: models.tag,
+                  where: (table) =>
+                      and(
+                          eq(table.idOrganization, idOrganization),
+                          inArray(
+                              table.id,
+                              tagYears.map((tagYear) => tagYear.idTag),
+                          ),
+                      ),
+              })
 
     return response({
         context: c,

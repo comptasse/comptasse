@@ -25,7 +25,6 @@ export function TagLayout() {
             <DataWrapper
                 routeDefinition={readOneTagRouteDefinition}
                 body={{
-                    idYear: params.idYear,
                     idTag: params.idTag,
                 }}
             >
@@ -49,7 +48,7 @@ export function TagLayout() {
                                         to="/organisation/$idOrganization/exercice/$idYear/catégories"
                                         params={{
                                             idOrganization: tag.idOrganization,
-                                            idYear: tag.idYear,
+                                            idYear: params.idYear,
                                         }}
                                     >
                                         <ButtonOutlineContent

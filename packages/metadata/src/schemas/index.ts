@@ -18,6 +18,7 @@ import { matchingSchema, matchingSchemaReturn } from "./matching.js"
 import { organizationSchema, organizationSchemaReturn } from "./organization.js"
 import { organizationUserSchema, organizationUserSchemaReturn } from "./organizationUser.js"
 import { tagSchema, tagSchemaReturn } from "./tag.js"
+import { tagYearSchema, tagYearSchemaReturn } from "./tagYear.js"
 import { userSchema, userSchemaReturn } from "./user.js"
 import { userSessionSchema, userSessionSchemaReturn } from "./userSession.js"
 import { yearSchema, yearSchemaReturn } from "./year.js"
@@ -40,6 +41,7 @@ export const schemas = {
     organization: organizationSchema,
     organizationUser: organizationUserSchema,
     tag: tagSchema,
+    tagYear: tagYearSchema,
     user: userSchema,
     userSession: userSessionSchema,
     year: yearSchema,
@@ -63,6 +65,7 @@ export const returnedSchemas = {
     organization: organizationSchemaReturn,
     organizationUser: organizationUserSchemaReturn,
     tag: tagSchemaReturn,
+    tagYear: tagYearSchemaReturn,
     user: userSchemaReturn,
     userSession: userSessionSchemaReturn,
     year: yearSchemaReturn,

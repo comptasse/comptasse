@@ -1,5 +1,6 @@
 import type { AnyRoute } from "@tanstack/react-router"
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
+import { dashboardOrganisationCategoriesRoute } from "./dashboardOrganisationCategoriesRoute.js"
 import { dashboardOrganisationExerciceBilanRoute } from "./dashboardOrganisationExerciceBilanRoute.js"
 import { dashboardOrganisationExerciceCategoriesRoute } from "./dashboardOrganisationExerciceCategoriesRoute.js"
 import { dashboardOrganisationExerciceCompteDeResultatCalculsRoute } from "./dashboardOrganisationExerciceCompteDeResultatCalculsRoute.js"
@@ -44,6 +45,7 @@ export const applicationTree: AnyRoute = rootLayoutRoute.addChildren([
         dashboardOrganisationExercicesRoute,
 
         dashboardOrganisationStockageRoute,
+        dashboardOrganisationCategoriesRoute,
         dashboardOrganisationParametresRoute,
         dashboardOrganisationParametresSecuriteRoute,
         dashboardOrganisationParametresMembresRoute,

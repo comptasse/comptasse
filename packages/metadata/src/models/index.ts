@@ -15,6 +15,7 @@ import * as matchingModel from "./matching.js"
 import * as organizationModel from "./organization.js"
 import * as organizationUserModel from "./organizationUser.js"
 import * as tagModel from "./tag.js"
+import * as tagYearModel from "./tagYear.js"
 import * as userModel from "./user.js"
 import * as userSessionModel from "./userSession.js"
 import * as yearModel from "./year.js"
@@ -37,6 +38,7 @@ export const models = {
     organization: organizationModel.organizationModel,
     organizationUser: organizationUserModel.organizationUserModel,
     tag: tagModel.tagModel,
+    tagYear: tagYearModel.tagYearModel,
     user: userModel.userModel,
     userSession: userSessionModel.userSessionModel,
     year: yearModel.yearModel,
@@ -60,6 +62,7 @@ export const modelSchemas = {
     ...organizationModel,
     ...organizationUserModel,
     ...tagModel,
+    ...tagYearModel,
     ...userModel,
     ...userSessionModel,
     ...yearModel,
