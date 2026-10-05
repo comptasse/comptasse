@@ -8,6 +8,7 @@ export const fileSchema = v.object({
     id: v.nonNullable(idSchema, "Ce champ est requis"),
     idOrganization: v.nonNullable(idSchema, "Ce champ est requis"),
     idFolder: v.nullable(idSchema),
+    idFileParent: v.nullable(idSchema),
     reference: v.nullable(
         varcharSchema({
             maxLength: 256,
@@ -34,6 +35,7 @@ export const fileSchemaReturn = v.pick(fileSchema, [
     "id",
     "idOrganization",
     "idFolder",
+    "idFileParent",
     "reference",
     "name",
     "storageKey",
