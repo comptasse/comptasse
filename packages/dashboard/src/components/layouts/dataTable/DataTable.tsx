@@ -382,6 +382,7 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
 function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     rows: Array<Row<TData>>
     columnCount: number
+    filteredEmptyText?: string
     virtualize: boolean
     virtualItems: Array<{
         index: number
@@ -396,6 +397,20 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     if (props.virtualize) {
         return (
             <Fragment>
+                {props.rows.length === 0 && (
+                    <tbody>
+                        <tr>
+                            <td colSpan={props.columnCount}>
+                                <FormatNull
+                                    text={props.filteredEmptyText ?? "Aucun résultat pour ces filtres"}
+                                    className={{
+                                        padding: "1rem",
+                                    }}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                )}
                 {props.virtualPaddingTop > 0 && (
                     <tbody>
                         <tr>
@@ -448,9 +463,9 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
             {props.rows.length > 0 ? null : (
                 <tbody>
                     <tr>
-                        <td>
+                        <td colSpan={props.columnCount}>
                             <FormatNull
-                                text="Aucun résultat"
+                                text={props.filteredEmptyText ?? "Aucun résultat"}
                                 className={{
                                     padding: "1rem",
                                 }}
@@ -476,6 +491,7 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
 function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
     table: Table<TData>
     columnCount: number
+    filteredEmptyText?: string
     rows: Array<Row<TData>>
     virtualize: boolean
     virtualItems: Array<{
@@ -523,6 +539,7 @@ function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
                 <DataTableRows
                     rows={props.rows}
                     columnCount={props.columnCount}
+                    filteredEmptyText={props.filteredEmptyText}
                     virtualize={props.virtualize}
                     virtualItems={props.virtualItems}
                     virtualPaddingTop={props.virtualPaddingTop}
@@ -562,6 +579,8 @@ type DataTableProps<TData extends Record<keyof TData, unknown>> = {
     selectionActions?: (selectedRows: Array<Row<TData>>) => ReactElement | null
     resetSelectionTrigger?: unknown
     emptyStateProps?: Parameters<typeof EmptyState>[0]
+    /** Message shown when a filter/search yields no rows (virtualized tables included). */
+    filteredEmptyText?: string
 }
 
 function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTableProps<TData>) {
@@ -795,6 +814,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTab
             <DataTableTable
                 table={table}
                 columnCount={columnCount}
+                filteredEmptyText={props.filteredEmptyText}
                 rows={rows}
                 virtualize={props.virtualize === true}
                 virtualItems={virtualItems}

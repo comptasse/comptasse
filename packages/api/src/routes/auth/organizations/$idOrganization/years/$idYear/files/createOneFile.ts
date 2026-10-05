@@ -1,14 +1,14 @@
 import { createOneFileRouteDefinition, generateId, models } from "@comptasse/application-metadata"
-import { eq, and, sql } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 import { checkAuthMiddleware } from "../../../../../../../middlewares/checkAuthMiddleware.js"
 import { requireOrganizationMiddleware } from "../../../../../../../middlewares/requireOrganizationMiddleware.js"
+import { Exception } from "../../../../../../../utilities/exception.js"
 import { registerRoute } from "../../../../../../../utilities/registerRoute.js"
 import { response } from "../../../../../../../utilities/response.js"
 import { insertOne } from "../../../../../../../utilities/sql/insertOne.js"
-import { selectOne } from "../../../../../../../utilities/sql/selectOne.js"
+import { selectMany } from "../../../../../../../utilities/sql/selectMany.js"
 import { updateOne } from "../../../../../../../utilities/sql/updateOne.js"
 import { putObject } from "../../../../../../../utilities/storage/putObject.js"
-import { Exception } from "../../../../../../../utilities/exception.js"
 
 export const createOneFileRoute = registerRoute(createOneFileRouteDefinition, async (c) => {
     const auth = await checkAuthMiddleware({
@@ -35,20 +35,18 @@ export const createOneFileRoute = registerRoute(createOneFileRouteDefinition, as
     }
 
     if (hash) {
-        try {
-            const existingFile = await selectOne({
-                database: c.var.clients.sql,
-                table: models.file,
-                where: (table) =>
-                    and(eq(table.idOrganization, idOrganization), eq(table.hash, hash)),
+        const existingFiles = await selectMany({
+            database: c.var.clients.sql,
+            table: models.file,
+            where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.hash, hash)),
+        })
+        if (existingFiles.length > 0) {
+            throw new Exception({
+                statusCode: 409,
+                internalMessage: "File already exists",
+                externalMessage: "Ce fichier existe déjà",
             })
-            return response({
-                context: c,
-                statusCode: 200,
-                schema: createOneFileRouteDefinition.schemas.return,
-                data: existingFile,
-            })
-        } catch {}
+        }
     }
 
     const storageKey = `organizations/${idOrganization}/storage/${generateId()}`
