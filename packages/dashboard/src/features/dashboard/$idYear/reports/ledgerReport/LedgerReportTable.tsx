@@ -1,5 +1,5 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
+import { FormatNull, FormatPrice, FormatText, LinkButton, LinkContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { Fragment, useMemo, useRef } from "react"
@@ -99,6 +99,7 @@ function LedgerAccountSection({
             {/* biome-ignore lint/complexity/noUselessFragments: Fragment needed for TypeScript type compatibility with Table.Body.Root children */}
             <Fragment>
                 {entryLines.map((entryLine) => {
+                    const entry = entryById.get(entryLine.idEntry)
                     return (
                         <Table.Body.Row
                             key={entryLine.id}
@@ -107,13 +108,18 @@ function LedgerAccountSection({
                             })}
                         >
                             <Table.Body.Cell>
-                                <FormatText
-                                    className={{
-                                        color: "neutral/50",
-                                    }}
-                                >
-                                    {entryById.get(entryLine.idEntry)?.label ?? ""}
-                                </FormatText>
+                                {entry === undefined ? null : (
+                                    <LinkButton
+                                        to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
+                                        params={{
+                                            idOrganization: entry.idOrganization,
+                                            idYear: entry.idYear,
+                                            idEntry: entry.id,
+                                        }}
+                                    >
+                                        <LinkContent>{entry.label}</LinkContent>
+                                    </LinkButton>
+                                )}
                             </Table.Body.Cell>
                             <Table.Body.Cell
                                 className={css({
