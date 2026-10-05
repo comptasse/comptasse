@@ -44,27 +44,25 @@ export function AccountsTable(props: { idOrganization: string; idYear: string; g
         props.globalFilter,
     ])
 
-    const hrefBase = `/organisation/${props.idOrganization}/exercice/${props.idYear}/comptes`
-
     const renderAccount = useCallback(
         (sortedAccount: (typeof structuredAccounts)[number]) => (
             <AccountItem
                 account={sortedAccount.account}
                 level={sortedAccount.level}
-                href={hrefBase}
+                href={`/organisation/${props.idOrganization}/exercice/${props.idYear}/comptes/${sortedAccount.account.id}`}
                 onClick={() =>
                     navigate({
-                        to: "/organisation/$idOrganization/exercice/$idYear/comptes",
+                        to: "/organisation/$idOrganization/exercice/$idYear/comptes/$idAccount",
                         params: {
                             idOrganization: props.idOrganization,
                             idYear: props.idYear,
+                            idAccount: sortedAccount.account.id,
                         },
                     })
                 }
             />
         ),
         [
-            hrefBase,
             navigate,
             props.idOrganization,
             props.idYear,

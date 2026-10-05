@@ -3,8 +3,11 @@ import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 import { dashboardOrganisationCategoriesRoute } from "./dashboardOrganisationCategoriesRoute.js"
 import { dashboardOrganisationExerciceBilanRoute } from "./dashboardOrganisationExerciceBilanRoute.js"
 import { dashboardOrganisationExerciceCategoriesRoute } from "./dashboardOrganisationExerciceCategoriesRoute.js"
+import { dashboardOrganisationExerciceCompteDeResultatCalculsComputationPosteRoute } from "./dashboardOrganisationExerciceCompteDeResultatCalculsComputationPosteRoute.js"
+import { dashboardOrganisationExerciceCompteDeResultatCalculsComputationRoute } from "./dashboardOrganisationExerciceCompteDeResultatCalculsComputationRoute.js"
 import { dashboardOrganisationExerciceCompteDeResultatCalculsRoute } from "./dashboardOrganisationExerciceCompteDeResultatCalculsRoute.js"
 import { dashboardOrganisationExerciceCompteDeResultatRoute } from "./dashboardOrganisationExerciceCompteDeResultatRoute.js"
+import { dashboardOrganisationExerciceComptesAccountRoute } from "./dashboardOrganisationExerciceComptesAccountRoute.js"
 import { dashboardOrganisationExerciceComptesRoute } from "./dashboardOrganisationExerciceComptesRoute.js"
 import { dashboardOrganisationExerciceDocumentsBalanceRoute } from "./dashboardOrganisationExerciceDocumentsBalanceRoute.js"
 import { dashboardOrganisationExerciceDocumentsBilanRoute } from "./dashboardOrganisationExerciceDocumentsBilanRoute.js"
@@ -62,11 +65,14 @@ export const applicationTree: AnyRoute = rootLayoutRoute.addChildren([
         dashboardOrganisationExerciceStockageRoute,
         dashboardOrganisationExerciceParametresRoute,
         dashboardOrganisationExerciceComptesRoute,
+        dashboardOrganisationExerciceComptesAccountRoute,
         dashboardOrganisationExerciceJournauxRoute,
         dashboardOrganisationExerciceCategoriesRoute,
         dashboardOrganisationExerciceBilanRoute,
         dashboardOrganisationExerciceCompteDeResultatRoute,
         dashboardOrganisationExerciceCompteDeResultatCalculsRoute,
+        dashboardOrganisationExerciceCompteDeResultatCalculsComputationRoute,
+        dashboardOrganisationExerciceCompteDeResultatCalculsComputationPosteRoute,
         dashboardOrganisationExerciceEcritureIdRoute,
         dashboardOrganisationFichierIdRoute,
         dashboardRootRoute,
