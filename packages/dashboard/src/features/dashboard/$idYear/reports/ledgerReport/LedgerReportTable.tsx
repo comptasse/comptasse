@@ -8,15 +8,18 @@ import { Table } from "../../../../../components/layouts/table/table.tsx"
 
 type EntryLine = v.InferOutput<typeof returnedSchemas.entryLine>
 type Account = v.InferOutput<typeof returnedSchemas.account>
+type Entry = v.InferOutput<typeof returnedSchemas.entry>
 
 function LedgerAccountSection({
     account,
     entryLines,
+    entryById,
     virtualItem,
     measureElement,
 }: {
     account: Account
     entryLines: Array<EntryLine>
+    entryById: Map<string, Entry>
     virtualItem: ReturnType<ReturnType<typeof useVirtualizer>["getVirtualItems"]>[number]
     measureElement: (element: Element | null) => void
 }) {
@@ -103,7 +106,15 @@ function LedgerAccountSection({
                                 borderColor: "neutral/5",
                             })}
                         >
-                            <Table.Body.Cell />
+                            <Table.Body.Cell>
+                                <FormatText
+                                    className={{
+                                        color: "neutral/50",
+                                    }}
+                                >
+                                    {entryById.get(entryLine.idEntry)?.label ?? ""}
+                                </FormatText>
+                            </Table.Body.Cell>
                             <Table.Body.Cell
                                 className={css({
                                     width: "[1%]",
@@ -131,9 +142,20 @@ function LedgerAccountSection({
 export function LedgerReportTable(props: {
     entryLines: Array<v.InferOutput<typeof returnedSchemas.entryLine>>
     accounts: Array<v.InferOutput<typeof returnedSchemas.account>>
+    entries: Array<v.InferOutput<typeof returnedSchemas.entry>>
 }) {
     const accountsTotalDebit = props.entryLines.reduce((acc, entryLine) => acc + Number(entryLine.debit), 0)
     const accountsTotalCredit = props.entryLines.reduce((acc, entryLine) => acc + Number(entryLine.credit), 0)
+
+    const entryById = useMemo(() => {
+        const map = new Map<string, Entry>()
+        for (const entry of props.entries) {
+            map.set(entry.id, entry)
+        }
+        return map
+    }, [
+        props.entries,
+    ])
 
     const entryLinesByAccountId = useMemo(() => {
         const map = new Map<string, Array<v.InferOutput<typeof returnedSchemas.entryLine>>>()
@@ -324,6 +346,7 @@ export function LedgerReportTable(props: {
                                     key={account.id}
                                     account={account}
                                     entryLines={entryLinesByAccountId.get(account.id) ?? []}
+                                    entryById={entryById}
                                     virtualItem={virtualItem}
                                     measureElement={(element) => virtualizer.measureElement(element)}
                                 />
