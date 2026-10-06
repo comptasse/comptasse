@@ -5,7 +5,7 @@ import {
     updateOneFileRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { InputDate, InputFile, InputText, toast } from "@comptasse/ui"
+import { InputDate, InputFile, InputText, InputTextArea, toast } from "@comptasse/ui"
 import { IconPencil } from "@tabler/icons-react"
 import { Fragment } from "react/jsx-runtime"
 import * as v from "valibot"
@@ -52,6 +52,7 @@ export function UpdateOneFileForm(props: {
                     const formData = new FormData()
                     formData.append("reference", data.reference ?? "")
                     formData.append("name", data.name ?? "")
+                    formData.append("description", data.description ?? "")
                     formData.append("date", data.date ?? "")
                     if (data.idFolder) {
                         formData.append("idFolder", data.idFolder)
@@ -81,6 +82,7 @@ export function UpdateOneFileForm(props: {
                             idFile: props.file.id,
                             reference: data.reference,
                             name: data.name,
+                            description: data.description,
                             date: data.date,
                             idFolder: data.idFolder,
                         },
@@ -176,6 +178,25 @@ export function UpdateOneFileForm(props: {
                                         />
                                         <FormControl>
                                             <InputText
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormError />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            label="Description"
+                                            isRequired={false}
+                                        />
+                                        <FormControl>
+                                            <InputTextArea
                                                 value={field.value}
                                                 onChange={field.onChange}
                                             />

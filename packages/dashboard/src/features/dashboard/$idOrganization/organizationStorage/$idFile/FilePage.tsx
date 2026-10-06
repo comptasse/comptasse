@@ -32,6 +32,13 @@ export function FilePage(props: { idOrganization?: string; idFile?: string } = {
                             <DataBlock.Item label="Nom">
                                 <FormatText>{file.name}</FormatText>
                             </DataBlock.Item>
+                            <DataBlock.Item label="Description">
+                                {file.description === null || file.description === "" ? (
+                                    <FormatNull />
+                                ) : (
+                                    <FormatText wrap={true}>{file.description}</FormatText>
+                                )}
+                            </DataBlock.Item>
                             <DataBlock.Item label="Date">
                                 {file.date !== null && file.date !== undefined ? (
                                     <FormatDateTime date={file.date} />

@@ -20,6 +20,11 @@ export const fileSchema = v.object({
         }),
         "Ce champ est requis",
     ),
+    description: v.nullable(
+        varcharSchema({
+            maxLength: 2048,
+        }),
+    ),
     storageKey: v.nullable(stringSchema),
     type: v.nullable(stringSchema),
     size: v.nullable(integerSchema),
@@ -38,6 +43,7 @@ export const fileSchemaReturn = v.pick(fileSchema, [
     "idFileParent",
     "reference",
     "name",
+    "description",
     "storageKey",
     "type",
     "size",

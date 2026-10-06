@@ -31,6 +31,9 @@ export const fileModel = pgTable(
         name: varchar("name", {
             length: 256,
         }).notNull(),
+        description: varchar("description", {
+            length: 2048,
+        }),
         storageKey: text("storage_key"),
         type: text("type"),
         size: integer("size"),

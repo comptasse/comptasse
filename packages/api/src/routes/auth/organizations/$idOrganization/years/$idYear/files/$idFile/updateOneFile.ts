@@ -13,6 +13,7 @@ import { putObject } from "../../../../../../../../utilities/storage/putObject.j
 const UPDATEABLE_FILE_FIELDS = [
     "reference",
     "name",
+    "description",
     "date",
     "idFolder",
 ] as const

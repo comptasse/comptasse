@@ -21,6 +21,7 @@ export const createOneFileRoute = registerRoute(createOneFileRouteDefinition, as
     const formData = await c.req.formData()
 
     const name = formData.get("name")?.toString() ?? ""
+    const description = formData.get("description")?.toString() ?? null
     const reference = formData.get("reference")?.toString() ?? null
     const hash = formData.get("hash")?.toString() ?? null
     const idFolder = formData.get("idFolder")?.toString() ?? null
@@ -76,6 +77,7 @@ export const createOneFileRoute = registerRoute(createOneFileRouteDefinition, as
                 idFolder: idFolder,
                 reference: reference,
                 name: name,
+                description: description,
                 storageKey: storageKey,
                 type: contentType,
                 size: size,

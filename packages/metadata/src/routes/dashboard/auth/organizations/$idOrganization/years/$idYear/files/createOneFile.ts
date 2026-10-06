@@ -14,6 +14,7 @@ export const createOneFileRouteDefinition = routeDefinition({
             idFolder: v.optional(fileSchema.entries.idFolder),
             reference: fileSchema.entries.reference,
             name: fileSchema.entries.name,
+            description: v.optional(fileSchema.entries.description),
             hash: fileSchema.entries.hash,
             file: v.optional(blobSchema),
         }),
