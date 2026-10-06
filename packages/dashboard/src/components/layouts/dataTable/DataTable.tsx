@@ -54,6 +54,13 @@ declare module "@tanstack/react-table" {
         }
         /** Extra text matched by the filters in addition to the raw value. */
         filterText?: (value: TValue, row: TData) => string
+        /** Input rendered for this column in the filter popover. */
+        filterVariant?: "text" | "combobox" | "boolean"
+        /** Options offered for the `combobox` filter variant. */
+        filterOptions?: Array<{
+            key: string
+            label: string
+        }>
     }
 }
 

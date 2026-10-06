@@ -91,6 +91,9 @@ export function EntriesTable(props: {
                     header: "Pointé",
                     cell: ({ row }) => <FormatBoolean boolean={row.original.isCleared} />,
                     filterFn: includesStringOrBoolean,
+                    meta: {
+                        filterVariant: "boolean",
+                    },
                 },
                 {
                     accessorKey: "label",
@@ -125,6 +128,15 @@ export function EntriesTable(props: {
                         return <FormatText>{journal.code}</FormatText>
                     },
                     filterFn: "includesString",
+                    meta: {
+                        filterVariant: "combobox",
+                        filterOptions: [
+                            ...journalsMap.values(),
+                        ].map((journal) => ({
+                            key: journal.id,
+                            label: `(${journal.code}) ${journal.label}`,
+                        })),
+                    },
                 },
                 {
                     accessorKey: "id",
@@ -140,7 +152,19 @@ export function EntriesTable(props: {
                         if (tagLabels.length === 0) return <FormatNull />
                         return <FormatText>{tagLabels.join(", ")}</FormatText>
                     },
-                    filterFn: "includesString",
+                    filterFn: (row, _columnId, filterValue) => {
+                        const tagIds = tagsByEntry.get(row.original.id) ?? []
+                        return tagIds.includes(String(filterValue))
+                    },
+                    meta: {
+                        filterVariant: "combobox",
+                        filterOptions: [
+                            ...tagsMap.values(),
+                        ].map((tag) => ({
+                            key: tag.id,
+                            label: tag.label,
+                        })),
+                    },
                 },
                 {
                     accessorKey: "idFile",
