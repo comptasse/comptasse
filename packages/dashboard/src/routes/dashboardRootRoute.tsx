@@ -5,7 +5,9 @@ export const dashboardRootRoute = createRoute({
     getParentRoute: () => dashboardLayoutRoute,
     path: "/",
     beforeLoad: () => {
-        throw redirect({ to: "/organisations" })
+        throw redirect({
+            to: "/organisations",
+        })
     },
     component: () => null,
 })

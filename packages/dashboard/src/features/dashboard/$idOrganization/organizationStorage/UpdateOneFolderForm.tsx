@@ -13,9 +13,7 @@ import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../utilities/invalidateData.js"
 
-export function UpdateOneFolderForm(props: {
-    folder: v.InferOutput<typeof returnedSchemas.folder>
-}) {
+export function UpdateOneFolderForm(props: { folder: v.InferOutput<typeof returnedSchemas.folder> }) {
     const { closePanel } = useRightPanel()
     return (
         <FormRoot

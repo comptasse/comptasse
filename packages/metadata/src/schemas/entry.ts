@@ -21,6 +21,11 @@ export const entrySchema = v.object({
         }),
         "Ce champ est requis",
     ),
+    description: v.nullable(
+        varcharSchema({
+            maxLength: 2048,
+        }),
+    ),
     isCleared: v.nonNullable(booleanSchema, "Ce champ est requis"),
     date: v.nonNullable(dateTimeSchema, "Ce champ est requis"),
     createdAt: v.nonNullable(dateTimeSchema, "Ce champ est requis"),
@@ -37,6 +42,7 @@ export const entrySchemaReturn = v.pick(entrySchema, [
     "idFile",
     "idempotencyKey",
     "label",
+    "description",
     "isCleared",
     "date",
     "createdAt",

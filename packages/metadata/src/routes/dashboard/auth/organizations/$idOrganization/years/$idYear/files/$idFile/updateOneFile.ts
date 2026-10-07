@@ -14,6 +14,7 @@ export const updateOneFileRouteDefinition = routeDefinition({
             idFile: fileSchema.entries.id,
             reference: v.optional(fileSchema.entries.reference),
             name: v.optional(fileSchema.entries.name),
+            description: v.optional(fileSchema.entries.description),
             date: v.optional(fileSchema.entries.date),
             idFolder: v.optional(fileSchema.entries.idFolder),
             file: v.optional(blobSchema),

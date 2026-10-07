@@ -4,8 +4,8 @@ import { dateTimeColumn } from "../components/models/dateTimeColumn.js"
 import { idColumn } from "../components/models/idColumn.js"
 import { entryTagModel } from "./entryTag.js"
 import { organizationModel } from "./organization.js"
+import { tagYearModel } from "./tagYear.js"
 import { userModel } from "./user.js"
-import { yearModel } from "./year.js"
 
 // Model
 export const tagModel = pgTable(
@@ -14,12 +14,6 @@ export const tagModel = pgTable(
         id: idColumn("id").primaryKey(),
         idOrganization: idColumn("id_organization")
             .references(() => organizationModel.id, {
-                onDelete: "cascade",
-                onUpdate: "cascade",
-            })
-            .notNull(),
-        idYear: idColumn("id_year")
-            .references(() => yearModel.id, {
                 onDelete: "cascade",
                 onUpdate: "cascade",
             })
@@ -40,11 +34,12 @@ export const tagModel = pgTable(
         }),
     },
     (t) => [
-        unique().on(t.idOrganization, t.idYear, t.label),
+        unique().on(t.idOrganization, t.label),
     ],
 )
 
 // Relations
 export const tagRelations = relations(tagModel, ({ many }) => ({
     entryTags: many(entryTagModel),
+    tagYears: many(tagYearModel),
 }))

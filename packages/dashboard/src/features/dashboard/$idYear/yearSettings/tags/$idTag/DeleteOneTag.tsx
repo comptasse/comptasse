@@ -1,6 +1,7 @@
 import { deleteOneTagRouteDefinition, readAllTagsRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, ButtonOutlineContent, ButtonPlainContent, Dialog, toast, useModalStore } from "@comptasse/ui"
+import { useParams } from "@tanstack/react-router"
 import { type ComponentPropsWithRef, type ReactElement, useId } from "react"
 import type * as v from "valibot"
 import { applicationRouter } from "../../../../../../routes/applicationRouter.tsx"
@@ -13,13 +14,17 @@ export function DeleteOneTag(props: {
 }) {
     const modalId = useId()
     const { open: openModal, close: closeModal } = useModalStore()
+    const params = useParams({
+        strict: false,
+    }) as {
+        idYear?: string
+    }
 
     async function onSubmit() {
         const deleteResponse = await getResponseBodyFromAPI({
             routeDefinition: deleteOneTagRouteDefinition,
             body: {
                 idTag: props.tag.id,
-                idYear: props.tag.idYear,
             },
         })
 
@@ -34,7 +39,7 @@ export function DeleteOneTag(props: {
         await invalidateData({
             routeDefinition: readAllTagsRouteDefinition,
             body: {
-                idYear: props.tag.idYear,
+                idYear: params.idYear ?? "",
             },
         })
 
@@ -47,7 +52,7 @@ export function DeleteOneTag(props: {
             to: "/organisation/$idOrganization/exercice/$idYear/catégories",
             params: {
                 idOrganization: props.tag.idOrganization,
-                idYear: props.tag.idYear,
+                idYear: params.idYear ?? "",
             },
         })
     }

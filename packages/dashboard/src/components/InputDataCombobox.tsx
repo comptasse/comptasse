@@ -11,6 +11,10 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
         key: string
         label: string
     }
+    /** Restrict the offered options (e.g. only selectable accounts). */
+    filter?: (data: v.InferOutput<TRouteDefinition["schemas"]["return"]>[number]) => boolean
+    /** Allow long option/trigger labels to wrap onto multiple lines. */
+    wrapLabels?: boolean
     value?: string | null
     onChange: (value?: string | null) => void
 }) {
@@ -19,6 +23,16 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
         body: props.body,
     })
 
+    const items: Array<v.InferOutput<TRouteDefinition["schemas"]["return"]>[number]> =
+        response.data === undefined
+            ? []
+            : Array.isArray(response.data)
+              ? response.data
+              : [
+                    response.data,
+                ]
+    const filteredItems = props.filter === undefined ? items : items.filter(props.filter)
+
     return (
         <InputCombobox
             key={response.status}
@@ -26,16 +40,9 @@ export function InputDataCombobox<TRouteDefinition extends ReturnType<typeof rou
             onChange={props.onChange}
             isLoading={response.isPending}
             allowEmpty={true}
+            wrapLabels={props.wrapLabels}
             placeholder={props.placeholder ?? "Sélectionner un élément"}
-            options={
-                response.data === undefined
-                    ? []
-                    : Array.isArray(response.data)
-                      ? response.data?.map((item) => props.getOption(item))
-                      : [
-                            props.getOption(response.data),
-                        ]
-            }
+            options={filteredItems.map((item) => props.getOption(item))}
         />
     )
 }

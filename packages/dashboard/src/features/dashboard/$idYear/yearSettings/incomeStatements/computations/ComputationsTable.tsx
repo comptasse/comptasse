@@ -43,10 +43,11 @@ export function ComputationsTable(props: {
                         {computations.map((computation) => (
                             <LinkButton
                                 key={computation.id}
-                                to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
+                                to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs/$idComputation"
                                 params={{
                                     idOrganization: props.idOrganization,
                                     idYear: props.idYear,
+                                    idComputation: computation.id,
                                 }}
                                 className={{
                                     width: "100%",

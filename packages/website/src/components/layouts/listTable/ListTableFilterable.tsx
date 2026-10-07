@@ -24,7 +24,18 @@ export function ListTableFilterable<TItem>(props: {
         }>
     >([])
 
-    const columnById = useMemo(() => new Map(props.columns.map((col) => [col.id, col])), [props.columns])
+    const columnById = useMemo(
+        () =>
+            new Map(
+                props.columns.map((col) => [
+                    col.id,
+                    col,
+                ]),
+            ),
+        [
+            props.columns,
+        ],
+    )
 
     const filteredAndSorted = useMemo(() => {
         let result = props.items
@@ -61,9 +72,7 @@ export function ListTableFilterable<TItem>(props: {
         }
 
         if (sorting.length > 0) {
-            result = [
-                ...result,
-            ].sort((a, b) => {
+            result = result.toSorted((a, b) => {
                 for (const sort of sorting) {
                     const column = columnById.get(sort.id)
                     if (!column) continue

@@ -1,7 +1,7 @@
 import { css } from "@comptasse/ui/utilities/cn.js"
 import type { ReactNode } from "react"
 
-export function TreeSection({  children }: { children: ReactNode }) {
+export function TreeSection({ children }: { children: ReactNode }) {
     return (
         <div
             className={css({

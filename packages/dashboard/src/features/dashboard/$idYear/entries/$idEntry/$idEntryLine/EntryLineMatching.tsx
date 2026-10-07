@@ -7,7 +7,7 @@ import {
     readAllMatchingsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonOutlineContent, ButtonPlainContent, InputSelect, toast } from "@comptasse/ui"
+import { Button, ButtonOutlineContent, ButtonPlainContent, InputCombobox, InputText, toast } from "@comptasse/ui"
 import { IconLink, IconUnlink } from "@tabler/icons-react"
 import type { JSX } from "react"
 import { useState } from "react"
@@ -45,6 +45,7 @@ async function refresh(idYear: string) {
 function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<Matching> }) {
     const { closePanel } = useRightPanel()
     const [selectedMatchingId, setSelectedMatchingId] = useState<string | null>(null)
+    const [code, setCode] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const currentMatching = props.entryLine.idMatching
@@ -63,6 +64,7 @@ function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<M
                     entryLineIds: [
                         props.entryLine.id,
                     ],
+                    code: code.trim() === "" ? undefined : code.trim(),
                 },
             })
             if (response.ok === false) {
@@ -175,6 +177,11 @@ function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<M
                 </>
             ) : (
                 <>
+                    <InputText
+                        value={code}
+                        onChange={(value) => setCode(value ?? "")}
+                        placeholder="Code du lettrage (généré si vide)"
+                    />
                     <Button
                         hasLoader={isSubmitting}
                         onClick={generate}
@@ -192,7 +199,7 @@ function EntryLineMatchingForm(props: { entryLine: EntryLine; matchings: Array<M
                             gap: "0.5rem",
                         }}
                     >
-                        <InputSelect
+                        <InputCombobox
                             value={selectedMatchingId}
                             onChange={(value) => setSelectedMatchingId(value ?? null)}
                             options={availableMatchings.map((matching) => ({

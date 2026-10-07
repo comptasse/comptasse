@@ -5,7 +5,7 @@ import {
     updateOneFileRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { InputDate, InputFile, InputText, toast } from "@comptasse/ui"
+import { InputDate, InputFile, toast } from "@comptasse/ui"
 import { IconPencil } from "@tabler/icons-react"
 import { Fragment } from "react/jsx-runtime"
 import * as v from "valibot"
@@ -15,6 +15,7 @@ import { FormField } from "../../../../../components/forms/FormField.js"
 import { FormItem } from "../../../../../components/forms/FormItem.js"
 import { FormLabel } from "../../../../../components/forms/FormLabel.js"
 import { FormRoot } from "../../../../../components/forms/FormRoot.js"
+import { FormTextField } from "../../../../../components/forms/FormTextField.js"
 import { useRightPanel } from "../../../../../contexts/rightPanel/RightPanelContext.js"
 import { getResponseBodyFromAPI } from "../../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../../utilities/invalidateData.js"
@@ -52,6 +53,7 @@ export function UpdateOneFileForm(props: {
                     const formData = new FormData()
                     formData.append("reference", data.reference ?? "")
                     formData.append("name", data.name ?? "")
+                    formData.append("description", data.description ?? "")
                     formData.append("date", data.date ?? "")
                     if (data.idFolder) {
                         formData.append("idFolder", data.idFolder)
@@ -81,6 +83,7 @@ export function UpdateOneFileForm(props: {
                             idFile: props.file.id,
                             reference: data.reference,
                             name: data.name,
+                            description: data.description,
                             date: data.date,
                             idFolder: data.idFolder,
                         },
@@ -143,46 +146,22 @@ export function UpdateOneFileForm(props: {
                     )}
                     {showMetadata && (
                         <Fragment>
-                            <FormField
+                            <FormTextField
                                 control={form.control}
                                 name="reference"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel
-                                            label="Référence"
-                                            isRequired={false}
-                                        />
-                                        <FormControl>
-                                            <InputText
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                autoFocus
-                                            />
-                                        </FormControl>
-                                        <FormError />
-                                    </FormItem>
-                                )}
+                                label="Référence"
+                                autoFocus={true}
                             />
-                            <FormField
+                            <FormTextField
                                 control={form.control}
                                 name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel
-                                            label="Nom du fichier"
-                                            isRequired={false}
-                                            description={undefined}
-                                            tooltip={undefined}
-                                        />
-                                        <FormControl>
-                                            <InputText
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormError />
-                                    </FormItem>
-                                )}
+                                label="Nom du fichier"
+                            />
+                            <FormTextField
+                                control={form.control}
+                                name="description"
+                                label="Description"
+                                multiline={true}
                             />
                             <FormField
                                 control={form.control}

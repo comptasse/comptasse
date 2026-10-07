@@ -1,7 +1,7 @@
 import { createRoute } from "@tanstack/react-router"
 import { DocRoot } from "../../../../../../components/document/DocRoot"
-import { scenariosAccountingDocLayoutRoute } from "./scenariosAccountingDocLayoutRoute.js"
 import { ScenariosResourcesAccountingDocPage } from "../../../../../../features/docs/accounting/resources/scenarios/ScenariosResourcesAccountingDocPage.js"
+import { scenariosAccountingDocLayoutRoute } from "./scenariosAccountingDocLayoutRoute.js"
 
 export const scenariosAccountingDocIndexRoute = createRoute({
     getParentRoute: () => scenariosAccountingDocLayoutRoute,

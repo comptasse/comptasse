@@ -30,8 +30,8 @@ export function RootGeneralDocPage() {
             >
                 <DocParagraph>
                     Comptasse est un logiciel de comptabilité open source conçu pour tous. Accessible, moderne et
-                    respectueux des normes comptables françaises, il vous permet de gérer vos écritures comptables,
-                    vos documents, générer vos documents fiscaux et collaborer avec votre équipe.
+                    respectueux des normes comptables françaises, il vous permet de gérer vos écritures comptables, vos
+                    documents, générer vos documents fiscaux et collaborer avec votre équipe.
                 </DocParagraph>
                 <div
                     className={css({
@@ -40,7 +40,10 @@ export function RootGeneralDocPage() {
                     })}
                 >
                     <LinkButton to="/documentation/fonctionnalités">
-                        <ButtonOutlineContent text="Voir les fonctionnalités" rightIcon={<IconChevronRight />} />
+                        <ButtonOutlineContent
+                            text="Voir les fonctionnalités"
+                            rightIcon={<IconChevronRight />}
+                        />
                     </LinkButton>
                 </div>
             </div>
@@ -63,7 +66,7 @@ export function RootGeneralDocPage() {
                     description="Apprenez les bases de la comptabilité française : la partie double, les écritures, les comptes, les documents comptables et les ressources de référence."
                     links={[
                         {
-                            to: "/documentation/comptabilité/introduction/",
+                            to: "/documentation/comptabilité/introduction",
                             label: "Introduction",
                         },
                         {

@@ -9,7 +9,14 @@ import { selectOne } from "../../../../../../../../utilities/sql/selectOne.js"
 import { updateOne } from "../../../../../../../../utilities/sql/updateOne.js"
 import { deleteObject } from "../../../../../../../../utilities/storage/deleteObject.js"
 import { putObject } from "../../../../../../../../utilities/storage/putObject.js"
-import { Exception } from "../../../../../../../../utilities/exception.js"
+
+const UPDATEABLE_FILE_FIELDS = [
+    "reference",
+    "name",
+    "description",
+    "date",
+    "idFolder",
+] as const
 
 export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, async (c) => {
     const auth = await checkAuthMiddleware({
@@ -21,10 +28,9 @@ export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, as
 
     const contentType = c.req.header("content-type") ?? ""
 
-    let reference: string | null = null
-    let name: string | null = null
-    let date: string | null = null
-    let idFolder: string | null = null
+    // Only fields actually provided are updated, so a partial update (e.g. moving
+    // a file to another folder) never wipes the others (name, date, reference).
+    const providedFields: Record<string, unknown> = {}
     let file: File | null = null
 
     let idFile: string
@@ -32,10 +38,9 @@ export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, as
     if (contentType.includes("multipart/form-data")) {
         const formData = await c.req.formData()
         idFile = c.req.param("idFile") ?? ""
-        reference = formData.get("reference")?.toString() ?? null
-        name = formData.get("name")?.toString() ?? null
-        date = formData.get("date")?.toString() ?? null
-        idFolder = formData.get("idFolder")?.toString() ?? null
+        for (const key of UPDATEABLE_FILE_FIELDS) {
+            if (formData.has(key)) providedFields[key] = formData.get(key)?.toString() || null
+        }
         file = formData.get("file") as File | null
     } else {
         const body = await validateBodyMiddleware({
@@ -43,17 +48,13 @@ export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, as
             schema: updateOneFileRouteDefinition.schemas.body,
         })
         idFile = body.idFile
-        reference = body.reference ?? null
-        name = body.name ?? null
-        date = body.date ?? null
-        idFolder = body.idFolder ?? null
+        for (const key of UPDATEABLE_FILE_FIELDS) {
+            if (Object.hasOwn(body, key)) providedFields[key] = body[key] ?? null
+        }
     }
 
     const updateData: Record<string, unknown> = {
-        reference: reference,
-        name: name,
-        date: date,
-        idFolder: idFolder,
+        ...providedFields,
         lastUpdatedAt: new Date().toISOString(),
         lastUpdatedBy: auth.user.id,
     }
@@ -63,8 +64,7 @@ export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, as
             const existing = await selectOne({
                 database: tx,
                 table: models.file,
-                where: (table) =>
-                    and(eq(table.idOrganization, idOrganization), eq(table.id, idFile)),
+                where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.id, idFile)),
             })
 
             if (existing.storageKey) {
@@ -110,8 +110,7 @@ export const updateOneFileRoute = registerRoute(updateOneFileRouteDefinition, as
             database: tx,
             table: models.file,
             data: updateData as Record<string, unknown>,
-            where: (table) =>
-                and(eq(table.idOrganization, idOrganization), eq(table.id, idFile)),
+            where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.id, idFile)),
         })
 
         if (file && file.size > 0) {

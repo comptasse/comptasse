@@ -1,5 +1,5 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { FormatDate, FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
+import { FormatDate, FormatNull, FormatPrice, FormatText, LinkButton, LinkContent } from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import { useVirtualizer } from "@tanstack/react-virtual"
 import { Fragment, useMemo, useRef } from "react"
@@ -59,7 +59,16 @@ function JournalEntrySection({
                     />
                 </Table.Body.Cell>
                 <Table.Body.Cell colSpan={2}>
-                    <FormatText wrap={true}>{entry.label}</FormatText>
+                    <LinkButton
+                        to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
+                        params={{
+                            idOrganization: entry.idOrganization,
+                            idYear: entry.idYear,
+                            idEntry: entry.id,
+                        }}
+                    >
+                        <LinkContent>{entry.label}</LinkContent>
+                    </LinkButton>
                 </Table.Body.Cell>
                 <Table.Body.Cell
                     className={css({

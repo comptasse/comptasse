@@ -54,9 +54,7 @@ function getDescendantFolderIds(parameters: {
     return descendants
 }
 
-export function MoveOneFolderForm(props: {
-    folder: v.InferOutput<typeof returnedSchemas.folder>
-}) {
+export function MoveOneFolderForm(props: { folder: v.InferOutput<typeof returnedSchemas.folder> }) {
     const { closePanel } = useRightPanel()
     const foldersResponse = useDataFromAPI({
         routeDefinition: readAllFoldersRouteDefinition,
@@ -71,7 +69,10 @@ export function MoveOneFolderForm(props: {
         })
         blockedFolderIds.add(props.folder.id)
 
-        const options: Array<{ key: string; label: string }> = [
+        const options: Array<{
+            key: string
+            label: string
+        }> = [
             {
                 key: rootOptionKey,
                 label: "/",

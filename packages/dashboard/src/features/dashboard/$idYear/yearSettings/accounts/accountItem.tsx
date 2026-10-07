@@ -1,6 +1,6 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { memo, useCallback, type MouseEvent } from "react"
+import { type MouseEvent, memo, useCallback } from "react"
 import type * as v from "valibot"
 
 export const INDENT_PER_LEVEL = 16
@@ -55,7 +55,9 @@ export const AccountItem = memo(function AccountItem(props: {
             e.preventDefault()
             props.onClick?.()
         },
-        [props.onClick],
+        [
+            props.onClick,
+        ],
     )
 
     return (

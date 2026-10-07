@@ -15,8 +15,12 @@ export function DataWrapper<TRouteDefinition extends ReturnType<typeof routeDefi
     loaderProps?: ComponentProps<typeof CircularLoader>
     errorProps?: ComponentProps<typeof FormatError>
 }) {
-    const urlParams = useParams({ strict: false })
-    const params = { ...props.params }
+    const urlParams = useParams({
+        strict: false,
+    })
+    const params = {
+        ...props.params,
+    }
     if (
         props.routeDefinition.path.includes(":idOrganization") &&
         params.idOrganization === undefined &&

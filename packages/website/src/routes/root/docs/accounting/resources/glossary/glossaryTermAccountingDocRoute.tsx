@@ -1,8 +1,8 @@
 import { createRoute } from "@tanstack/react-router"
 import { DocRoot } from "../../../../../../components/document/DocRoot"
+import { GlossaryTermResourcesAccountingDocPage } from "../../../../../../features/docs/accounting/resources/glossary/GlossaryTermResourcesAccountingDocPage.js"
 import { getGlossaryTermBySlug } from "../../../../../../features/docs/accounting/resources/glossary/glossaryData.js"
 import { glossaryAccountingDocLayoutRoute } from "./glossaryAccountingDocLayoutRoute.js"
-import { GlossaryTermResourcesAccountingDocPage } from "../../../../../../features/docs/accounting/resources/glossary/GlossaryTermResourcesAccountingDocPage.js"
 
 export const glossaryTermAccountingDocRoute = createRoute({
     getParentRoute: () => glossaryAccountingDocLayoutRoute,

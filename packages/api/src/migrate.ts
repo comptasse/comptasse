@@ -10,7 +10,9 @@ if (!databaseUrl) {
 
 const migrationsDir = process.env.MIGRATIONS_DIR || "/app/migrations"
 
-const sql = postgres(databaseUrl, { max: 1 })
+const sql = postgres(databaseUrl, {
+    max: 1,
+})
 
 async function main() {
     await sql`create schema if not exists meta`
@@ -19,26 +21,39 @@ async function main() {
         applied_at timestamptz not null default now()
     )`
 
-    const files = readdirSync(migrationsDir).filter((file) => file.endsWith(".sql")).sort()
+    const files = readdirSync(migrationsDir)
+        .filter((file) => file.endsWith(".sql"))
+        .sort()
     if (files.length === 0) {
         throw new Error(`No migration files found in ${migrationsDir}`)
     }
 
-    const appliedRows = await sql<{ name: string }[]>`select name from meta._migrations`
+    const appliedRows = await sql<
+        {
+            name: string
+        }[]
+    >`select name from meta._migrations`
     const applied = new Set(appliedRows.map((row) => row.name))
 
-    const [{ count }] = await sql<{ count: number }[]>`select count(*)::int as count from information_schema.tables where table_schema = 'public'`
+    const [{ count }] = await sql<
+        {
+            count: number
+        }[]
+    >`select count(*)::int as count from information_schema.tables where table_schema = 'public'`
     const isFresh = count === 0
 
     // 0000_setup.sql must be the first file (sorts before 0001_*)
     const setupFile = files[0]
 
+    // Migrations must run sequentially: each file is recorded as applied before the next runs, so the loop is
+    // intentionally ordered and cannot be parallelised.
     for (const file of files) {
         if (applied.has(file)) continue
 
         if (isFresh && file !== setupFile) {
             // Fresh install: setup.sql contains the full current schema.
             // Record the remaining files as applied without running them.
+            // react-doctor-disable-next-line react-doctor/async-await-in-loop
             await sql`insert into meta._migrations (name) values (${file})`
             continue
         }

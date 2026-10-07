@@ -55,6 +55,7 @@ export const duplicateOneEntryRoute = registerRoute(duplicateOneEntryRouteDefini
                 idJournal: originalEntry.idJournal,
                 idFile: originalEntry.idFile,
                 label: `${originalEntry.label} (copy)`,
+                description: originalEntry.description,
                 date: originalEntry.date,
                 createdAt: new Date().toISOString(),
                 lastUpdatedAt: null,

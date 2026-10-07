@@ -8,7 +8,7 @@ import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, InputToggle, toast } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPlus } from "@tabler/icons-react"
-import { useState, type JSX } from "react"
+import { type JSX, useState } from "react"
 import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
 import { FormControl } from "../../../../../../../../../components/forms/FormControl.tsx"
@@ -51,121 +51,121 @@ export function UpdateOneComputationIncomeStatement(props: {
                     })}
                 >
                     <FormRoot
-                            schema={updateOneComputationIncomeStatementRouteDefinition.schemas.body}
-                            defaultValues={{
-                                ...props.computationIncomeStatement,
-                                idComputationIncomeStatement: props.computationIncomeStatement.id,
-                            }}
-                            submitButtonProps={{
-                                leftIcon: <IconPlus />,
-                                text: "Modifier le terme du calcul",
-                            }}
-                            onSubmit={async (data) => {
-                                const updateComputationIncomeStatementResponse = await getResponseBodyFromAPI({
-                                    routeDefinition: updateOneComputationIncomeStatementRouteDefinition,
-                                    body: data,
-                                })
-                                if (updateComputationIncomeStatementResponse.ok === false) {
-                                    toast({
-                                        title: "Impossible de modifier le terme du calcul",
-                                        variant: "error",
-                                    })
-                                    return false
-                                }
-
+                        schema={updateOneComputationIncomeStatementRouteDefinition.schemas.body}
+                        defaultValues={{
+                            ...props.computationIncomeStatement,
+                            idComputationIncomeStatement: props.computationIncomeStatement.id,
+                        }}
+                        submitButtonProps={{
+                            leftIcon: <IconPlus />,
+                            text: "Modifier le terme du calcul",
+                        }}
+                        onSubmit={async (data) => {
+                            const updateComputationIncomeStatementResponse = await getResponseBodyFromAPI({
+                                routeDefinition: updateOneComputationIncomeStatementRouteDefinition,
+                                body: data,
+                            })
+                            if (updateComputationIncomeStatementResponse.ok === false) {
                                 toast({
-                                    title: "Terme du calcul modifié avec succès",
-                                    variant: "success",
+                                    title: "Impossible de modifier le terme du calcul",
+                                    variant: "error",
                                 })
-                                return true
-                            }}
-                            onCancel={() => setOpen(false)}
-                            onSuccess={async () => {
-                                await Promise.all([
-                                    invalidateData({
-                                        routeDefinition: readAllComputationIncomeStatementsRouteDefinition,
-                                        body: {
-                                            idYear: props.computationIncomeStatement.idYear,
-                                        },
-                                    }),
-                                    invalidateData({
-                                        routeDefinition: readOneComputationIncomeStatementRouteDefinition,
-                                        body: {
-                                            idComputationIncomeStatement: props.computationIncomeStatement.id,
-                                            idYear: props.computationIncomeStatement.idYear,
-                                        },
-                                    }),
-                                ])
+                                return false
+                            }
 
-                                setOpen(false)
-                            }}
-                        >
-                            {(form) => (
-                                <Fragment>
-                                    <FormField
-                                        control={form.control}
-                                        name="idIncomeStatement"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Poste du compte de résultat"
-                                                    tooltip="Le poste du compte de résultat à utiliser pour cette opération."
-                                                    isRequired
+                            toast({
+                                title: "Terme du calcul modifié avec succès",
+                                variant: "success",
+                            })
+                            return true
+                        }}
+                        onCancel={() => setOpen(false)}
+                        onSuccess={async () => {
+                            await Promise.all([
+                                invalidateData({
+                                    routeDefinition: readAllComputationIncomeStatementsRouteDefinition,
+                                    body: {
+                                        idYear: props.computationIncomeStatement.idYear,
+                                    },
+                                }),
+                                invalidateData({
+                                    routeDefinition: readOneComputationIncomeStatementRouteDefinition,
+                                    body: {
+                                        idComputationIncomeStatement: props.computationIncomeStatement.id,
+                                        idYear: props.computationIncomeStatement.idYear,
+                                    },
+                                }),
+                            ])
+
+                            setOpen(false)
+                        }}
+                    >
+                        {(form) => (
+                            <Fragment>
+                                <FormField
+                                    control={form.control}
+                                    name="idIncomeStatement"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Poste du compte de résultat"
+                                                tooltip="Le poste du compte de résultat à utiliser pour cette opération."
+                                                isRequired
+                                            />
+                                            <FormControl>
+                                                <InputDataCombobox
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    routeDefinition={readAllIncomeStatementsRouteDefinition}
+                                                    body={{
+                                                        idYear: props.computationIncomeStatement.idYear,
+                                                    }}
+                                                    placeholder="Sélectionner un poste du compte de résultat"
+                                                    getOption={(incomeStatement) => ({
+                                                        key: incomeStatement.id,
+                                                        label: `${incomeStatement.number} - ${incomeStatement.label}`,
+                                                    })}
                                                 />
-                                                <FormControl>
-                                                    <InputDataCombobox
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        routeDefinition={readAllIncomeStatementsRouteDefinition}
-                                                        body={{
-                                                            idYear: props.computationIncomeStatement.idYear,
-                                                        }}
-                                                        placeholder="Sélectionner un poste du compte de résultat"
-                                                        getOption={(incomeStatement) => ({
-                                                            key: incomeStatement.id,
-                                                            label: `${incomeStatement.number} - ${incomeStatement.label}`,
-                                                        })}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="operation"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Opération"
-                                                    tooltip="L'opération à effectuer avec cette ligne de compte de résultat."
-                                                    isRequired
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="operation"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Opération"
+                                                tooltip="L'opération à effectuer avec cette ligne de compte de résultat."
+                                                isRequired
+                                            />
+                                            <FormControl>
+                                                <InputToggle
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    options={[
+                                                        {
+                                                            label: "Addition",
+                                                            value: "plus",
+                                                        },
+                                                        {
+                                                            label: "Soustraction",
+                                                            value: "minus",
+                                                        },
+                                                    ]}
                                                 />
-                                                <FormControl>
-                                                    <InputToggle
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                        options={[
-                                                            {
-                                                                label: "Addition",
-                                                                value: "plus",
-                                                            },
-                                                            {
-                                                                label: "Soustraction",
-                                                                value: "minus",
-                                                            },
-                                                        ]}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </Fragment>
-                            )}
-                        </FormRoot>
-                    </div>
-                )}
-            </>
-        )
-    }
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                            </Fragment>
+                        )}
+                    </FormRoot>
+                </div>
+            )}
+        </>
+    )
+}

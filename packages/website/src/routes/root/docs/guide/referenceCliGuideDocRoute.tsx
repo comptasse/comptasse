@@ -1,8 +1,7 @@
 import { createRoute } from "@tanstack/react-router"
 import { DocRoot } from "../../../../components/document/DocRoot"
-import { guideDocLayoutRoute } from "./guideDocLayoutRoute.js"
 import { ReferenceCliGuideDocPage } from "../../../../features/docs/guide/ReferenceCliGuideDocPage.js"
-
+import { guideDocLayoutRoute } from "./guideDocLayoutRoute.js"
 
 export const referenceCliGuideDocRoute = createRoute({
     getParentRoute: () => guideDocLayoutRoute,

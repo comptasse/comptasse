@@ -1,4 +1,3 @@
-import { useCallback } from "react"
 import {
     readOneOrganizationRouteDefinition,
     updateOrganizationStorageCredentialsRouteDefinition,
@@ -8,7 +7,7 @@ import { Button, ButtonOutlineContent, formatFileSize, InputPassword, InputText,
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconDeviceFloppy } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type * as v from "valibot"
 import { Block } from "../../../../components/layouts/block/block.tsx"
 import { DataWrapper } from "../../../../components/layouts/DataWrapper.tsx"
@@ -63,24 +62,34 @@ interface FieldDef {
 }
 
 const FIELDS: FieldDef[] = [
-    { key: "storageEndpoint", label: "Endpoint" },
-    { key: "storageAccessKey", label: "Clé d'accès" },
-    { key: "storageSecretKey", label: "Clé secrète", isPassword: true },
-    { key: "storageBucketName", label: "Bucket" },
-    { key: "storageRegion", label: "Région" },
+    {
+        key: "storageEndpoint",
+        label: "Endpoint",
+    },
+    {
+        key: "storageAccessKey",
+        label: "Clé d'accès",
+    },
+    {
+        key: "storageSecretKey",
+        label: "Clé secrète",
+        isPassword: true,
+    },
+    {
+        key: "storageBucketName",
+        label: "Bucket",
+    },
+    {
+        key: "storageRegion",
+        label: "Région",
+    },
 ]
 
-function StorageCredentialsBlock({
-    idOrganization,
-    org,
-}: {
-    idOrganization: string
-    org: Record<string, unknown>
-}) {
+function StorageCredentialsBlock({ idOrganization, org }: { idOrganization: string; org: Record<string, unknown> }) {
     const initialSnap = FIELDS.map((f) => `${f.key}:${(org[f.key] as string | null | undefined) ?? ""}`).join("|")
     const [values, setValues] = useState<Record<string, string>>(() => {
         const init: Record<string, string> = {}
-            for (const f of FIELDS) init[f.key] = (org[f.key] as string | null | undefined) ?? ""
+        for (const f of FIELDS) init[f.key] = (org[f.key] as string | null | undefined) ?? ""
         return init
     })
     const [isSaving, setIsSaving] = useState(false)
@@ -90,7 +99,9 @@ function StorageCredentialsBlock({
     const handleSave = useCallback(async () => {
         setIsSaving(true)
         try {
-            const body: Record<string, string | null | undefined> = { ...values }
+            const body: Record<string, string | null | undefined> = {
+                ...values,
+            }
             for (const f of FIELDS) if (body[f.key] === "") body[f.key] = undefined
             const response = await getResponseBodyFromAPI({
                 routeDefinition: updateOrganizationStorageCredentialsRouteDefinition,
@@ -104,7 +115,9 @@ function StorageCredentialsBlock({
             } else {
                 await invalidateData({
                     routeDefinition: readOneOrganizationRouteDefinition,
-                    body: { idOrganization },
+                    body: {
+                        idOrganization,
+                    },
                 })
                 toast({
                     title: "Identifiants de stockage mis à jour",
@@ -114,7 +127,10 @@ function StorageCredentialsBlock({
         } finally {
             setIsSaving(false)
         }
-    }, [values, idOrganization])
+    }, [
+        values,
+        idOrganization,
+    ])
 
     return (
         <Block.Root>
@@ -137,19 +153,33 @@ function StorageCredentialsBlock({
                         })}
                     >
                         <span
-                            className={css({ fontSize: "sm", fontWeight: "medium", color: "fg.muted" })}
+                            className={css({
+                                fontSize: "sm",
+                                fontWeight: "medium",
+                                color: "fg.muted",
+                            })}
                         >
                             {f.label}
                         </span>
                         {f.isPassword ? (
                             <InputPassword
                                 value={values[f.key] ?? ""}
-                                onChange={(v) => setValues((p) => ({ ...p, [f.key]: v ?? "" }))}
+                                onChange={(v) =>
+                                    setValues((p) => ({
+                                        ...p,
+                                        [f.key]: v ?? "",
+                                    }))
+                                }
                             />
                         ) : (
                             <InputText
                                 value={values[f.key] ?? ""}
-                                onChange={(v) => setValues((p) => ({ ...p, [f.key]: v ?? "" }))}
+                                onChange={(v) =>
+                                    setValues((p) => ({
+                                        ...p,
+                                        [f.key]: v ?? "",
+                                    }))
+                                }
                             />
                         )}
                     </div>

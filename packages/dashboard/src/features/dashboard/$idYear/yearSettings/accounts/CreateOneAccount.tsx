@@ -165,9 +165,7 @@ export function CreateOneAccount(props: {
                         name="type"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel
-                                    label="Type de compte"
-                                />
+                                <FormLabel label="Type de compte" />
                                 <FormControl>
                                     <InputToggle
                                         value={field.value}

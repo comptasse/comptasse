@@ -1,7 +1,13 @@
 import { createRoute } from "@tanstack/react-router"
-import { Page } from "../components/layouts/page/page.js"
 import { lazy } from "react"
-const BalanceReportPage = lazy(() => import("../features/dashboard/$idYear/reports/balanceReport/BalanceReportPage.js").then((m) => ({ default: m.BalanceReportPage })))
+import { Page } from "../components/layouts/page/page.js"
+
+const BalanceReportPage = lazy(() =>
+    import("../features/dashboard/$idYear/reports/balanceReport/BalanceReportPage.js").then((m) => ({
+        default: m.BalanceReportPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
 function BalanceReportPageWrapper() {

@@ -79,7 +79,10 @@ function EntryCategoriesTabContent(props: {
         })
         .filter((t): t is NonNullable<typeof t> => t !== null)
 
-    const availableTags: Array<{ key: string; label: string }> = []
+    const availableTags: Array<{
+        key: string
+        label: string
+    }> = []
     for (const t of props.tags) {
         if (!currentTagIds.has(t.id)) {
             availableTags.push({

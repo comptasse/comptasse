@@ -126,7 +126,9 @@ export function FilesPage() {
                             onClick={() =>
                                 navigate({
                                     to: "/organisation/$idOrganization/paramètres",
-                                    params: { idOrganization: params.idOrganization },
+                                    params: {
+                                        idOrganization: params.idOrganization,
+                                    },
                                 })
                             }
                         >

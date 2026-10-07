@@ -44,7 +44,7 @@ async function uploadOneFile(params: {
 
     const formData = new FormData()
     formData.append("file", file)
-    formData.append("name", file.name)
+    formData.append("name", referenceFromFileName(file.name))
     formData.append("reference", referenceFromFileName(file.name))
     formData.append("hash", hash)
     if (idFolder) {
@@ -63,10 +63,12 @@ async function uploadOneFile(params: {
     })
 
     if (!response.ok) {
-        const errorText = await response.text().catch(() => "")
+        const errorBody = (await response.json().catch(() => null)) as {
+            message?: string
+        } | null
         toast({
-            title: `Impossible de créer "${file.name}"`,
-            description: errorText,
+            title: errorBody?.message ?? `Impossible de créer "${file.name}"`,
+            description: file.name,
             variant: "error",
         })
         return "error"

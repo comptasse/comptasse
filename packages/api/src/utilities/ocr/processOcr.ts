@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 import { generateId, models } from "@comptasse/application-metadata"
-import { and, eq, sql } from "drizzle-orm"
+import { and, eq, or, sql } from "drizzle-orm"
 import { Exception } from "../exception.js"
 import type { getClients } from "../getClients.js"
 import type { getEnv } from "../getEnv.js"
@@ -158,18 +158,38 @@ export async function processOcr(params: ProcessOcrParams): Promise<ProcessOcrRe
     const markdownBuffer = Buffer.from(normalizedMarkdownContent, "utf-8")
     const ocrHash = createHash("sha256").update(markdownBuffer).digest("hex")
 
-    // Check for existing OCR file with the same hash
+    // Reuse an already generated OCR file for this source, or adopt an existing
+    // one with the same content (e.g. generated before the parent link existed).
     const existingOcrFiles = await params.var.clients.sql
         .select()
         .from(models.file)
-        .where(and(eq(models.file.idOrganization, idOrganization), eq(models.file.hash, ocrHash)))
+        .where(
+            and(
+                eq(models.file.idOrganization, idOrganization),
+                or(eq(models.file.idFileParent, sourceFile.id), eq(models.file.hash, ocrHash)),
+            ),
+        )
         .limit(1)
 
     if (existingOcrFiles.length > 0 && existingOcrFiles[0]) {
-        console.log(`[processOcr] OCR file already exists (hash=${ocrHash}), reusing file id=${existingOcrFiles[0].id}`)
+        const existing = existingOcrFiles[0]
+        if (existing.idFileParent === null) {
+            await updateOne({
+                database: params.var.clients.sql,
+                table: models.file,
+                data: {
+                    idFileParent: sourceFile.id,
+                },
+                where: (table) => eq(table.id, existing.id),
+            })
+        }
+        console.log(`[processOcr] OCR file already exists (id=${existing.id}), reusing it`)
 
         return {
-            ocrFile: existingOcrFiles[0],
+            ocrFile: {
+                ...existing,
+                idFileParent: sourceFile.id,
+            },
             markdownContent: normalizedMarkdownContent,
         }
     }
@@ -187,6 +207,7 @@ export async function processOcr(params: ProcessOcrParams): Promise<ProcessOcrRe
             id: newFileId,
             idOrganization: idOrganization,
             idFolder: sourceFile.idFolder,
+            idFileParent: sourceFile.id,
             reference: null,
             name: markdownName,
             storageKey: storageKey,

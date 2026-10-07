@@ -1,6 +1,6 @@
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button } from "@comptasse/ui"
-import { type JSX } from "react"
+import type { JSX } from "react"
 import type * as v from "valibot"
 import { useRightPanel } from "../../../../../contexts/rightPanel/RightPanelContext.js"
 import { UpdateOneFileForm } from "./UpdateOneFileForm.js"

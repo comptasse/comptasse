@@ -32,6 +32,7 @@ export const createOneEntryFromTemplateRoute = apiFactory
                     idJournal: body.idJournal,
                     idFile: body.idFile,
                     label: body.label,
+                    description: body.description ?? null,
                     date: body.date,
                     createdAt: new Date().toISOString(),
                     lastUpdatedAt: null,

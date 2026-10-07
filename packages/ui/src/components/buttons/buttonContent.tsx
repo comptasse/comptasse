@@ -62,18 +62,17 @@ export function renderButtonContent(
 
             {props.children}
 
-            {props.rightIcon && (
-                        cloneElement(props.rightIcon, {
-                            "aria-disabled": isDisabled,
-                            size: 16 - 4,
-                            className: css(classes.rightIcon, {
-                                _disabled: {
-                                    color: "neutral/50",
-                                },
-                            }),
-                            strokeWidth: 1.75,
-                        })
-                    )}
+            {props.rightIcon &&
+                cloneElement(props.rightIcon, {
+                    "aria-disabled": isDisabled,
+                    size: 16 - 4,
+                    className: css(classes.rightIcon, {
+                        _disabled: {
+                            color: "neutral/50",
+                        },
+                    }),
+                    strokeWidth: 1.75,
+                })}
         </div>
     )
 }

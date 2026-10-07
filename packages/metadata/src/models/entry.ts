@@ -41,6 +41,9 @@ export const entryModel = pgTable(
         label: varchar("label", {
             length: 256,
         }).notNull(),
+        description: varchar("description", {
+            length: 2048,
+        }),
         isCleared: boolean("is_cleared").notNull().default(false),
         date: dateTimeColumn("date").notNull(),
         createdAt: dateTimeColumn("created_at").notNull(),

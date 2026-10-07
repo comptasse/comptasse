@@ -34,50 +34,50 @@ export function AccountsPage({
     }, [])
 
     return (
-                <Section.Root>
-                    <Section.Item>
-                        <div
-                            className={css({
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "flex-start",
-                                alignItems: "center",
-                                gap: "0.5rem",
-                            })}
-                        >
-                            <CreateOneAccount
-                                idOrganization={idOrganization}
-                                idYear={idYear}
-                            >
-                                <ButtonPlainContent
-                                    leftIcon={<IconPlus />}
-                                    text="Ajouter un compte"
-                                />
-                            </CreateOneAccount>
-                        </div>
-                        <InputDebounced
-                            value={globalFilter ?? ""}
-                            onChange={handleFilterChange}
-                        >
-                            <InputText
-                                placeholder="Recherche"
-                                className={{
-                                    maxWidth: "[320px]",
-                                }}
-                            />
-                        </InputDebounced>
-                        <Box
-                            className={css({
-                                maxH: "640px",
-                            })}
-                        >
-                            <AccountsTable
-                                idOrganization={idOrganization}
-                                idYear={idYear}
-                                globalFilter={globalFilter}
-                            />
-                        </Box>
-                    </Section.Item>
-                </Section.Root>
+        <Section.Root>
+            <Section.Item>
+                <div
+                    className={css({
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                    })}
+                >
+                    <CreateOneAccount
+                        idOrganization={idOrganization}
+                        idYear={idYear}
+                    >
+                        <ButtonPlainContent
+                            leftIcon={<IconPlus />}
+                            text="Ajouter un compte"
+                        />
+                    </CreateOneAccount>
+                </div>
+                <InputDebounced
+                    value={globalFilter ?? ""}
+                    onChange={handleFilterChange}
+                >
+                    <InputText
+                        placeholder="Recherche"
+                        className={{
+                            maxWidth: "[320px]",
+                        }}
+                    />
+                </InputDebounced>
+                <Box
+                    className={css({
+                        maxH: "640px",
+                    })}
+                >
+                    <AccountsTable
+                        idOrganization={idOrganization}
+                        idYear={idYear}
+                        globalFilter={globalFilter}
+                    />
+                </Box>
+            </Section.Item>
+        </Section.Root>
     )
 }

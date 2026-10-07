@@ -11,11 +11,17 @@ import { resolveOrganizationId } from "./resolveOrganizationId.js"
  * reuses the same cache entry.
  */
 export function buildQueryKey(
-    routeDefinition: { path: string },
+    routeDefinition: {
+        path: string
+    },
     body: Record<string, unknown>,
     params?: Record<string, string>,
 ) {
-    const resolvedParams: Record<string, string> = params ? { ...params } : {}
+    const resolvedParams: Record<string, string> = params
+        ? {
+              ...params,
+          }
+        : {}
     if (
         routeDefinition.path.includes(":idOrganization") &&
         resolvedParams.idOrganization === undefined &&

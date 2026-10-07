@@ -1,7 +1,13 @@
 import { createRoute } from "@tanstack/react-router"
-import { Page } from "../components/layouts/page/page.js"
 import { lazy } from "react"
-const IncomeStatementReportPage = lazy(() => import("../features/dashboard/$idYear/reports/incomeStatementReport/IncomeStatementReportPage.js").then((m) => ({ default: m.IncomeStatementReportPage })))
+import { Page } from "../components/layouts/page/page.js"
+
+const IncomeStatementReportPage = lazy(() =>
+    import("../features/dashboard/$idYear/reports/incomeStatementReport/IncomeStatementReportPage.js").then((m) => ({
+        default: m.IncomeStatementReportPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
 function IncomeStatementReportPageWrapper() {

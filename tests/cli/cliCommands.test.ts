@@ -449,12 +449,14 @@ describe("cli: matchings & pointage", () => {
                     account.id,
                     "--lines",
                     line1.id,
+                    "--code",
+                    "ZZ",
                 ],
                 env,
             ),
         )
         expect(matching.id).toBeTruthy()
-        expect(matching.code).toBeTruthy()
+        expect(matching.code).toBe("ZZ")
         expect(matching.idAccount).toBe(account.id)
 
         // It can be listed and read back.
@@ -511,6 +513,26 @@ describe("cli: matchings & pointage", () => {
             ),
         )
         expect(connected.some((line) => line.id === line2.id && line.idMatching === matching.id)).toBe(true)
+
+        // The code can be renamed.
+        const renamed = parseJson<{
+            id: string
+            code: string
+        }>(
+            await runCli(
+                [
+                    "matchings",
+                    "update",
+                    matching.id,
+                    "--year",
+                    idYear,
+                    "--code",
+                    "ZZ2",
+                ],
+                env,
+            ),
+        )
+        expect(renamed.code).toBe("ZZ2")
 
         // Pointage: mark the entry cleared, then uncleared.
         const cleared = parseJson<{

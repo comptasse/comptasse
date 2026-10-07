@@ -33,10 +33,12 @@ export function ComputationIncomeStatementsTable(props: {
                                 header: " ",
                                 cell: ({ row }) => (
                                     <LinkButton
-                                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs"
+                                        to="/organisation/$idOrganization/exercice/$idYear/compte-de-résultat/calculs/$idComputation/postes/$idComputationIncomeStatement"
                                         params={{
                                             idOrganization: row.original.idOrganization,
                                             idYear: row.original.idYear,
+                                            idComputation: row.original.idComputation,
+                                            idComputationIncomeStatement: row.original.id,
                                         }}
                                     >
                                         <ButtonGhostContent

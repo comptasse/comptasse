@@ -9,7 +9,16 @@ import {
     readAllTagsRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, InputComboboxMultiple, InputDate, InputSelect, InputText, toast } from "@comptasse/ui"
+import {
+    Button,
+    formatDate,
+    InputComboboxMultiple,
+    InputDate,
+    InputSelect,
+    InputText,
+    InputTextArea,
+    toast,
+} from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPlus } from "@tabler/icons-react"
 import { type JSX, useState } from "react"
@@ -149,6 +158,25 @@ function ManualEntryForm(props: {
                     />
                     <FormField
                         control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel
+                                    label="Description"
+                                    isRequired={false}
+                                />
+                                <FormControl>
+                                    <InputTextArea
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormError />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="date"
                         render={({ field }) => (
                             <FormItem>
@@ -206,15 +234,20 @@ function ManualEntryForm(props: {
                                 <FormControl>
                                     <InputDataCombobox
                                         value={field.value}
-                                        onChange={field.onChange}
+                                        onChange={(value) => field.onChange(value ?? null)}
                                         routeDefinition={readAllFilesRouteDefinition}
                                         body={{
                                             idYear: props.idYear,
                                         }}
                                         placeholder="Sélectionner une pièce justificative"
+                                        wrapLabels={true}
                                         getOption={(file) => ({
                                             key: file.id,
-                                            label: file.reference ? `${file.name} (${file.reference})` : file.name,
+                                            label: `${file.name}${
+                                                file.reference && file.reference !== file.name
+                                                    ? ` (${file.reference})`
+                                                    : ""
+                                            } · ${formatDate(file.createdAt)}`,
                                         })}
                                     />
                                 </FormControl>

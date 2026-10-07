@@ -26,7 +26,10 @@ export function BalanceSheetsSelect(props: {
             allowEmpty={true}
             placeholder="Sélectionner une ligne de bilan"
             options={(() => {
-                const options: Array<{ key: string; label: string }> = []
+                const options: Array<{
+                    key: string
+                    label: string
+                }> = []
                 if (balanceSheetsResponse.data !== undefined) {
                     for (const balanceSheet of balanceSheetsResponse.data) {
                         if (props.side !== undefined && balanceSheet.side !== props.side) continue

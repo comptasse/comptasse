@@ -1,6 +1,6 @@
 import { createRoute } from "@tanstack/react-router"
-import { guideDocLayoutRoute } from "./guideDocLayoutRoute.js"
 import { ExportsGuideDocPage } from "../../../../features/docs/guide/ExportsGuideDocPage.js"
+import { guideDocLayoutRoute } from "./guideDocLayoutRoute.js"
 
 export const exportsGuideDocRoute = createRoute({
     getParentRoute: () => guideDocLayoutRoute,

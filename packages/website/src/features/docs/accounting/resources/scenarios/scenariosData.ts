@@ -1,8 +1,4 @@
-import {
-    buildScenarioEntries,
-    scenarioCatalog,
-    type ScenarioDefinition,
-} from "@comptasse/application-metadata"
+import { buildScenarioEntries, type ScenarioDefinition, scenarioCatalog } from "@comptasse/application-metadata"
 import { type AccountEntry, getAccount } from "../accounts/accountsData.js"
 
 export interface ScenarioExample {
@@ -37,8 +33,21 @@ function formatAmount(value: string): string {
         .replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0")
 }
 
-function formatAmountsForAccountLines(rows: Array<{ debit: string; credit: string }>): Array<[string, string]> {
-    return rows.map((row) => [formatAmount(row.debit), formatAmount(row.credit)])
+function formatAmountsForAccountLines(
+    rows: Array<{
+        debit: string
+        credit: string
+    }>,
+): Array<
+    [
+        string,
+        string,
+    ]
+> {
+    return rows.map((row) => [
+        formatAmount(row.debit),
+        formatAmount(row.credit),
+    ])
 }
 
 function buildExamples(definition: ScenarioDefinition): ScenarioExample[] {
@@ -67,10 +76,13 @@ function buildExamples(definition: ScenarioDefinition): ScenarioExample[] {
 
 function collectAccountNumbers(definition: ScenarioDefinition): string[] {
     const numbers: string[] = []
+    const seen = new Set<string>()
     for (const docExample of definition.docExamples) {
         for (const draft of buildScenarioEntries(definition, docExample)) {
             for (const line of draft.lines) {
-                if (!numbers.includes(line.number)) numbers.push(line.number)
+                if (seen.has(line.number)) continue
+                seen.add(line.number)
+                numbers.push(line.number)
             }
         }
     }

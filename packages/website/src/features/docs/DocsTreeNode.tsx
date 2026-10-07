@@ -46,13 +46,7 @@ export function DocsTreeNode({
                 <ButtonGhostContent
                     leftIcon={icon}
                     text={label}
-                    rightIcon={
-                        expanded ? (
-                            <IconChevronDown />
-                        ) : (
-                            <IconChevronRight />
-                        )
-                    }
+                    rightIcon={expanded ? <IconChevronDown /> : <IconChevronRight />}
                     isCurrent={active}
                     className={{
                         width: "100%",

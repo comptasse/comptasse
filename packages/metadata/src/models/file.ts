@@ -21,12 +21,19 @@ export const fileModel = pgTable(
             onDelete: "set null",
             onUpdate: "cascade",
         }),
+        idFileParent: idColumn("id_file_parent").references((): AnyPgColumn => fileModel.id, {
+            onDelete: "cascade",
+            onUpdate: "cascade",
+        }),
         reference: varchar("reference", {
             length: 256,
         }),
         name: varchar("name", {
             length: 256,
         }).notNull(),
+        description: varchar("description", {
+            length: 2048,
+        }),
         storageKey: text("storage_key"),
         type: text("type"),
         size: integer("size"),

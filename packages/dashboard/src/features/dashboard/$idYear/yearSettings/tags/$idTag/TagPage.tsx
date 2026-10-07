@@ -18,7 +18,6 @@ export function TagPage() {
         <DataWrapper
             routeDefinition={readOneTagRouteDefinition}
             body={{
-                idYear: params.idYear,
                 idTag: params.idTag,
             }}
         >

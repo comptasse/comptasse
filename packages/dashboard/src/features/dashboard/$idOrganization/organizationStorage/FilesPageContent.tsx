@@ -1,4 +1,5 @@
 import { readAllFilesRouteDefinition, type readAllFoldersRouteDefinition } from "@comptasse/application-metadata/routes"
+import { InputCheckbox } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { type DragEvent, useMemo, useState } from "react"
 import type * as v from "valibot"
@@ -75,6 +76,7 @@ export function FilesPageContent(props: {
         params,
     } = props
     const [viewMode, _setViewMode] = useState<ViewMode>("list")
+    const [showOcrFiles, setShowOcrFiles] = useState(false)
 
     const _folderPath = useMemo(
         () => buildFolderPath(folders, idFolder),
@@ -121,29 +123,57 @@ export function FilesPageContent(props: {
                 body={{}}
             >
                 {(files) => {
-                    const currentFiles = files.filter((f) => (f.idFolder ?? null) === currentFolderId)
+                    // OCR-generated files (markdown) are hidden by default: they are
+                    // linked to their source file, which shows them in its "Texte OCR" tab.
+                    const currentFiles = files
+                        .filter((f) => (f.idFolder ?? null) === currentFolderId)
+                        .filter((f) => showOcrFiles || f.idFileParent === null)
 
-                    if (viewMode === "grid") {
-                        return (
-                            <FilesGrid
-                                idOrganization={params.idOrganization}
-                                files={currentFiles}
-                                folders={sortedFolders}
-                                currentFolderId={currentFolderId}
-                                parentFolderId={parentFolderId}
-                                onFolderOpen={navigateToFolder}
-                            />
-                        )
-                    }
                     return (
-                        <FilesTable
-                            idOrganization={params.idOrganization}
-                            files={currentFiles}
-                            folders={sortedFolders}
-                            currentFolderId={currentFolderId}
-                            parentFolderId={parentFolderId}
-                            onFolderOpen={navigateToFolder}
-                        />
+                        <div
+                            className={css({
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.5rem",
+                            })}
+                        >
+                            <div
+                                className={css({
+                                    display: "flex",
+                                    justifyContent: "flex-start",
+                                    alignItems: "center",
+                                    gap: "0.5rem",
+                                    fontSize: "sm",
+                                    color: "neutral/60",
+                                })}
+                            >
+                                <InputCheckbox
+                                    checked={showOcrFiles}
+                                    onChange={(checked) => setShowOcrFiles(checked)}
+                                />
+                                Afficher les fichiers OCR
+                            </div>
+                            {viewMode === "grid" ? (
+                                <FilesGrid
+                                    idOrganization={params.idOrganization}
+                                    files={currentFiles}
+                                    folders={sortedFolders}
+                                    currentFolderId={currentFolderId}
+                                    parentFolderId={parentFolderId}
+                                    onFolderOpen={navigateToFolder}
+                                />
+                            ) : (
+                                <FilesTable
+                                    idOrganization={params.idOrganization}
+                                    files={currentFiles}
+                                    folders={sortedFolders}
+                                    currentFolderId={currentFolderId}
+                                    parentFolderId={parentFolderId}
+                                    onFolderOpen={navigateToFolder}
+                                />
+                            )}
+                        </div>
                     )
                 }}
             </DataWrapper>

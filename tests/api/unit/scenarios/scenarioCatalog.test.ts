@@ -19,7 +19,7 @@ function totalLines(draft: {
 describe("scenarioCatalog", () => {
     it("exposes the full documented catalogue", () => {
         const slugs = Object.keys(scenarioCatalog)
-        expect(slugs.length).toBe(22)
+        expect(slugs.length).toBe(23)
         expect(getScenarioDefinition("note-de-frais")).toBeDefined()
         expect(getScenarioDefinition("inconnu")).toBeUndefined()
     })
@@ -100,6 +100,30 @@ describe("key scenario outputs", () => {
         // reimburse path does not use expenseAccount
         expect(reimbursement.lines[0].number).toBe("421")
         expect(reimbursement.lines[1].number).toBe("512")
+    })
+
+    it("caution-depot-garantie books deposit then recovery", () => {
+        const deposit = scenarioCatalog["caution-depot-garantie"].buildEntries({
+            mode: "deposit",
+            amount: "1200",
+        })[0]
+        expect(deposit.lines.map((line) => line.number)).toEqual([
+            "275",
+            "512",
+        ])
+        expect(deposit.lines[0].debit).toBe("1200.00")
+        expect(deposit.lines[1].credit).toBe("1200.00")
+
+        const recovery = scenarioCatalog["caution-depot-garantie"].buildEntries({
+            mode: "recovery",
+            amount: "1200",
+        })[0]
+        expect(recovery.lines.map((line) => line.number)).toEqual([
+            "512",
+            "275",
+        ])
+        expect(recovery.lines[0].debit).toBe("1200.00")
+        expect(recovery.lines[1].credit).toBe("1200.00")
     })
 
     it("constitution-capital produces souscription + libération", () => {

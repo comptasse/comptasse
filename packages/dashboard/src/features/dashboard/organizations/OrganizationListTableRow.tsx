@@ -1,9 +1,9 @@
 import type { getAllMyOrganizationsRouteDefinition } from "@comptasse/application-metadata/routes"
 import { Button, Chip, LinkContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
+import { useRouter } from "@tanstack/react-router"
 import type * as v from "valibot"
 import { ListTable } from "../../../components/layouts/listTable/listTable.tsx"
-import { useRouter } from "@tanstack/react-router"
 
 export function OrganizationListTableRow(props: {
     organizationUser: v.InferOutput<typeof getAllMyOrganizationsRouteDefinition.schemas.return>[number]
@@ -37,7 +37,9 @@ export function OrganizationListTableRow(props: {
                         onClick={() =>
                             router.navigate({
                                 to: "/organisation/$idOrganization",
-                                params: { idOrganization: organization.id },
+                                params: {
+                                    idOrganization: organization.id,
+                                },
                             })
                         }
                     >

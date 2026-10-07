@@ -2,12 +2,14 @@ import { readOneAccountRouteDefinition } from "@comptasse/application-metadata/r
 import { ButtonOutlineContent, ButtonPlainContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconChevronLeft, IconDatabase, IconInfoCircle, IconPencil, IconTrash } from "@tabler/icons-react"
-import { Outlet, useParams } from "@tanstack/react-router"
+import { useParams } from "@tanstack/react-router"
+import { Suspense } from "react"
 import { LinkButton } from "../../../../../../components/LinkButton.tsx"
 import { DataWrapper } from "../../../../../../components/layouts/DataWrapper.tsx"
-import { Section } from "../../../../../../components/layouts/section/section.tsx"
-import { Tab } from "../../../../../../components/layouts/tab/tab.tsx"
-
+import { Page } from "../../../../../../components/layouts/page/page.tsx"
+import { SubPageContent } from "../../../../../../components/layouts/SubPageContent.tsx"
+import { AccountMetadataTab } from "./AccountMetadataTab.tsx"
+import { AccountPage } from "./AccountPage.tsx"
 import { DeleteOneAccount } from "./DeleteOneAccount.tsx"
 import { UpdateOneAccount } from "./UpdateOneAccount.tsx"
 
@@ -15,32 +17,29 @@ export function AccountLayout() {
     const params = useParams({
         strict: false,
     }) as {
+        idOrganization: string
         idYear: string
         idAccount: string
-        idOrganization: string
     }
 
     return (
-        <Section.Root>
-            <DataWrapper
-                routeDefinition={readOneAccountRouteDefinition}
-                body={{
-                    idYear: params.idYear,
-                    idAccount: params.idAccount,
-                }}
-            >
-                {(account) => {
-                    return (
-                        <>
-                            <Section.Item
-                                className={css({
-                                    flexDirection: "row",
-                                })}
-                            >
+        <Page.Root>
+            <Page.Content>
+                <DataWrapper
+                    routeDefinition={readOneAccountRouteDefinition}
+                    body={{
+                        idYear: params.idYear,
+                        idAccount: params.idAccount,
+                    }}
+                >
+                    {(account) => {
+                        return (
+                            <>
                                 <div
                                     className={css({
+                                        width: "100%",
                                         display: "flex",
-                                        justifyContent: "flex-start",
+                                        justifyContent: "space-between",
                                         alignItems: "center",
                                         gap: "0.5rem",
                                     })}
@@ -48,8 +47,8 @@ export function AccountLayout() {
                                     <LinkButton
                                         to="/organisation/$idOrganization/exercice/$idYear/comptes"
                                         params={{
-                                            idOrganization: account.idOrganization,
-                                            idYear: account.idYear,
+                                            idOrganization: params.idOrganization,
+                                            idYear: params.idYear,
                                         }}
                                     >
                                         <ButtonOutlineContent
@@ -57,62 +56,63 @@ export function AccountLayout() {
                                             text="Retour"
                                         />
                                     </LinkButton>
+                                    <div
+                                        className={css({
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            alignItems: "center",
+                                            gap: "0.5rem",
+                                        })}
+                                    >
+                                        <UpdateOneAccount account={account}>
+                                            <ButtonPlainContent
+                                                leftIcon={<IconPencil />}
+                                                text="Modifier"
+                                            />
+                                        </UpdateOneAccount>
+                                        <DeleteOneAccount account={account}>
+                                            <ButtonOutlineContent
+                                                leftIcon={<IconTrash />}
+                                                title="Supprimer"
+                                                color="danger"
+                                            />
+                                        </DeleteOneAccount>
+                                    </div>
                                 </div>
-                                <div
-                                    className={css({
-                                        ml: "auto",
-                                        display: "flex",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center",
-                                        gap: "0.5rem",
-                                    })}
-                                >
-                                    <UpdateOneAccount account={account}>
-                                        <ButtonPlainContent
-                                            leftIcon={<IconPencil />}
-                                            text="Modifier"
-                                        />
-                                    </UpdateOneAccount>
-                                    <DeleteOneAccount account={account}>
-                                        <ButtonOutlineContent
-                                            leftIcon={<IconTrash />}
-                                            title="Supprimer"
-                                            color="danger"
-                                        />
-                                    </DeleteOneAccount>
-                                </div>
-                            </Section.Item>
-                            <Section.Item>
-                                <Tab.Root
-                                    tabs={[
-                                        {
-                                            label: "Informations",
-                                            icon: <IconInfoCircle />,
-                                            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
-                                            params: {
-                                                idOrganization: params.idOrganization,
-                                                idYear: params.idYear,
-                                                idAccount: params.idAccount,
-                                            },
+                                <SubPageContent
+                                    defaultKey="informations"
+                                    sections={{
+                                        main: {
+                                            items: [
+                                                {
+                                                    key: "informations",
+                                                    label: "Informations",
+                                                    icon: <IconInfoCircle />,
+                                                    content: (
+                                                        <Suspense fallback={null}>
+                                                            <AccountPage />
+                                                        </Suspense>
+                                                    ),
+                                                },
+                                                {
+                                                    key: "métadonnées",
+                                                    label: "Métadonnées",
+                                                    icon: <IconDatabase />,
+                                                    content: (
+                                                        <Suspense fallback={null}>
+                                                            <AccountMetadataTab />
+                                                        </Suspense>
+                                                    ),
+                                                },
+                                            ],
                                         },
-                                        {
-                                            label: "Métadonnées",
-                                            icon: <IconDatabase />,
-                                            to: "/organisation/$idOrganization/exercice/$idYear/comptes",
-                                            params: {
-                                                idOrganization: params.idOrganization,
-                                                idYear: params.idYear,
-                                                idAccount: params.idAccount,
-                                            },
-                                        },
-                                    ]}
+                                    }}
                                 />
-                            </Section.Item>
-                            <Outlet />
-                        </>
-                    )
-                }}
-            </DataWrapper>
-        </Section.Root>
+                            </>
+                        )
+                    }}
+                </DataWrapper>
+            </Page.Content>
+        </Page.Root>
     )
 }

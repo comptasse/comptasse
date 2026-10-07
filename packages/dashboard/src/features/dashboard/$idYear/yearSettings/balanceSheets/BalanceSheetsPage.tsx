@@ -1,6 +1,6 @@
 import { ButtonPlainContent, InputDebounced, InputSelect, InputText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconPlus, IconScale } from "@tabler/icons-react"
+import { IconPlus } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
 import { useCallback, useState, useTransition } from "react"
 import { Box } from "../../../../../components/layouts/Box.tsx"

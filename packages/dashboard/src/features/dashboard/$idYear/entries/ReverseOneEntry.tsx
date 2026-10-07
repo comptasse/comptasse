@@ -6,7 +6,7 @@ import {
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, ButtonOutlineContent, ButtonPlainContent, Dialog, toast, useModalStore } from "@comptasse/ui"
-import { type ComponentPropsWithRef, type ReactElement, useId } from "react"
+import { type ComponentProps, cloneElement, type ReactElement, useId } from "react"
 import type * as v from "valibot"
 import { applicationRouter } from "../../../../routes/applicationRouter.tsx"
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.ts"
@@ -14,7 +14,7 @@ import { invalidateData } from "../../../../utilities/invalidateData.ts"
 
 export function ReverseOneEntry(props: {
     entry: v.InferOutput<typeof returnedSchemas.entry>
-    children: ReactElement<ComponentPropsWithRef<"div">>
+    children: ReactElement<ComponentProps<typeof Button>>
     onClick?: () => void
 }) {
     const modalId = useId()
@@ -73,41 +73,37 @@ export function ReverseOneEntry(props: {
         })
     }
 
-    return (
-        <Button
-            onClick={() => {
-                props.onClick?.()
-                openModal(
-                    modalId,
-                    <Dialog.Content>
-                        <Dialog.Header>
-                            <Dialog.Title>Voulez-vous extourner cette écriture ?</Dialog.Title>
-                        </Dialog.Header>
-                        <Dialog.Body>
-                            <Dialog.Description>
-                                Cette action créera une écriture d'extourne avec les mêmes mouvements inversés.
-                                L'écriture originale ne sera pas modifiée.
-                            </Dialog.Description>
-                        </Dialog.Body>
-                        <Dialog.Footer>
-                            <Button onClick={() => closeModal(modalId)}>
-                                <ButtonOutlineContent text="Annuler" />
-                            </Button>
-                            <Button
-                                hasLoader
-                                onClick={async () => {
-                                    await onSubmit()
-                                    closeModal(modalId)
-                                }}
-                            >
-                                <ButtonPlainContent text="Extourner l'écriture" />
-                            </Button>
-                        </Dialog.Footer>
-                    </Dialog.Content>,
-                )
-            }}
-        >
-            {props.children}
-        </Button>
-    )
+    return cloneElement(props.children, {
+        onClick: () => {
+            props.onClick?.()
+            openModal(
+                modalId,
+                <Dialog.Content>
+                    <Dialog.Header>
+                        <Dialog.Title>Voulez-vous extourner cette écriture ?</Dialog.Title>
+                    </Dialog.Header>
+                    <Dialog.Body>
+                        <Dialog.Description>
+                            Cette action créera une écriture d'extourne avec les mêmes mouvements inversés. L'écriture
+                            originale ne sera pas modifiée.
+                        </Dialog.Description>
+                    </Dialog.Body>
+                    <Dialog.Footer>
+                        <Button onClick={() => closeModal(modalId)}>
+                            <ButtonOutlineContent text="Annuler" />
+                        </Button>
+                        <Button
+                            hasLoader
+                            onClick={async () => {
+                                await onSubmit()
+                                closeModal(modalId)
+                            }}
+                        >
+                            <ButtonPlainContent text="Extourner l'écriture" />
+                        </Button>
+                    </Dialog.Footer>
+                </Dialog.Content>,
+            )
+        },
+    })
 }

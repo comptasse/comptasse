@@ -1,24 +1,14 @@
 import type { readAllEntriesRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import {
-    Button,
-    FormatBoolean,
-    FormatDate,
-    FormatDateTime,
-    FormatNull,
-    FormatPrice,
-    FormatText,
-    LinkContent,
-} from "@comptasse/ui"
+import { FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconPencil } from "@tabler/icons-react"
-import { useRouter } from "@tanstack/react-router"
 import { useMemo } from "react"
 import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
-import { EntryClearedToggle } from "./EntryClearedToggle.tsx"
+import { buildEntriesTableColumns } from "./entriesTableColumns.js"
 
 export function EntriesTable(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
@@ -30,21 +20,17 @@ export function EntriesTable(props: {
     journalById: YearDataMaps["journalById"]
     tagById: YearDataMaps["tagById"]
     fileById: YearDataMaps["fileById"]
+    matchingById: YearDataMaps["matchingById"]
 }) {
-    const router = useRouter()
     const entriesData = useMemo(
-        () =>
-            [
-                ...props.entries,
-            ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+        () => props.entries.toSorted((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
         [
             props.entries,
         ],
     )
 
     const linesByEntry = props.entryLinesByEntryId
-    const journalsMap = props.journalById
-    const tagsMap = props.tagById
+    const accountsMap = props.accountById
     const tagsByEntry = useMemo(() => {
         const m = new Map<string, string[]>()
         for (const [entryId, ets] of props.entryTagsByEntryId) {
@@ -57,8 +43,24 @@ export function EntriesTable(props: {
     }, [
         props.entryTagsByEntryId,
     ])
-    const filesMap = props.fileById
-    const accountsMap = props.accountById
+
+    const columns = useMemo(
+        () =>
+            buildEntriesTableColumns({
+                idOrganization: props.idOrganization,
+                journalsMap: props.journalById,
+                tagsMap: props.tagById,
+                tagsByEntry,
+                filesMap: props.fileById,
+            }),
+        [
+            props.idOrganization,
+            props.journalById,
+            props.tagById,
+            tagsByEntry,
+            props.fileById,
+        ],
+    )
 
     return (
         <DataTable
@@ -82,117 +84,7 @@ export function EntriesTable(props: {
                 title: "Aucune écriture",
                 subtitle: "Les écritures de votre exercice apparaîtront ici.",
             }}
-            columns={[
-                {
-                    accessorKey: "isCleared",
-                    header: "Pointé",
-                    cell: ({ row }) => <FormatBoolean boolean={row.original.isCleared} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "label",
-                    header: "Libellé",
-                    cell: ({ row }) => (
-                        <Button
-                            onClick={() =>
-                                router.navigate({
-                                    to: "/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry",
-                                    params: {
-                                        idOrganization: row.original.idOrganization,
-                                        idYear: row.original.idYear,
-                                        idEntry: row.original.id,
-                                    },
-                                })
-                            }
-                        >
-                            <LinkContent>{row.original.label}</LinkContent>
-                        </Button>
-                    ),
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "date",
-                    header: "Date",
-                    cell: ({ row }) => <FormatDate date={row.original.date} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "idJournal",
-                    header: "Journal",
-                    cell: ({ row }) => {
-                        if (row.original.idJournal === null) return <FormatNull />
-                        const journal = journalsMap.get(row.original.idJournal)
-                        if (!journal) return <FormatNull />
-                        return <FormatText>{journal.code}</FormatText>
-                    },
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "id",
-                    id: "tags",
-                    header: "Catégorie",
-                    cell: ({ row }) => {
-                        const tagIds = tagsByEntry.get(row.original.id)
-                        if (!tagIds || tagIds.length === 0) return <FormatNull />
-                        const tagLabels = tagIds
-                            .map((id) => tagsMap.get(id))
-                            .filter((tag): tag is NonNullable<typeof tag> => Boolean(tag))
-                            .map((tag) => tag.label)
-                        if (tagLabels.length === 0) return <FormatNull />
-                        return <FormatText>{tagLabels.join(", ")}</FormatText>
-                    },
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "idFile",
-                    header: "Pièce justificative",
-                    cell: ({ row }) => {
-                        if (row.original.idFile === null) return <FormatNull />
-                        const file = filesMap.get(row.original.idFile)
-                        if (!file) return <FormatNull />
-                        return (
-                            <Button
-                                onClick={() =>
-                                    router.navigate({
-                                        to: "/organisation/$idOrganization/fichier/$idFile",
-                                        params: {
-                                            idOrganization: props.idOrganization,
-                                            idFile: file.id,
-                                        },
-                                    })
-                                }
-                            >
-                                <LinkContent>{file.name}</LinkContent>
-                            </Button>
-                        )
-                    },
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "createdAt",
-                    header: "Ajouté le",
-                    cell: ({ row }) => <FormatDateTime date={row.original.createdAt} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "lastUpdatedAt",
-                    header: "Dernière mise à jour le",
-                    cell: ({ row }) => <FormatDateTime date={row.original.lastUpdatedAt} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "actions",
-                    header: " ",
-                    enableSorting: false,
-                    enableGlobalFilter: false,
-                    cell: ({ row }) => (
-                        <EntryClearedToggle
-                            entry={row.original}
-                            iconOnly={true}
-                        />
-                    ),
-                },
-            ]}
+            columns={columns}
             renderSubComponent={({ row }) => {
                 const rows = linesByEntry.get(row.original.id)
                 if (!rows || rows.length === 0) {
@@ -205,6 +97,16 @@ export function EntriesTable(props: {
                         />
                     )
                 }
+                // Movements are always shown sorted by account number.
+                const sortedRows = rows.toSorted((a, b) =>
+                    (accountsMap.get(a.idAccount)?.number ?? "").localeCompare(
+                        accountsMap.get(b.idAccount)?.number ?? "",
+                        undefined,
+                        {
+                            numeric: true,
+                        },
+                    ),
+                )
                 return (
                     <table
                         className={css({
@@ -231,6 +133,19 @@ export function EntriesTable(props: {
                                         fontSize: "xs",
                                         fontWeight: "semibold",
                                         color: "neutral/40",
+                                        textAlign: "left",
+                                    })}
+                                >
+                                    Lettrage
+                                </th>
+                                <th
+                                    className={css({
+                                        padding: "0.5rem 0.75rem",
+                                        width: "1%",
+                                        whiteSpace: "nowrap",
+                                        fontSize: "xs",
+                                        fontWeight: "semibold",
+                                        color: "neutral/40",
                                         textAlign: "right",
                                     })}
                                 >
@@ -238,7 +153,9 @@ export function EntriesTable(props: {
                                 </th>
                                 <th
                                     className={css({
-                                        padding: "0.5rem 1rem",
+                                        padding: "0.5rem 0.75rem",
+                                        width: "1%",
+                                        whiteSpace: "nowrap",
                                         fontSize: "xs",
                                         fontWeight: "semibold",
                                         color: "neutral/40",
@@ -250,8 +167,11 @@ export function EntriesTable(props: {
                             </tr>
                         </thead>
                         <tbody>
-                            {rows.map((entryLine) => {
+                            {sortedRows.map((entryLine) => {
                                 const account = accountsMap.get(entryLine.idAccount)
+                                const matching = entryLine.idMatching
+                                    ? props.matchingById.get(entryLine.idMatching)
+                                    : undefined
                                 return (
                                     <tr
                                         key={entryLine.id}
@@ -297,18 +217,37 @@ export function EntriesTable(props: {
                                         <td
                                             className={css({
                                                 padding: "0.5rem 1rem",
-                                                textAlign: "right",
                                             })}
                                         >
-                                            <FormatPrice price={entryLine.debit} />
+                                            {matching ? <FormatText>{matching.code}</FormatText> : <FormatNull />}
                                         </td>
                                         <td
                                             className={css({
-                                                padding: "0.5rem 1rem",
+                                                padding: "0.5rem 0.75rem",
+                                                whiteSpace: "nowrap",
                                                 textAlign: "right",
                                             })}
                                         >
-                                            <FormatPrice price={entryLine.credit} />
+                                            <FormatPrice
+                                                price={entryLine.debit}
+                                                className={{
+                                                    fontSize: "xs",
+                                                }}
+                                            />
+                                        </td>
+                                        <td
+                                            className={css({
+                                                padding: "0.5rem 0.75rem",
+                                                whiteSpace: "nowrap",
+                                                textAlign: "right",
+                                            })}
+                                        >
+                                            <FormatPrice
+                                                price={entryLine.credit}
+                                                className={{
+                                                    fontSize: "xs",
+                                                }}
+                                            />
                                         </td>
                                     </tr>
                                 )

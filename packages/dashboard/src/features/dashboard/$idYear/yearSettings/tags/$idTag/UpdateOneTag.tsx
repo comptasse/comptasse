@@ -6,6 +6,7 @@ import {
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, InputText, toast } from "@comptasse/ui"
 import { IconPlus } from "@tabler/icons-react"
+import { useParams } from "@tanstack/react-router"
 import type { JSX } from "react"
 import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
@@ -21,6 +22,11 @@ import { invalidateData } from "../../../../../../utilities/invalidateData.ts"
 
 export function UpdateOneTag(props: { tag: v.InferOutput<typeof returnedSchemas.tag>; children: JSX.Element }) {
     const { openPanel, closePanel } = useRightPanel()
+    const params = useParams({
+        strict: false,
+    }) as {
+        idYear?: string
+    }
 
     const form = (
         <FormRoot
@@ -58,14 +64,13 @@ export function UpdateOneTag(props: { tag: v.InferOutput<typeof returnedSchemas.
                     invalidateData({
                         routeDefinition: readAllTagsRouteDefinition,
                         body: {
-                            idYear: props.tag.idYear,
+                            idYear: params.idYear ?? "",
                         },
                     }),
                     invalidateData({
                         routeDefinition: readOneTagRouteDefinition,
                         body: {
                             idTag: props.tag.id,
-                            idYear: props.tag.idYear,
                         },
                     }),
                 ])

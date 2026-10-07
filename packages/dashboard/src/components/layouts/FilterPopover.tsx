@@ -6,6 +6,7 @@ import {
     InputCombobox,
     InputDebounced,
     InputText,
+    InputToggle,
     Separator,
 } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
@@ -15,7 +16,7 @@ import { Popover } from "../overlays/popover/popover.js"
 export type FilterColumn = {
     id: string
     header: string
-    filterVariant?: "text" | "combobox"
+    filterVariant?: "text" | "combobox" | "boolean"
     filterOptions?: Array<{
         key: string
         label: string
@@ -115,6 +116,32 @@ export function FilterPopover(props: {
                                     allowEmpty={true}
                                     placeholder={`Choisir ${column.header.toLowerCase()}`}
                                     options={column.filterOptions ?? []}
+                                />
+                            ) : column.filterVariant === "boolean" ? (
+                                <InputToggle
+                                    value={
+                                        props.columnFilters[column.id] === "true"
+                                            ? true
+                                            : props.columnFilters[column.id] === "false"
+                                              ? false
+                                              : null
+                                    }
+                                    onChange={(value) =>
+                                        props.onFilterChange(
+                                            column.id,
+                                            value === null || value === undefined ? undefined : String(value),
+                                        )
+                                    }
+                                    options={[
+                                        {
+                                            value: true,
+                                            label: "Oui",
+                                        },
+                                        {
+                                            value: false,
+                                            label: "Non",
+                                        },
+                                    ]}
                                 />
                             ) : (
                                 <InputDebounced

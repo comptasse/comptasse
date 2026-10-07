@@ -83,11 +83,14 @@ function BinaryFileContent(props: {
                 throw new Error("Impossible de récupérer le fichier")
             }
             const buffer = await response.arrayBuffer()
-            return new Blob([
-                buffer,
-            ], {
-                type: props.file.type ?? "application/octet-stream",
-            })
+            return new Blob(
+                [
+                    buffer,
+                ],
+                {
+                    type: props.file.type ?? "application/octet-stream",
+                },
+            )
         },
         staleTime: Infinity,
     })
@@ -110,6 +113,29 @@ function BinaryFileContent(props: {
     }
     if (query.isPending || objectUrl === null) {
         return <CircularLoader text="Chargement du fichier..." />
+    }
+
+    if (props.file.type?.startsWith("image/")) {
+        // `<embed>` stretches the image to its box and ignores the aspect ratio;
+        // a plain `<img>` with auto sizing preserves it (portrait images included).
+        return (
+            <img
+                src={objectUrl}
+                alt={props.file.reference ?? props.file.name}
+                className={css({
+                    display: "block",
+                    margin: "auto",
+                    maxWidth: "100%",
+                    maxHeight: "768px",
+                    width: "auto",
+                    height: "auto",
+                    objectFit: "contain",
+                    border: "1px solid",
+                    borderColor: "neutral/20",
+                    borderRadius: "md",
+                })}
+            />
+        )
     }
 
     return (

@@ -2,16 +2,28 @@ import {
     deleteOneMatchingRouteDefinition,
     readAllEntryLinesRouteDefinition,
     readAllMatchingsRouteDefinition,
+    updateOneMatchingRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, ButtonOutlineContent, FormatDateTime, FormatNull, FormatPrice, FormatText, toast } from "@comptasse/ui"
+import {
+    Button,
+    ButtonOutlineContent,
+    ButtonPlainContent,
+    FormatDateTime,
+    FormatNull,
+    FormatPrice,
+    FormatText,
+    InputText,
+    toast,
+} from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconLink, IconTrash } from "@tabler/icons-react"
+import { IconLink, IconPencil, IconTrash } from "@tabler/icons-react"
 import { useParams } from "@tanstack/react-router"
 import { useMemo, useState } from "react"
 import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
 import { Page } from "../../../../components/layouts/page/page.js"
+import { useRightPanel } from "../../../../contexts/rightPanel/RightPanelContext.js"
 import { getResponseBodyFromAPI } from "../../../../utilities/getResponseBodyFromAPI.js"
 import { invalidateData } from "../../../../utilities/invalidateData.js"
 import { type YearDataKey, type YearDataMaps, YearDataWrapper } from "../YearDataWrapper.tsx"
@@ -25,6 +37,73 @@ type MatchingRow = Matching & {
     totalCredit: number
 }
 
+/** Right-panel form to rename a matching's code. */
+function EditMatchingForm(props: { idYear: string; matching: Matching }) {
+    const { closePanel } = useRightPanel()
+    // The panel is intentionally uncontrolled: it captures the code once and edits it. A different matching opens a fresh
+    // panel (see the `key` at the call site), so the initial value never needs to re-sync.
+    // react-doctor-disable-next-line react-doctor/no-derived-useState
+    const [code, setCode] = useState(props.matching.code)
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    async function save() {
+        setIsSubmitting(true)
+        try {
+            const response = await getResponseBodyFromAPI({
+                routeDefinition: updateOneMatchingRouteDefinition,
+                body: {
+                    idYear: props.idYear,
+                    idMatching: props.matching.id,
+                    code: code.trim(),
+                },
+            })
+            if (response.ok === false) {
+                toast({
+                    title: "Impossible de modifier le lettrage",
+                    variant: "error",
+                })
+                return
+            }
+            await invalidateData({
+                routeDefinition: readAllMatchingsRouteDefinition,
+                body: {
+                    idYear: props.idYear,
+                },
+            })
+            toast({
+                title: "Lettrage modifié",
+                variant: "success",
+            })
+            closePanel()
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    return (
+        <div
+            className={css({
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+            })}
+        >
+            <InputText
+                value={code}
+                onChange={(value) => setCode(value ?? "")}
+                placeholder="Code du lettrage"
+            />
+            <Button
+                hasLoader={isSubmitting}
+                onClick={save}
+            >
+                <ButtonPlainContent text="Enregistrer" />
+            </Button>
+        </div>
+    )
+}
+
 function MatchingsTable(props: {
     idYear: string
     matchings: Array<Matching>
@@ -32,6 +111,7 @@ function MatchingsTable(props: {
     accountById: YearDataMaps["accountById"]
     entryById: YearDataMaps["entryById"]
 }) {
+    const { openPanel } = useRightPanel()
     const [submittingId, setSubmittingId] = useState<string | null>(null)
 
     async function remove(idMatching: string) {
@@ -76,10 +156,8 @@ function MatchingsTable(props: {
 
     const data = useMemo<Array<MatchingRow>>(
         () =>
-            [
-                ...props.matchings,
-            ]
-                .sort((a, b) => a.code.localeCompare(b.code))
+            props.matchings
+                .toSorted((a, b) => a.code.localeCompare(b.code))
                 .map((matching) => {
                     const lines = props.linesByMatchingId.get(matching.id) ?? []
                     return {
@@ -154,16 +232,42 @@ function MatchingsTable(props: {
                     header: " ",
                     enableSorting: false,
                     cell: ({ row }) => (
-                        <Button
-                            hasLoader={submittingId === row.original.id}
-                            onClick={() => remove(row.original.id)}
+                        <div
+                            className={css({
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                            })}
                         >
-                            <ButtonOutlineContent
-                                color="danger"
-                                leftIcon={<IconTrash />}
-                                text={undefined}
-                            />
-                        </Button>
+                            <Button
+                                onClick={() =>
+                                    openPanel(
+                                        <EditMatchingForm
+                                            key={row.original.id}
+                                            idYear={props.idYear}
+                                            matching={row.original}
+                                        />,
+                                        "Modifier le lettrage",
+                                    )
+                                }
+                            >
+                                <ButtonOutlineContent
+                                    leftIcon={<IconPencil />}
+                                    text={undefined}
+                                />
+                            </Button>
+                            <Button
+                                hasLoader={submittingId === row.original.id}
+                                onClick={() => remove(row.original.id)}
+                            >
+                                <ButtonOutlineContent
+                                    color="danger"
+                                    leftIcon={<IconTrash />}
+                                    text={undefined}
+                                />
+                            </Button>
+                        </div>
                     ),
                 },
             ]}

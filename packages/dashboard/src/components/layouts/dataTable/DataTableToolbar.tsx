@@ -1,6 +1,6 @@
-import { cn, css } from "@comptasse/ui/utilities/cn.js"
-import { type Table } from "@tanstack/react-table"
-import { type ReactNode } from "react"
+import { css } from "@comptasse/ui/utilities/cn.js"
+import type { Table } from "@tanstack/react-table"
+import type { ReactNode } from "react"
 import { ColumnVisibilityPopover, type VisibilityColumn } from "../ColumnVisibilityPopover.js"
 import { type FilterColumn, FilterPopover } from "../FilterPopover.js"
 import { SearchBar } from "../SearchBar.js"
@@ -40,6 +40,8 @@ export function DataTableToolbar<TData extends Record<keyof TData, unknown>>({
                         filterableColumns.push({
                             id: col.id,
                             header: col.columnDef.header?.toString() ?? "",
+                            filterVariant: col.columnDef.meta?.filterVariant,
+                            filterOptions: col.columnDef.meta?.filterOptions,
                         })
                     }
                 }

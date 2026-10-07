@@ -99,100 +99,100 @@ export function JournalReportPage({ idYear: idYearProp }: { idYear?: string } = 
                 const canNextPage = clampedPageIndex < pageCount - 1
 
                 return (
-                            <Section.Root>
-                                <Section.Item>
+                    <Section.Root>
+                        <Section.Item>
+                            <div
+                                className={css({
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "end",
+                                    alignItems: "center",
+                                    gap: "0.5rem",
+                                })}
+                            >
+                                <ReportFilterPopover
+                                    selectedJournalId={selectedJournalId}
+                                    onJournalChange={(value) => {
+                                        setSelectedJournalId(value)
+                                        setPageIndex(0)
+                                    }}
+                                    journalOptions={journalOptions}
+                                    selectedTags={selectedTags}
+                                    onTagsChange={(values) => {
+                                        setSelectedTags(values)
+                                        setPageIndex(0)
+                                    }}
+                                    tagOptions={tagOptions}
+                                />
+                            </div>
+                            <Box>
+                                <JournalReportTable
+                                    entries={paginatedEntries}
+                                    entryLines={filteredEntryLinesForTable}
+                                    accounts={accountsMap}
+                                />
+                            </Box>
+                            {pageCount > 1 ? (
+                                <div
+                                    className={css({
+                                        flexShrink: "0",
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        gap: "4",
+                                        paddingTop: "0.75rem",
+                                    })}
+                                >
+                                    <span
+                                        className={css({
+                                            fontSize: "sm",
+                                            color: "neutral/50",
+                                        })}
+                                    >
+                                        {sortedEntries.length} écriture{sortedEntries.length > 1 ? "s" : ""}
+                                    </span>
                                     <div
                                         className={css({
-                                            width: "100%",
                                             display: "flex",
-                                            justifyContent: "end",
+                                            justifyContent: "flex-end",
                                             alignItems: "center",
                                             gap: "0.5rem",
                                         })}
                                     >
-                                        <ReportFilterPopover
-                                            selectedJournalId={selectedJournalId}
-                                            onJournalChange={(value) => {
-                                                setSelectedJournalId(value)
-                                                setPageIndex(0)
-                                            }}
-                                            journalOptions={journalOptions}
-                                            selectedTags={selectedTags}
-                                            onTagsChange={(values) => {
-                                                setSelectedTags(values)
-                                                setPageIndex(0)
-                                            }}
-                                            tagOptions={tagOptions}
-                                        />
-                                    </div>
-                                    <Box>
-                                        <JournalReportTable
-                                            entries={paginatedEntries}
-                                            entryLines={filteredEntryLinesForTable}
-                                            accounts={accountsMap}
-                                        />
-                                    </Box>
-                                    {pageCount > 1 ? (
-                                        <div
+                                        <Button
+                                            onClick={() => setPageIndex(clampedPageIndex - 1)}
+                                            isDisabled={!canPreviousPage}
+                                        >
+                                            <ButtonOutlineContent
+                                                leftIcon={<IconChevronLeft />}
+                                                text={undefined}
+                                                isDisabled={!canPreviousPage}
+                                            />
+                                        </Button>
+                                        <span
                                             className={css({
-                                                flexShrink: "0",
-                                                width: "100%",
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                alignItems: "center",
-                                                gap: "4",
-                                                paddingTop: "0.75rem",
+                                                fontSize: "sm",
+                                                color: "neutral/50",
                                             })}
                                         >
-                                            <span
-                                                className={css({
-                                                    fontSize: "sm",
-                                                    color: "neutral/50",
-                                                })}
-                                            >
-                                                {sortedEntries.length} écriture{sortedEntries.length > 1 ? "s" : ""}
-                                            </span>
-                                            <div
-                                                className={css({
-                                                    display: "flex",
-                                                    justifyContent: "flex-end",
-                                                    alignItems: "center",
-                                                    gap: "0.5rem",
-                                                })}
-                                            >
-                                                <Button
-                                                    onClick={() => setPageIndex(clampedPageIndex - 1)}
-                                                    isDisabled={!canPreviousPage}
-                                                >
-                                                    <ButtonOutlineContent
-                                                        leftIcon={<IconChevronLeft />}
-                                                        text={undefined}
-                                                        isDisabled={!canPreviousPage}
-                                                    />
-                                                </Button>
-                                                <span
-                                                    className={css({
-                                                        fontSize: "sm",
-                                                        color: "neutral/50",
-                                                    })}
-                                                >
-                                                    Page {clampedPageIndex + 1} sur {pageCount}
-                                                </span>
-                                                <Button
-                                                    onClick={() => setPageIndex(clampedPageIndex + 1)}
-                                                    isDisabled={!canNextPage}
-                                                >
-                                                    <ButtonOutlineContent
-                                                        leftIcon={<IconChevronRight />}
-                                                        text={undefined}
-                                                        isDisabled={!canNextPage}
-                                                    />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    ) : null}
-                                </Section.Item>
-                            </Section.Root>
+                                            Page {clampedPageIndex + 1} sur {pageCount}
+                                        </span>
+                                        <Button
+                                            onClick={() => setPageIndex(clampedPageIndex + 1)}
+                                            isDisabled={!canNextPage}
+                                        >
+                                            <ButtonOutlineContent
+                                                leftIcon={<IconChevronRight />}
+                                                text={undefined}
+                                                isDisabled={!canNextPage}
+                                            />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : null}
+                        </Section.Item>
+                    </Section.Root>
                 )
             }}
         </YearDataWrapper>

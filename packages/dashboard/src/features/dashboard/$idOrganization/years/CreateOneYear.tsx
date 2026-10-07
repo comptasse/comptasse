@@ -28,168 +28,168 @@ export function CreateOneYear(props: {
 
     return (
         <>
-        <Button
-            className={css.raw(
-                {
-                    padding: "0",
-                    border: "none",
-                    backgroundColor: "transparent",
-                    width: "fit-content",
-                    height: "fit-content",
-                },
-                props.className,
-            )}
-            onClick={() => {
-                props.onClick?.()
-                setOpen(true)
-            }}
-        >
-            {props.children}
-        </Button>
-            {open &&
-                    <div
-                        className={css({
-                            padding: "2rem",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "1rem",
-                        })}
-                    >
-                        <FormRoot
-                            schema={createOneYearRouteDefinition.schemas.body}
-                            defaultValues={{
-                                startingAt: new Date(currentDate.getFullYear(), 0, 1).toISOString(),
-                                endingAt: new Date(currentDate.getFullYear(), 11, 31).toISOString(),
-                                label: undefined,
-                            }}
-                            submitButtonProps={{
-                                leftIcon: <IconPlus />,
-                                text: "Ajouter l'exercice",
-                            }}
-                            onSubmit={async (data) => {
-                                const response = await getResponseBodyFromAPI({
-                                    routeDefinition: createOneYearRouteDefinition,
-                                    body: data,
-                                })
-                                if (!response.ok) {
-                                    toast({
-                                        title: "Impossible de créer l'exercice",
-                                        variant: "error",
-                                    })
-                                    return false
-                                }
-
+            <Button
+                className={css.raw(
+                    {
+                        padding: "0",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        width: "fit-content",
+                        height: "fit-content",
+                    },
+                    props.className,
+                )}
+                onClick={() => {
+                    props.onClick?.()
+                    setOpen(true)
+                }}
+            >
+                {props.children}
+            </Button>
+            {open && (
+                <div
+                    className={css({
+                        padding: "2rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                    })}
+                >
+                    <FormRoot
+                        schema={createOneYearRouteDefinition.schemas.body}
+                        defaultValues={{
+                            startingAt: new Date(currentDate.getFullYear(), 0, 1).toISOString(),
+                            endingAt: new Date(currentDate.getFullYear(), 11, 31).toISOString(),
+                            label: undefined,
+                        }}
+                        submitButtonProps={{
+                            leftIcon: <IconPlus />,
+                            text: "Ajouter l'exercice",
+                        }}
+                        onSubmit={async (data) => {
+                            const response = await getResponseBodyFromAPI({
+                                routeDefinition: createOneYearRouteDefinition,
+                                body: data,
+                            })
+                            if (!response.ok) {
                                 toast({
-                                    title: "Exercice créé avec succès",
-                                    variant: "success",
+                                    title: "Impossible de créer l'exercice",
+                                    variant: "error",
                                 })
-                                return true
-                            }}
-                            onCancel={undefined}
-                            onSuccess={async () => {
-                                await invalidateData({
-                                    routeDefinition: readAllYearsRouteDefinition,
-                                    body: {},
-                                    params: {
-                                        idOrganization: props.idOrganization,
-                                    },
-                                })
+                                return false
+                            }
 
-                                setOpen(false)
-                            }}
-                        >
-                            {(form) => (
-                                <Fragment>
-                                    <FormField
-                                        control={form.control}
-                                        name="startingAt"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Date de début"
-                                                    isRequired={true}
-                                                    description={undefined}
-                                                    tooltip={undefined}
+                            toast({
+                                title: "Exercice créé avec succès",
+                                variant: "success",
+                            })
+                            return true
+                        }}
+                        onCancel={undefined}
+                        onSuccess={async () => {
+                            await invalidateData({
+                                routeDefinition: readAllYearsRouteDefinition,
+                                body: {},
+                                params: {
+                                    idOrganization: props.idOrganization,
+                                },
+                            })
+
+                            setOpen(false)
+                        }}
+                    >
+                        {(form) => (
+                            <Fragment>
+                                <FormField
+                                    control={form.control}
+                                    name="startingAt"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Date de début"
+                                                isRequired={true}
+                                                description={undefined}
+                                                tooltip={undefined}
+                                            />
+                                            <FormControl>
+                                                <InputDate
+                                                    value={field.value}
+                                                    onChange={field.onChange}
                                                 />
-                                                <FormControl>
-                                                    <InputDate
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="endingAt"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Date de fin"
-                                                    isRequired={true}
-                                                    description={undefined}
-                                                    tooltip={undefined}
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="endingAt"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Date de fin"
+                                                isRequired={true}
+                                                description={undefined}
+                                                tooltip={undefined}
+                                            />
+                                            <FormControl>
+                                                <InputDate
+                                                    value={field.value}
+                                                    onChange={field.onChange}
                                                 />
-                                                <FormControl>
-                                                    <InputDate
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="idYearPrevious"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Exercice précédent ?"
-                                                    isRequired={false}
-                                                    description={undefined}
-                                                    tooltip={undefined}
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="idYearPrevious"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Exercice précédent ?"
+                                                isRequired={false}
+                                                description={undefined}
+                                                tooltip={undefined}
+                                            />
+                                            <FormControl>
+                                                <YearSelect
+                                                    idOrganization={props.idOrganization}
+                                                    value={field.value}
+                                                    onChange={field.onChange}
                                                 />
-                                                <FormControl>
-                                                    <YearSelect
-                                                        idOrganization={props.idOrganization}
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="label"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    label="Libellé de l'exercice"
-                                                    isRequired={false}
-                                                    description={undefined}
-                                                    tooltip={undefined}
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="label"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                label="Libellé de l'exercice"
+                                                isRequired={false}
+                                                description={undefined}
+                                                tooltip={undefined}
+                                            />
+                                            <FormControl>
+                                                <InputText
+                                                    value={field.value}
+                                                    onChange={field.onChange}
                                                 />
-                                                <FormControl>
-                                                    <InputText
-                                                        value={field.value}
-                                                        onChange={field.onChange}
-                                                    />
-                                                </FormControl>
-                                                <FormError />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </Fragment>
-                            )}
-                        </FormRoot>
-                    </div>
-            }
+                                            </FormControl>
+                                            <FormError />
+                                        </FormItem>
+                                    )}
+                                />
+                            </Fragment>
+                        )}
+                    </FormRoot>
+                </div>
+            )}
         </>
     )
 }

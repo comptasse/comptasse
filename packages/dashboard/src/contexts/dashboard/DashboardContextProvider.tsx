@@ -51,12 +51,13 @@ export function DashboardContextProvider(props: { children: ReactNode }) {
             setOrg,
             setYear,
         }),
-        [selectedOrgId, selectedYearId, setOrg, setYear],
+        [
+            selectedOrgId,
+            selectedYearId,
+            setOrg,
+            setYear,
+        ],
     )
 
-    return (
-        <DashboardContext.Provider value={contextValue}>
-            {props.children}
-        </DashboardContext.Provider>
-    )
+    return <DashboardContext.Provider value={contextValue}>{props.children}</DashboardContext.Provider>
 }

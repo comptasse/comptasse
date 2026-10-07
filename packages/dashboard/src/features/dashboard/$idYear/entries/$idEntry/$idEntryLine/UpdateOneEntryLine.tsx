@@ -1,5 +1,4 @@
 import {
-    readAllAccountsRouteDefinition,
     readAllEntryLinesRouteDefinition,
     readOneEntryLineRouteDefinition,
     updateOneEntryLineRouteDefinition,
@@ -7,7 +6,7 @@ import {
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, toast } from "@comptasse/ui"
 import { IconPencil } from "@tabler/icons-react"
-import { type JSX } from "react"
+import type { JSX } from "react"
 import type * as v from "valibot"
 import { FormRoot } from "../../../../../../components/forms/FormRoot.tsx"
 import { useRightPanel } from "../../../../../../contexts/rightPanel/RightPanelContext.js"
@@ -72,7 +71,12 @@ export function UpdateOneEntryLine(props: {
                 closePanel()
             }}
         >
-            {(form) => <EntryLineFormFields form={form} idYear={props.entryLine.idYear} />}
+            {(form) => (
+                <EntryLineFormFields
+                    form={form}
+                    idYear={props.entryLine.idYear}
+                />
+            )}
         </FormRoot>
     )
 

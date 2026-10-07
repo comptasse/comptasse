@@ -1,9 +1,9 @@
 import type { readAllYearsRouteDefinition } from "@comptasse/application-metadata/routes"
 import { Button, Chip, formatDate, LinkContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
+import { useRouter } from "@tanstack/react-router"
 import type * as v from "valibot"
 import { ListTable } from "../../../../components/layouts/listTable/listTable.tsx"
-import { useRouter } from "@tanstack/react-router"
 
 export function YearListTableRow(props: {
     year: v.InferOutput<typeof readAllYearsRouteDefinition.schemas.return>[number]

@@ -7,7 +7,6 @@ import type { tagModel } from "../models/tag.js"
 export const tagSchema = v.object({
     id: v.nonNullable(idSchema, "Ce champ est requis"),
     idOrganization: v.nonNullable(idSchema, "Ce champ est requis"),
-    idYear: v.nonNullable(idSchema, "Ce champ est requis"),
 
     label: v.nonNullable(
         varcharSchema({
@@ -25,7 +24,6 @@ export const tagSchema = v.object({
 export const tagSchemaReturn = v.pick(tagSchema, [
     "id",
     "idOrganization",
-    "idYear",
 
     "label",
 
@@ -34,3 +32,9 @@ export const tagSchemaReturn = v.pick(tagSchema, [
     "createdBy",
     "lastUpdatedBy",
 ])
+
+/** A tag with the ids of the years it is linked to (via `table_tag_year`). */
+export const tagSchemaReturnWithYears = v.object({
+    ...tagSchemaReturn.entries,
+    idYearIds: v.array(idSchema),
+})

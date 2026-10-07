@@ -224,6 +224,86 @@ describe("Matchings (lettrage)", () => {
         expect(missingResponse.status).toBe(400)
     })
 
+    it("accepts an explicit code and lets it be renamed", async () => {
+        const idEntry = await createEntry("Matching codes")
+        const idLine1 = await createLine({
+            idEntry: idEntry,
+            idAccount: idAccount,
+            debit: "3.00",
+            credit: "0",
+        })
+        const idLine2 = await createLine({
+            idEntry: idEntry,
+            idAccount: idAccount,
+            debit: "0",
+            credit: "3.00",
+        })
+
+        // Explicit code at creation.
+        const createResponse = await authenticatedRequest<{
+            id: string
+            code: string
+        }>({
+            session,
+            method: "POST",
+            path: `/organizations/${idOrganization}/years/${idYear}/matchings`,
+            body: {
+                idYear: idYear,
+                idAccount: idAccount,
+                entryLineIds: [
+                    idLine1,
+                ],
+                code: "ZZ",
+            },
+        })
+        expect(createResponse.status).toBe(200)
+        expect(createResponse.data.code).toBe("ZZ")
+
+        // Duplicate code is rejected.
+        const duplicateResponse = await authenticatedRequest({
+            session,
+            method: "POST",
+            path: `/organizations/${idOrganization}/years/${idYear}/matchings`,
+            body: {
+                idYear: idYear,
+                idAccount: idAccount,
+                entryLineIds: [
+                    idLine2,
+                ],
+                code: "ZZ",
+            },
+        })
+        expect(duplicateResponse.status).toBe(400)
+
+        // The code can be renamed.
+        const updateResponse = await authenticatedRequest<{
+            id: string
+            code: string
+        }>({
+            session,
+            method: "PATCH",
+            path: `/organizations/${idOrganization}/years/${idYear}/matchings/${createResponse.data.id}`,
+            body: {
+                idYear: idYear,
+                idMatching: createResponse.data.id,
+                code: "ZZ2",
+            },
+        })
+        expect(updateResponse.status).toBe(200)
+        expect(updateResponse.data.code).toBe("ZZ2")
+
+        // Cleanup.
+        await authenticatedRequest({
+            session,
+            method: "DELETE",
+            path: `/organizations/${idOrganization}/years/${idYear}/matchings/${createResponse.data.id}`,
+            body: {
+                idYear: idYear,
+                idMatching: createResponse.data.id,
+            },
+        })
+    })
+
     it("rejects a matching whose lines are not all on the matching account", async () => {
         const idEntry = await createEntry("Matching wrong account")
         const idLine = await createLine({

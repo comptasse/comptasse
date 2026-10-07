@@ -6,9 +6,9 @@ import {
     updateOneEntryRouteDefinition,
 } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import { Button, InputDate, InputText, toast } from "@comptasse/ui"
+import { Button, formatDate, InputDate, InputText, InputTextArea, toast } from "@comptasse/ui"
 import { IconPencil } from "@tabler/icons-react"
-import { type JSX } from "react"
+import type { JSX } from "react"
 import { Fragment } from "react/jsx-runtime"
 import type * as v from "valibot"
 import { FormControl } from "../../../../../components/forms/FormControl.tsx"
@@ -100,6 +100,25 @@ export function UpdateOneEntry(props: { entry: v.InferOutput<typeof returnedSche
                     />
                     <FormField
                         control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel
+                                    label="Description"
+                                    isRequired={false}
+                                />
+                                <FormControl>
+                                    <InputTextArea
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormError />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="date"
                         render={({ field }) => (
                             <FormItem>
@@ -129,7 +148,7 @@ export function UpdateOneEntry(props: { entry: v.InferOutput<typeof returnedSche
                                 <FormControl>
                                     <InputDataCombobox
                                         value={field.value}
-                                        onChange={field.onChange}
+                                        onChange={(value) => field.onChange(value ?? null)}
                                         routeDefinition={readAllJournalsRouteDefinition}
                                         body={{
                                             idYear: props.entry.idYear,
@@ -157,17 +176,20 @@ export function UpdateOneEntry(props: { entry: v.InferOutput<typeof returnedSche
                                 <FormControl>
                                     <InputDataCombobox
                                         value={field.value}
-                                        onChange={field.onChange}
+                                        onChange={(value) => field.onChange(value ?? null)}
                                         routeDefinition={readAllFilesRouteDefinition}
                                         body={{
                                             idYear: props.entry.idYear,
                                         }}
                                         placeholder="Sélectionner une pièce justificative"
+                                        wrapLabels={true}
                                         getOption={(file) => ({
                                             key: file.id,
-                                            label: file.reference
-                                                ? `${file.name} (${file.reference})`
-                                                : file.name,
+                                            label: `${file.name}${
+                                                file.reference && file.reference !== file.name
+                                                    ? ` (${file.reference})`
+                                                    : ""
+                                            } · ${formatDate(file.createdAt)}`,
                                         })}
                                     />
                                 </FormControl>

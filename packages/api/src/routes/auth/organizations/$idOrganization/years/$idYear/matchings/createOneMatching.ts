@@ -63,13 +63,23 @@ export const createOneMatchingRoute = registerRoute(createOneMatchingRouteDefini
             where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.idYear, body.idYear)),
         })
         const usedCodes = new Set(existingMatchings.map((matching) => matching.code))
-        let code = ""
-        for (let i = 1; ; i++) {
-            const candidate = toMatchingCode(i)
-            if (!usedCodes.has(candidate)) {
-                code = candidate
-                break
+
+        let code = body.code?.trim() ?? ""
+        if (code === "") {
+            // Auto-generate the next free letter code (A, B, ..., Z, AA, ...).
+            for (let i = 1; ; i++) {
+                const candidate = toMatchingCode(i)
+                if (!usedCodes.has(candidate)) {
+                    code = candidate
+                    break
+                }
             }
+        } else if (usedCodes.has(code)) {
+            throw new Exception({
+                statusCode: 400,
+                internalMessage: "Matching code already used",
+                externalMessage: "Ce code de lettrage est déjà utilisé",
+            })
         }
 
         const createdMatching = await insertOne({

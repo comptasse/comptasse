@@ -10,7 +10,7 @@ import {
     useModalStore,
 } from "@comptasse/ui"
 import { IconArrowsMove, IconDotsVertical, IconEye, IconPencil, IconTrash } from "@tabler/icons-react"
-import { useId, useState } from "react"
+import { useId } from "react"
 import type * as v from "valibot"
 import { Dialog } from "../../../../components/overlays/dialog/dialog.js"
 import { Popover } from "../../../../components/overlays/popover/popover.js"

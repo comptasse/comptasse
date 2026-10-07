@@ -7,6 +7,7 @@ import {
     IconSortAscending,
     IconSortDescending,
 } from "@tabler/icons-react"
+import { useParams } from "@tanstack/react-router"
 import {
     type ColumnDef,
     type ColumnSizingState,
@@ -19,6 +20,7 @@ import {
     type Row,
     type RowData,
     type RowSelectionState,
+    type SortingState,
     type Table,
     useReactTable,
     type VisibilityState,
@@ -40,10 +42,25 @@ import { usePersistentDataTableState } from "../../../utilities/usePersistentDat
 import { EmptyState } from "../EmptyState.js"
 import { DataTablePagination } from "./DataTablePagination.js"
 import { DataTableToolbar } from "./DataTableToolbar.js"
+import { includesStringOrBoolean } from "./filterFns.js"
 
 declare module "@tanstack/react-table" {
     interface ColumnMeta<TData extends RowData, TValue> {
         fit?: boolean
+        /** Labels matched by the filters for boolean values (defaults to Oui / Non). */
+        booleanLabels?: {
+            true?: string
+            false?: string
+        }
+        /** Extra text matched by the filters in addition to the raw value. */
+        filterText?: (value: TValue, row: TData) => string
+        /** Input rendered for this column in the filter popover. */
+        filterVariant?: "text" | "combobox" | "boolean"
+        /** Options offered for the `combobox` filter variant. */
+        filterOptions?: Array<{
+            key: string
+            label: string
+        }>
     }
 }
 
@@ -372,6 +389,7 @@ function DataTableRow<TData extends Record<keyof TData, unknown>>({
 function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     rows: Array<Row<TData>>
     columnCount: number
+    filteredEmptyText?: string
     virtualize: boolean
     virtualItems: Array<{
         index: number
@@ -386,6 +404,20 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
     if (props.virtualize) {
         return (
             <Fragment>
+                {props.rows.length === 0 && (
+                    <tbody>
+                        <tr>
+                            <td colSpan={props.columnCount}>
+                                <FormatNull
+                                    text={props.filteredEmptyText ?? "Aucun résultat pour ces filtres"}
+                                    className={{
+                                        padding: "1rem",
+                                    }}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                )}
                 {props.virtualPaddingTop > 0 && (
                     <tbody>
                         <tr>
@@ -438,9 +470,9 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
             {props.rows.length > 0 ? null : (
                 <tbody>
                     <tr>
-                        <td>
+                        <td colSpan={props.columnCount}>
                             <FormatNull
-                                text="Aucun résultat"
+                                text={props.filteredEmptyText ?? "Aucun résultat"}
                                 className={{
                                     padding: "1rem",
                                 }}
@@ -466,6 +498,7 @@ function DataTableRows<TData extends Record<keyof TData, unknown>>(props: {
 function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
     table: Table<TData>
     columnCount: number
+    filteredEmptyText?: string
     rows: Array<Row<TData>>
     virtualize: boolean
     virtualItems: Array<{
@@ -513,6 +546,7 @@ function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
                 <DataTableRows
                     rows={props.rows}
                     columnCount={props.columnCount}
+                    filteredEmptyText={props.filteredEmptyText}
                     virtualize={props.virtualize}
                     virtualItems={props.virtualItems}
                     virtualPaddingTop={props.virtualPaddingTop}
@@ -527,7 +561,7 @@ function DataTableTable<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
-function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
+type DataTableProps<TData extends Record<keyof TData, unknown>> = {
     data: Array<TData>
     isLoading?: boolean
     columns: Array<ColumnDef<TData>>
@@ -540,6 +574,8 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     /** localStorage key: persists sorting, filters and column visibility per table. */
     persistKey?: string
     defaultColumnVisibility?: VisibilityState
+    /** Initial sorting applied when nothing is persisted yet. */
+    defaultSorting?: SortingState
     onRowClick?: (context: Row<TData>) => void
     renderSubComponent?: (context: { row: Row<TData> }) => ReactElement | null
     getRowProps?: (row: Row<TData>) => ComponentProps<"tr">
@@ -550,7 +586,11 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     selectionActions?: (selectedRows: Array<Row<TData>>) => ReactElement | null
     resetSelectionTrigger?: unknown
     emptyStateProps?: Parameters<typeof EmptyState>[0]
-}) {
+    /** Message shown when a filter/search yields no rows (virtualized tables included). */
+    filteredEmptyText?: string
+}
+
+function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTableProps<TData>) {
     const memoizedData = useMemo(
         () => props.data,
         [
@@ -566,11 +606,13 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
         setColumnFilters,
         columnVisibility,
         setColumnVisibility,
-    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {})
+    } = usePersistentDataTableState(props.persistKey, props.defaultColumnVisibility ?? {}, props.defaultSorting)
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
-    // Reset selection when the trigger changes (e.g. folder navigation)
+    // Reset selection when the trigger changes (e.g. folder navigation). The trigger is deliberately not read inside the
+    // effect; it is a dependency so the effect re-runs whenever it changes.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: re-run on trigger change, not on its value
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
     }, [
@@ -678,6 +720,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: includesStringOrBoolean,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onColumnVisibilityChange: setColumnVisibility,
@@ -780,6 +823,7 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
             <DataTableTable
                 table={table}
                 columnCount={columnCount}
+                filteredEmptyText={props.filteredEmptyText}
                 rows={rows}
                 virtualize={props.virtualize === true}
                 virtualItems={virtualItems}
@@ -808,4 +852,29 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: {
     )
 }
 
-export const DataTable = memo(DataTableRaw) as typeof DataTableRaw
+function DataTableScoped<TData extends Record<keyof TData, unknown>>(props: DataTableProps<TData>) {
+    // Scope the persisted state to the current organization + year so tables
+    // with the same key (e.g. the org and year "Stockage" pages) stay independent.
+    const params = useParams({
+        strict: false,
+    }) as {
+        idOrganization?: string
+        idYear?: string
+    }
+    const persistKey =
+        props.persistKey === undefined
+            ? undefined
+            : `${params.idOrganization ?? ""}:${params.idYear ?? ""}:${props.persistKey}`
+
+    // `key` forces a full remount (and thus a fresh read from localStorage) when
+    // the scope changes, so a reused instance can't carry state across tables.
+    return (
+        <DataTableRaw
+            key={persistKey}
+            {...props}
+            persistKey={persistKey}
+        />
+    )
+}
+
+export const DataTable = memo(DataTableScoped) as typeof DataTableRaw

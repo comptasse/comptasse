@@ -6,7 +6,7 @@ import {
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { Button, toast } from "@comptasse/ui"
 import { IconPlus } from "@tabler/icons-react"
-import { type JSX } from "react"
+import type { JSX } from "react"
 import type * as v from "valibot"
 import { FormRoot } from "../../../../../components/forms/FormRoot.tsx"
 import { useRightPanel } from "../../../../../contexts/rightPanel/RightPanelContext.js"
@@ -26,6 +26,8 @@ export function CreateOneEntryLine(props: {
             defaultValues={{
                 idYear: props.entry.idYear,
                 idEntry: props.entry.id,
+                debit: "0",
+                credit: "0",
                 isComputedForJournalReport: true,
                 isComputedForLedgerReport: true,
                 isComputedForBalanceReport: true,
@@ -76,7 +78,12 @@ export function CreateOneEntryLine(props: {
                 closePanel()
             }}
         >
-            {(form) => <EntryLineFormFields form={form} idYear={props.entry.idYear} />}
+            {(form) => (
+                <EntryLineFormFields
+                    form={form}
+                    idYear={props.entry.idYear}
+                />
+            )}
         </FormRoot>
     )
 
