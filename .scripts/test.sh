@@ -56,9 +56,11 @@ RUN_INTEGRATION="${RUN_INTEGRATION:-0}"
 # Reuse an already-running dev environment (e.g. started with `just dev up`)
 # instead of recreating, resetting and then tearing it down. This keeps the dev
 # server online across build/test runs. Detection happens before any step so it
-# also drives the teardown decision at the end.
+# also drives the teardown decision at the end. The API is the service the test
+# suites talk to, so it is what we check (a partially started stack must be
+# brought up rather than reused).
 DEV_WAS_RUNNING=0
-if "${DC[@]}" ps --status running --services 2>/dev/null | grep -q .; then
+if "${DC[@]}" ps --status running --services 2>/dev/null | grep -qx "api"; then
     DEV_WAS_RUNNING=1
 fi
 
