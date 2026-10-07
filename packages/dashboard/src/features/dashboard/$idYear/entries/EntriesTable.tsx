@@ -1,27 +1,14 @@
 import type { readAllEntriesRouteDefinition } from "@comptasse/application-metadata/routes"
 import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
-import {
-    Button,
-    ButtonGhostContent,
-    FormatBoolean,
-    FormatDate,
-    FormatDateTime,
-    FormatNull,
-    FormatPrice,
-    FormatText,
-    LinkButton,
-    LinkContent,
-} from "@comptasse/ui"
+import { FormatNull, FormatPrice, FormatText } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconCircleCheck, IconCircleX, IconPencil } from "@tabler/icons-react"
-import { useRouter } from "@tanstack/react-router"
+import { IconPencil } from "@tabler/icons-react"
 import { useMemo } from "react"
 import type * as v from "valibot"
 import { DataTable } from "../../../../components/layouts/dataTable/DataTable.js"
-import { includesStringOrBoolean } from "../../../../components/layouts/dataTable/filterFns.js"
 import type { YearDataMaps } from "../YearDataWrapper.tsx"
 import { EntriesTableSelectionActions } from "./EntriesTableSelectionActions.js"
-import { EntryClearedToggle } from "./EntryClearedToggle.tsx"
+import { buildEntriesTableColumns } from "./entriesTableColumns.js"
 
 export function EntriesTable(props: {
     idOrganization: v.InferOutput<typeof returnedSchemas.organization>["id"]
@@ -34,20 +21,15 @@ export function EntriesTable(props: {
     tagById: YearDataMaps["tagById"]
     fileById: YearDataMaps["fileById"]
 }) {
-    const router = useRouter()
     const entriesData = useMemo(
-        () =>
-            [
-                ...props.entries,
-            ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+        () => props.entries.toSorted((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
         [
             props.entries,
         ],
     )
 
     const linesByEntry = props.entryLinesByEntryId
-    const journalsMap = props.journalById
-    const tagsMap = props.tagById
+    const accountsMap = props.accountById
     const tagsByEntry = useMemo(() => {
         const m = new Map<string, string[]>()
         for (const [entryId, ets] of props.entryTagsByEntryId) {
@@ -60,8 +42,24 @@ export function EntriesTable(props: {
     }, [
         props.entryTagsByEntryId,
     ])
-    const filesMap = props.fileById
-    const accountsMap = props.accountById
+
+    const columns = useMemo(
+        () =>
+            buildEntriesTableColumns({
+                idOrganization: props.idOrganization,
+                journalsMap: props.journalById,
+                tagsMap: props.tagById,
+                tagsByEntry,
+                filesMap: props.fileById,
+            }),
+        [
+            props.idOrganization,
+            props.journalById,
+            props.tagById,
+            tagsByEntry,
+            props.fileById,
+        ],
+    )
 
     return (
         <DataTable
@@ -85,142 +83,7 @@ export function EntriesTable(props: {
                 title: "Aucune écriture",
                 subtitle: "Les écritures de votre exercice apparaîtront ici.",
             }}
-            columns={[
-                {
-                    accessorKey: "isCleared",
-                    header: "Pointé",
-                    cell: ({ row }) => <FormatBoolean boolean={row.original.isCleared} />,
-                    filterFn: includesStringOrBoolean,
-                    meta: {
-                        filterVariant: "boolean",
-                    },
-                },
-                {
-                    accessorKey: "label",
-                    header: "Libellé",
-                    cell: ({ row }) => (
-                        <LinkButton
-                            to="/organisation/$idOrganization/exercice/$idYear/ecriture/$idEntry"
-                            params={{
-                                idOrganization: row.original.idOrganization,
-                                idYear: row.original.idYear,
-                                idEntry: row.original.id,
-                            }}
-                        >
-                            <LinkContent>{row.original.label}</LinkContent>
-                        </LinkButton>
-                    ),
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "date",
-                    header: "Date",
-                    cell: ({ row }) => <FormatDate date={row.original.date} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "idJournal",
-                    header: "Journal",
-                    cell: ({ row }) => {
-                        if (row.original.idJournal === null) return <FormatNull />
-                        const journal = journalsMap.get(row.original.idJournal)
-                        if (!journal) return <FormatNull />
-                        return <FormatText>{journal.code}</FormatText>
-                    },
-                    filterFn: "includesString",
-                    meta: {
-                        filterVariant: "combobox",
-                        filterOptions: [
-                            ...journalsMap.values(),
-                        ].map((journal) => ({
-                            key: journal.id,
-                            label: `(${journal.code}) ${journal.label}`,
-                        })),
-                    },
-                },
-                {
-                    accessorKey: "id",
-                    id: "tags",
-                    header: "Catégorie",
-                    cell: ({ row }) => {
-                        const tagIds = tagsByEntry.get(row.original.id)
-                        if (!tagIds || tagIds.length === 0) return <FormatNull />
-                        const tagLabels = tagIds
-                            .map((id) => tagsMap.get(id))
-                            .filter((tag): tag is NonNullable<typeof tag> => Boolean(tag))
-                            .map((tag) => tag.label)
-                        if (tagLabels.length === 0) return <FormatNull />
-                        return <FormatText>{tagLabels.join(", ")}</FormatText>
-                    },
-                    filterFn: (row, _columnId, filterValue) => {
-                        const tagIds = tagsByEntry.get(row.original.id) ?? []
-                        return tagIds.includes(String(filterValue))
-                    },
-                    meta: {
-                        filterVariant: "combobox",
-                        filterOptions: [
-                            ...tagsMap.values(),
-                        ].map((tag) => ({
-                            key: tag.id,
-                            label: tag.label,
-                        })),
-                    },
-                },
-                {
-                    accessorKey: "idFile",
-                    header: "Pièce justificative",
-                    cell: ({ row }) => {
-                        if (row.original.idFile === null) return <FormatNull />
-                        const file = filesMap.get(row.original.idFile)
-                        if (!file) return <FormatNull />
-                        return (
-                            <Button
-                                onClick={() =>
-                                    router.navigate({
-                                        to: "/organisation/$idOrganization/fichier/$idFile",
-                                        params: {
-                                            idOrganization: props.idOrganization,
-                                            idFile: file.id,
-                                        },
-                                    })
-                                }
-                            >
-                                <LinkContent>{file.name}</LinkContent>
-                            </Button>
-                        )
-                    },
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "createdAt",
-                    header: "Ajouté le",
-                    cell: ({ row }) => <FormatDateTime date={row.original.createdAt} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "lastUpdatedAt",
-                    header: "Dernière mise à jour le",
-                    cell: ({ row }) => <FormatDateTime date={row.original.lastUpdatedAt} />,
-                    filterFn: "includesString",
-                },
-                {
-                    accessorKey: "actions",
-                    header: " ",
-                    enableSorting: false,
-                    enableGlobalFilter: false,
-                    cell: ({ row }) => (
-                        <EntryClearedToggle entry={row.original}>
-                            <Button>
-                                <ButtonGhostContent
-                                    leftIcon={row.original.isCleared ? <IconCircleX /> : <IconCircleCheck />}
-                                    text={undefined}
-                                    title={row.original.isCleared ? "Dépointer" : "Pointer"}
-                                />
-                            </Button>
-                        </EntryClearedToggle>
-                    ),
-                },
-            ]}
+            columns={columns}
             renderSubComponent={({ row }) => {
                 const rows = linesByEntry.get(row.original.id)
                 if (!rows || rows.length === 0) {

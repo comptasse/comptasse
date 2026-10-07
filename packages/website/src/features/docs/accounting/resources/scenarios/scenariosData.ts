@@ -76,10 +76,13 @@ function buildExamples(definition: ScenarioDefinition): ScenarioExample[] {
 
 function collectAccountNumbers(definition: ScenarioDefinition): string[] {
     const numbers: string[] = []
+    const seen = new Set<string>()
     for (const docExample of definition.docExamples) {
         for (const draft of buildScenarioEntries(definition, docExample)) {
             for (const line of draft.lines) {
-                if (!numbers.includes(line.number)) numbers.push(line.number)
+                if (seen.has(line.number)) continue
+                seen.add(line.number)
+                numbers.push(line.number)
             }
         }
     }

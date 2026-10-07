@@ -367,10 +367,13 @@ function buildScenarioExamples(definition: ScenarioDefinition): ScenarioExample[
 
 function collectScenarioAccountNumbers(definition: ScenarioDefinition): string[] {
     const numbers: string[] = []
+    const seen = new Set<string>()
     for (const docExample of definition.docExamples) {
         for (const draft of buildScenarioEntries(definition, docExample)) {
             for (const line of draft.lines) {
-                if (!numbers.includes(line.number)) numbers.push(line.number)
+                if (seen.has(line.number)) continue
+                seen.add(line.number)
+                numbers.push(line.number)
             }
         }
     }

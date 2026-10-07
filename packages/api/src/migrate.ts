@@ -45,12 +45,15 @@ async function main() {
     // 0000_setup.sql must be the first file (sorts before 0001_*)
     const setupFile = files[0]
 
+    // Migrations must run sequentially: each file is recorded as applied before the next runs, so the loop is
+    // intentionally ordered and cannot be parallelised.
     for (const file of files) {
         if (applied.has(file)) continue
 
         if (isFresh && file !== setupFile) {
             // Fresh install: setup.sql contains the full current schema.
             // Record the remaining files as applied without running them.
+            // react-doctor-disable-next-line react-doctor/async-await-in-loop
             await sql`insert into meta._migrations (name) values (${file})`
             continue
         }

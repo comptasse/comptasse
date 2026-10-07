@@ -40,6 +40,9 @@ type MatchingRow = Matching & {
 /** Right-panel form to rename a matching's code. */
 function EditMatchingForm(props: { idYear: string; matching: Matching }) {
     const { closePanel } = useRightPanel()
+    // The panel is intentionally uncontrolled: it captures the code once and edits it. A different matching opens a fresh
+    // panel (see the `key` at the call site), so the initial value never needs to re-sync.
+    // react-doctor-disable-next-line react-doctor/no-derived-useState
     const [code, setCode] = useState(props.matching.code)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -153,10 +156,8 @@ function MatchingsTable(props: {
 
     const data = useMemo<Array<MatchingRow>>(
         () =>
-            [
-                ...props.matchings,
-            ]
-                .sort((a, b) => a.code.localeCompare(b.code))
+            props.matchings
+                .toSorted((a, b) => a.code.localeCompare(b.code))
                 .map((matching) => {
                     const lines = props.linesByMatchingId.get(matching.id) ?? []
                     return {
@@ -243,6 +244,7 @@ function MatchingsTable(props: {
                                 onClick={() =>
                                     openPanel(
                                         <EditMatchingForm
+                                            key={row.original.id}
                                             idYear={props.idYear}
                                             matching={row.original}
                                         />,

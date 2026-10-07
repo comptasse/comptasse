@@ -13,9 +13,13 @@ const deltaFile = "0001_from_last_update.sql"
 
 function toSqlFile(statements: string[]) {
     const body = statements
-        .map((statement) => statement.trim())
-        .filter(Boolean)
-        .map((statement) => (statement.endsWith(";") ? statement : `${statement};`))
+        .flatMap((statement) => {
+            const trimmed = statement.trim()
+            if (!trimmed) return []
+            return [
+                trimmed.endsWith(";") ? trimmed : `${trimmed};`,
+            ]
+        })
         .join("\n\n")
     return body ? `${body}\n` : ""
 }
