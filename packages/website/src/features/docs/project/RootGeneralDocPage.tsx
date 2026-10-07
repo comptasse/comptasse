@@ -66,7 +66,7 @@ export function RootGeneralDocPage() {
                     description="Apprenez les bases de la comptabilité française : la partie double, les écritures, les comptes, les documents comptables et les ressources de référence."
                     links={[
                         {
-                            to: "/documentation/comptabilité/introduction/",
+                            to: "/documentation/comptabilité/introduction",
                             label: "Introduction",
                         },
                         {

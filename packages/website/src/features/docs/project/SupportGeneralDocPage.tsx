@@ -84,7 +84,7 @@ export function SupportGeneralDocPage() {
                     <DocParagraph>Les bases de la comptabilité expliquées simplement</DocParagraph>
                     <DocParagraph>
                         <DocLink
-                            to="/documentation/comptabilité/introduction/"
+                            to="/documentation/comptabilité/introduction"
                             buttonProps={{
                                 text: "Commencer le cours",
                             }}
