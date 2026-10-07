@@ -44,6 +44,7 @@ export function EntriesPage({
                         "tags",
                         "files",
                         "accounts",
+                        "matchings",
                     ]}
                 >
                     {(data) => (
@@ -189,6 +190,7 @@ export function EntriesPage({
                                 tagById={data.tagById}
                                 fileById={data.fileById}
                                 accountById={data.accountById}
+                                matchingById={data.matchingById}
                             />
                         </Fragment>
                     )}

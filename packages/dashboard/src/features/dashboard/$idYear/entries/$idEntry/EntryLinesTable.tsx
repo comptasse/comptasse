@@ -23,6 +23,12 @@ export function EntryLinesTable(props: {
             data={props.entryLines}
             isLoading={false}
             persistKey="entry-lines"
+            defaultSorting={[
+                {
+                    id: "idAccount",
+                    desc: false,
+                },
+            ]}
             columns={[
                 {
                     accessorKey: "actions",
@@ -69,8 +75,17 @@ export function EntryLinesTable(props: {
                     enableGlobalFilter: false,
                 },
                 {
-                    accessorKey: "idAccount",
+                    id: "idAccount",
+                    accessorFn: (row) => props.accounts.get(row.idAccount)?.number ?? "",
                     header: "Compte",
+                    sortingFn: (rowA, rowB) =>
+                        String(rowA.getValue("idAccount")).localeCompare(
+                            String(rowB.getValue("idAccount")),
+                            undefined,
+                            {
+                                numeric: true,
+                            },
+                        ),
                     cell: ({ row }) => {
                         const account = props.accounts.get(row.original.idAccount)
                         if (!account) return <FormatNull />

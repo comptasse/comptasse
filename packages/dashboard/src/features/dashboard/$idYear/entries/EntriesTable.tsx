@@ -20,6 +20,7 @@ export function EntriesTable(props: {
     journalById: YearDataMaps["journalById"]
     tagById: YearDataMaps["tagById"]
     fileById: YearDataMaps["fileById"]
+    matchingById: YearDataMaps["matchingById"]
 }) {
     const entriesData = useMemo(
         () => props.entries.toSorted((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
@@ -96,6 +97,16 @@ export function EntriesTable(props: {
                         />
                     )
                 }
+                // Movements are always shown sorted by account number.
+                const sortedRows = rows.toSorted((a, b) =>
+                    (accountsMap.get(a.idAccount)?.number ?? "").localeCompare(
+                        accountsMap.get(b.idAccount)?.number ?? "",
+                        undefined,
+                        {
+                            numeric: true,
+                        },
+                    ),
+                )
                 return (
                     <table
                         className={css({
@@ -122,6 +133,19 @@ export function EntriesTable(props: {
                                         fontSize: "xs",
                                         fontWeight: "semibold",
                                         color: "neutral/40",
+                                        textAlign: "left",
+                                    })}
+                                >
+                                    Lettrage
+                                </th>
+                                <th
+                                    className={css({
+                                        padding: "0.5rem 0.75rem",
+                                        width: "1%",
+                                        whiteSpace: "nowrap",
+                                        fontSize: "xs",
+                                        fontWeight: "semibold",
+                                        color: "neutral/40",
                                         textAlign: "right",
                                     })}
                                 >
@@ -129,7 +153,9 @@ export function EntriesTable(props: {
                                 </th>
                                 <th
                                     className={css({
-                                        padding: "0.5rem 1rem",
+                                        padding: "0.5rem 0.75rem",
+                                        width: "1%",
+                                        whiteSpace: "nowrap",
                                         fontSize: "xs",
                                         fontWeight: "semibold",
                                         color: "neutral/40",
@@ -141,8 +167,11 @@ export function EntriesTable(props: {
                             </tr>
                         </thead>
                         <tbody>
-                            {rows.map((entryLine) => {
+                            {sortedRows.map((entryLine) => {
                                 const account = accountsMap.get(entryLine.idAccount)
+                                const matching = entryLine.idMatching
+                                    ? props.matchingById.get(entryLine.idMatching)
+                                    : undefined
                                 return (
                                     <tr
                                         key={entryLine.id}
@@ -188,18 +217,37 @@ export function EntriesTable(props: {
                                         <td
                                             className={css({
                                                 padding: "0.5rem 1rem",
-                                                textAlign: "right",
                                             })}
                                         >
-                                            <FormatPrice price={entryLine.debit} />
+                                            {matching ? <FormatText>{matching.code}</FormatText> : <FormatNull />}
                                         </td>
                                         <td
                                             className={css({
-                                                padding: "0.5rem 1rem",
+                                                padding: "0.5rem 0.75rem",
+                                                whiteSpace: "nowrap",
                                                 textAlign: "right",
                                             })}
                                         >
-                                            <FormatPrice price={entryLine.credit} />
+                                            <FormatPrice
+                                                price={entryLine.debit}
+                                                className={{
+                                                    fontSize: "xs",
+                                                }}
+                                            />
+                                        </td>
+                                        <td
+                                            className={css({
+                                                padding: "0.5rem 0.75rem",
+                                                whiteSpace: "nowrap",
+                                                textAlign: "right",
+                                            })}
+                                        >
+                                            <FormatPrice
+                                                price={entryLine.credit}
+                                                className={{
+                                                    fontSize: "xs",
+                                                }}
+                                            />
                                         </td>
                                     </tr>
                                 )
