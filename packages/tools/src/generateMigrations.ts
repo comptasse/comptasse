@@ -1,7 +1,7 @@
-import { modelSchemas } from "@comptasse/application-metadata"
-import { generateDrizzleJson, generateMigration } from "drizzle-kit/api"
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
+import { modelSchemas } from "@comptasse/application-metadata"
+import { generateDrizzleJson, generateMigration } from "drizzle-kit/api"
 
 const repoDrizzleDir = fileURLToPath(new URL("../drizzle", import.meta.url))
 const defaultBaseline = fileURLToPath(new URL("../drizzle/meta/_snapshot.json", import.meta.url))
@@ -32,7 +32,9 @@ if (existsSync(baselinePath)) {
     console.warn(`[generateMigrations] No baseline snapshot found at ${baselinePath} - writing empty delta`)
 }
 
-mkdirSync(outDir, { recursive: true })
+mkdirSync(outDir, {
+    recursive: true,
+})
 writeFileSync(`${outDir}/${setupFile}`, toSqlFile(setup))
 writeFileSync(`${outDir}/${deltaFile}`, toSqlFile(delta))
 

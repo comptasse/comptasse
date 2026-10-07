@@ -17,11 +17,24 @@ export function IncomeStatementsReportTable(props: {
     accounts: Array<v.InferOutput<typeof returnedSchemas.account>>
 }) {
     const incomeStatementById = useMemo(
-        () => new Map(props.incomeStatements.map((is) => [is.id, is])),
-        [props.incomeStatements],
+        () =>
+            new Map(
+                props.incomeStatements.map((is) => [
+                    is.id,
+                    is,
+                ]),
+            ),
+        [
+            props.incomeStatements,
+        ],
     )
 
-    const accountTotals = useMemo(() => getAccountTotals(props.entryLines), [props.entryLines])
+    const accountTotals = useMemo(
+        () => getAccountTotals(props.entryLines),
+        [
+            props.entryLines,
+        ],
+    )
 
     return (
         <div

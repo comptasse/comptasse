@@ -1,7 +1,13 @@
 import { createRoute } from "@tanstack/react-router"
-import { Page } from "../components/layouts/page/page.js"
 import { lazy } from "react"
-const JournalReportPage = lazy(() => import("../features/dashboard/$idYear/reports/journalReport/JournalReportPage.js").then((m) => ({ default: m.JournalReportPage })))
+import { Page } from "../components/layouts/page/page.js"
+
+const JournalReportPage = lazy(() =>
+    import("../features/dashboard/$idYear/reports/journalReport/JournalReportPage.js").then((m) => ({
+        default: m.JournalReportPage,
+    })),
+)
+
 import { dashboardLayoutRoute } from "./dashboardLayoutRoute.js"
 
 function JournalReportPageWrapper() {

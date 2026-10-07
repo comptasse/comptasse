@@ -23,32 +23,32 @@ export function JournalsPage({
     const idYear = idYearProp ?? params.idYear ?? ""
 
     return (
-                <Section.Root>
-                    <Section.Item>
-                        <div
-                            className={css({
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "flex-start",
-                                alignItems: "center",
-                                gap: "0.5rem",
-                            })}
-                        >
-                            <CreateOneJournal
-                                idOrganization={idOrganization}
-                                idYear={idYear}
-                            >
-                                <ButtonPlainContent
-                                    leftIcon={<IconPlus />}
-                                    text="Ajouter un journal"
-                                />
-                            </CreateOneJournal>
-                        </div>
-                        <JournalsListTable
-                            idOrganization={idOrganization}
-                            idYear={idYear}
+        <Section.Root>
+            <Section.Item>
+                <div
+                    className={css({
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                    })}
+                >
+                    <CreateOneJournal
+                        idOrganization={idOrganization}
+                        idYear={idYear}
+                    >
+                        <ButtonPlainContent
+                            leftIcon={<IconPlus />}
+                            text="Ajouter un journal"
                         />
-                    </Section.Item>
-                </Section.Root>
+                    </CreateOneJournal>
+                </div>
+                <JournalsListTable
+                    idOrganization={idOrganization}
+                    idYear={idYear}
+                />
+            </Section.Item>
+        </Section.Root>
     )
 }

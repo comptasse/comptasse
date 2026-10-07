@@ -23,7 +23,10 @@ export function YearContextSelect(props: {
         enabled: props.idOrganizationSelected !== null,
     })
 
-    const options: Array<{ key: string; label: string }> = []
+    const options: Array<{
+        key: string
+        label: string
+    }> = []
     for (const y of yearsData.data ?? []) {
         if (y.idOrganization !== props.idOrganizationSelected) continue
         options.push({

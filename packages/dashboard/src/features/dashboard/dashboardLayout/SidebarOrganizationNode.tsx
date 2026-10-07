@@ -30,7 +30,7 @@ function usePathname() {
 export function SidebarOrganizationNode({ org }: { org: Org }) {
     const pathname = usePathname()
     const orgPrefix = `/organisation/${org.id}`
-    const orgMatch = pathname.startsWith(orgPrefix + "/")
+    const orgMatch = pathname.startsWith(`${orgPrefix}/`)
     const [isExpanded, setExpanded] = useCollapsibleState(pathname, orgMatch)
     const [isSettingsExpanded, setSettingsExpanded] = useCollapsibleState(
         pathname,

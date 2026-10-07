@@ -1,8 +1,7 @@
 import { createRoute } from "@tanstack/react-router"
 import { DocRoot } from "../../../../../components/document/DocRoot"
-import { reportsAccountingDocLayoutRoute } from "./reportsAccountingDocLayoutRoute.js"
 import { JournalAccountingDocPage } from "../../../../../features/docs/accounting/reports/JournalAccountingDocPage.js"
-
+import { reportsAccountingDocLayoutRoute } from "./reportsAccountingDocLayoutRoute.js"
 
 export const journalAccountingDocRoute = createRoute({
     getParentRoute: () => reportsAccountingDocLayoutRoute,

@@ -29,9 +29,11 @@ export function buildUrl(
     // matched with a boundary so a shorter key (e.g. `id`) can never corrupt a
     // longer one (e.g. `:idOrganization`).
     const pathParamNames = [
-        ...new Set([
-            ...rawPath.matchAll(/:([A-Za-z0-9_]+)/g),
-        ].map((match) => match[1])),
+        ...new Set(
+            [
+                ...rawPath.matchAll(/:([A-Za-z0-9_]+)/g),
+            ].map((match) => match[1]),
+        ),
     ]
 
     for (const name of pathParamNames) {
@@ -107,7 +109,11 @@ export async function getResponseBodyFromAPI<
         // active organization cookie when the caller did not pass it explicitly.
         // This keeps nested Hono apps on the API side happy without requiring every
         // DataWrapper/Provider to forward the organization id.
-        const params = parameters.params ? { ...parameters.params } : {}
+        const params = parameters.params
+            ? {
+                  ...parameters.params,
+              }
+            : {}
         const body = parameters.body as Record<string, unknown>
         if (
             parameters.routeDefinition.path.includes(":idOrganization") &&
@@ -118,13 +124,7 @@ export async function getResponseBodyFromAPI<
             params.idOrganization = idOrganization
         }
 
-        const { url, remainingBody } = buildUrl(
-            apiBaseUrl,
-            parameters.routeDefinition.path,
-            params,
-            body,
-            method,
-        )
+        const { url, remainingBody } = buildUrl(apiBaseUrl, parameters.routeDefinition.path, params, body, method)
 
         const response = await fetch(url, {
             method,

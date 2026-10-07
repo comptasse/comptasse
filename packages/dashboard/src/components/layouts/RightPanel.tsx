@@ -2,12 +2,7 @@ import { css } from "@comptasse/ui/utilities/cn.js"
 import { IconX } from "@tabler/icons-react"
 import type { ReactNode } from "react"
 
-export function RightPanel(props: {
-    open: boolean
-    onClose: () => void
-    title: string
-    children: ReactNode
-}) {
+export function RightPanel(props: { open: boolean; onClose: () => void; title: string; children: ReactNode }) {
     if (!props.open) return null
 
     return (
@@ -58,7 +53,14 @@ export function RightPanel(props: {
                         flexShrink: 0,
                     })}
                 >
-                    <h2 className={css({ fontSize: "lg", fontWeight: "semibold" })}>{props.title}</h2>
+                    <h2
+                        className={css({
+                            fontSize: "lg",
+                            fontWeight: "semibold",
+                        })}
+                    >
+                        {props.title}
+                    </h2>
                     <button
                         type="button"
                         aria-label="Fermer"

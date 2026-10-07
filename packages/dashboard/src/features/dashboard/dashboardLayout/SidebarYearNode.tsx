@@ -34,25 +34,25 @@ export function SidebarYearNode({ orgId, year }: { orgId: string; year: Year }) 
     const pathname = usePathname()
     const yearPrefix = `/organisation/${orgId}/exercice/${year.id}`
     const isSettingsPath =
-        pathname.startsWith(yearPrefix + "/paramètres") ||
-        pathname.startsWith(yearPrefix + "/comptes") ||
-        pathname.startsWith(yearPrefix + "/journaux") ||
-        pathname.startsWith(yearPrefix + "/catégories") ||
-        pathname.startsWith(yearPrefix + "/bilan") ||
-        pathname.startsWith(yearPrefix + "/compte-de-résultat")
+        pathname.startsWith(`${yearPrefix}/paramètres`) ||
+        pathname.startsWith(`${yearPrefix}/comptes`) ||
+        pathname.startsWith(`${yearPrefix}/journaux`) ||
+        pathname.startsWith(`${yearPrefix}/catégories`) ||
+        pathname.startsWith(`${yearPrefix}/bilan`) ||
+        pathname.startsWith(`${yearPrefix}/compte-de-résultat`)
     const [isExpanded, setExpanded] = useCollapsibleState(pathname, pathname.startsWith(yearPrefix))
     const [isSettingsExpanded, setSettingsExpanded] = useCollapsibleState(pathname, isSettingsPath)
     const [isDocumentsExpanded, setDocumentsExpanded] = useCollapsibleState(
         pathname,
-        pathname.startsWith(yearPrefix + "/documents"),
+        pathname.startsWith(`${yearPrefix}/documents`),
     )
     const [isInventoryExpanded, setInventoryExpanded] = useCollapsibleState(
         pathname,
-        pathname.startsWith(yearPrefix + "/inventaire"),
+        pathname.startsWith(`${yearPrefix}/inventaire`),
     )
     const [isCompteResultatExpanded, setCompteResultatExpanded] = useCollapsibleState(
         pathname,
-        pathname.startsWith(yearPrefix + "/compte-de-résultat"),
+        pathname.startsWith(`${yearPrefix}/compte-de-résultat`),
     )
 
     const p = (path: string) => path.replace("$idOrganization", orgId).replace("$idYear", year.id)

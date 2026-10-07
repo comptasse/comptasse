@@ -10,7 +10,9 @@ if (!databaseUrl) {
 
 const migrationsDir = process.env.MIGRATIONS_DIR || "/app/migrations"
 
-const sql = postgres(databaseUrl, { max: 1 })
+const sql = postgres(databaseUrl, {
+    max: 1,
+})
 
 async function main() {
     await sql`create schema if not exists meta`
@@ -19,15 +21,25 @@ async function main() {
         applied_at timestamptz not null default now()
     )`
 
-    const files = readdirSync(migrationsDir).filter((file) => file.endsWith(".sql")).sort()
+    const files = readdirSync(migrationsDir)
+        .filter((file) => file.endsWith(".sql"))
+        .sort()
     if (files.length === 0) {
         throw new Error(`No migration files found in ${migrationsDir}`)
     }
 
-    const appliedRows = await sql<{ name: string }[]>`select name from meta._migrations`
+    const appliedRows = await sql<
+        {
+            name: string
+        }[]
+    >`select name from meta._migrations`
     const applied = new Set(appliedRows.map((row) => row.name))
 
-    const [{ count }] = await sql<{ count: number }[]>`select count(*)::int as count from information_schema.tables where table_schema = 'public'`
+    const [{ count }] = await sql<
+        {
+            count: number
+        }[]
+    >`select count(*)::int as count from information_schema.tables where table_schema = 'public'`
     const isFresh = count === 0
 
     // 0000_setup.sql must be the first file (sorts before 0001_*)

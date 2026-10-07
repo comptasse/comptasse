@@ -56,10 +56,7 @@ const yearScopedRouteDefinitions: YearScopedRouteDefinition[] = [
  *
  * This is fire-and-forget - it does not block navigation.
  */
-export function prefetchYearData(params: {
-    idYear: string
-    idOrganization: string
-}) {
+export function prefetchYearData(params: { idYear: string; idOrganization: string }) {
     const body: YearScopedBody = {
         idYear: params.idYear,
     }
@@ -78,11 +75,7 @@ export function prefetchYearData(params: {
         )
 
         dataClient.prefetchQuery({
-            queryKey: buildQueryKey(
-                routeDefinition,
-                body as Record<string, unknown>,
-                routeParams,
-            ),
+            queryKey: buildQueryKey(routeDefinition, body as Record<string, unknown>, routeParams),
             queryFn: async ({ signal }) => {
                 const response = await getResponseBodyFromAPI({
                     routeDefinition,

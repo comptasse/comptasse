@@ -29,7 +29,9 @@ export function SidebarContextProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         writeStorage(SIDEBAR_WIDTH_KEY, String(width))
-    }, [width])
+    }, [
+        width,
+    ])
 
     const setWidth = useCallback((newWidth: number) => {
         setWidthValue(Math.max(MIN_WIDTH, newWidth))
@@ -37,9 +39,7 @@ export function SidebarContextProvider({ children }: { children: ReactNode }) {
 
     return (
         <SidebarWidthContext.Provider value={width}>
-            <SidebarSetWidthContext.Provider value={setWidth}>
-                {children}
-            </SidebarSetWidthContext.Provider>
+            <SidebarSetWidthContext.Provider value={setWidth}>{children}</SidebarSetWidthContext.Provider>
         </SidebarWidthContext.Provider>
     )
 }

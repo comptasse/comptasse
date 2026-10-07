@@ -175,7 +175,12 @@ export function IncomeStatementReportPdf(props: {
     const rootIncomeStatements = props.incomeStatements
         .filter((is) => is.idIncomeStatementParent === null)
         .sort((a, b) => Number(a.number) - Number(b.number))
-    const incomeStatementById = new Map(props.incomeStatements.map((is) => [is.id, is]))
+    const incomeStatementById = new Map(
+        props.incomeStatements.map((is) => [
+            is.id,
+            is,
+        ]),
+    )
 
     return (
         <Document>

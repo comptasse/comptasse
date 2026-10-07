@@ -1,7 +1,5 @@
 import { getAllMyOrganizationsRouteDefinition } from "@comptasse/application-metadata/routes"
-import { Button, ButtonGhostContent } from "@comptasse/ui"
 import { css } from "@comptasse/ui/utilities/cn.js"
-import { IconPlus } from "@tabler/icons-react"
 import { useRouter } from "@tanstack/react-router"
 import { TreeSection } from "../../../components/layouts/tree/TreeSection.js"
 import { useDataFromAPI } from "../../../utilities/useHTTPData.js"
@@ -13,7 +11,7 @@ export function SidebarNavigation() {
         body: {},
     })
     const orgs = Array.isArray(response.data) ? response.data : []
-    const router = useRouter()
+    const _router = useRouter()
 
     return (
         <nav

@@ -72,18 +72,18 @@ async function tryAuthWithCookie(context: Context<any>) {
 
         context.set("user", user)
 
-    // Resolve idOrganization from header/cookie/body for cookie-based auth
-    let idOrganization: string | undefined
-    try {
-        idOrganization = await resolveOrganizationMiddleware({
-            context,
-        })
-    } catch {
-        // Fallback to URL path param when the route is mounted under /organizations/:idOrganization
-        // and nested Hono apps don't expose the param to resolveOrganizationMiddleware.
-        const urlParam = context.req.param("idOrganization")
-        idOrganization = urlParam && !urlParam.startsWith(":") ? urlParam : undefined
-    }
+        // Resolve idOrganization from header/cookie/body for cookie-based auth
+        let idOrganization: string | undefined
+        try {
+            idOrganization = await resolveOrganizationMiddleware({
+                context,
+            })
+        } catch {
+            // Fallback to URL path param when the route is mounted under /organizations/:idOrganization
+            // and nested Hono apps don't expose the param to resolveOrganizationMiddleware.
+            const urlParam = context.req.param("idOrganization")
+            idOrganization = urlParam && !urlParam.startsWith(":") ? urlParam : undefined
+        }
 
         return {
             userSession: userSession,

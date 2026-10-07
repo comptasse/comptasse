@@ -8,7 +8,7 @@ import type { returnedSchemas } from "@comptasse/application-metadata/schemas"
 import { FormatDate, FormatFileSize, toast } from "@comptasse/ui"
 import { cn, css } from "@comptasse/ui/utilities/cn.js"
 import { IconArrowUp, IconFile, IconFileTypePdf, IconFolder, IconPhoto } from "@tabler/icons-react"
-import { memo, type DragEvent, type MutableRefObject, useRef, useState } from "react"
+import { type DragEvent, type MutableRefObject, memo, useRef, useState } from "react"
 import type * as v from "valibot"
 import { EmptyState } from "../../../../components/layouts/EmptyState.js"
 import { applicationRouter } from "../../../../routes/applicationRouter.js"
@@ -145,7 +145,13 @@ function canDropOnTarget(parameters: { payload: DragPayload; targetFolderId: str
 type GridCardHandlers = {
     handleDragStart: (event: DragEvent, payload: DragPayload) => void
     handleDragEnd: () => void
-    handleDragOver: (event: DragEvent, parameters: { targetId: string; targetFolderId: string | null }) => void
+    handleDragOver: (
+        event: DragEvent,
+        parameters: {
+            targetId: string
+            targetFolderId: string | null
+        },
+    ) => void
     handleDragLeave: () => void
     handleDrop: (event: DragEvent, folderId: string | null) => void
     suppressClickRef: MutableRefObject<boolean>

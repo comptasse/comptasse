@@ -270,7 +270,10 @@ export function BalanceReportTable(props: {
     const scrollContainerRef = useRef<HTMLDivElement>(null)
 
     const sortedAccounts = useMemo(
-        () => [...props.accounts].sort((a, b) => a.number.localeCompare(b.number)),
+        () =>
+            [
+                ...props.accounts,
+            ].sort((a, b) => a.number.localeCompare(b.number)),
         [
             props.accounts,
         ],

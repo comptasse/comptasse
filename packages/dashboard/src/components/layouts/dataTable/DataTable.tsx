@@ -610,7 +610,9 @@ function DataTableRaw<TData extends Record<keyof TData, unknown>>(props: DataTab
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [columnSizingOverrides, setColumnSizingOverrides] = useState<ColumnSizingState>({})
 
-    // Reset selection when the trigger changes (e.g. folder navigation)
+    // Reset selection when the trigger changes (e.g. folder navigation). The trigger is deliberately not read inside the
+    // effect; it is a dependency so the effect re-runs whenever it changes.
+    // biome-ignore lint/correctness/useExhaustiveDependencies: re-run on trigger change, not on its value
     useEffect(() => {
         setRowSelection((prev) => (Object.keys(prev).length > 0 ? {} : prev))
     }, [

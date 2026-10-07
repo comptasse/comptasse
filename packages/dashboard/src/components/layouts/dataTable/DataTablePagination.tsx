@@ -1,56 +1,7 @@
-import {
-    Button,
-    ButtonGhostContent,
-    ButtonOutlineContent,
-    CircularLoader,
-    FormatNull,
-    InputCheckbox,
-    InputNumber,
-} from "@comptasse/ui"
-import { cn, css } from "@comptasse/ui/utilities/cn.js"
-import {
-    IconChevronDown,
-    IconChevronLeft,
-    IconChevronRight,
-    IconDatabaseOff,
-    IconSortAscending,
-    IconSortDescending,
-} from "@tabler/icons-react"
-import {
-    type ColumnDef,
-    type ColumnFiltersState,
-    type ColumnSizingState,
-    flexRender,
-    getCoreRowModel,
-    getExpandedRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    type Row,
-    type RowData,
-    type RowSelectionState,
-    type SortingState,
-    type Table,
-    useReactTable,
-    type VisibilityState,
-} from "@tanstack/react-table"
-import {
-    type ComponentProps,
-    Fragment,
-    memo,
-    type ReactElement,
-    type ReactNode,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react"
-import { ColumnVisibilityPopover, type VisibilityColumn } from "../ColumnVisibilityPopover.js"
-import { EmptyState } from "../EmptyState.js"
-import { type FilterColumn, FilterPopover } from "../FilterPopover.js"
-import { SearchBar } from "../SearchBar.js"
-import { type SortDirection, SortPopover } from "../SortPopover.js"
-import { DataTableToolbar } from "./DataTableToolbar.js"
+import { Button, ButtonOutlineContent, InputNumber } from "@comptasse/ui"
+import { css } from "@comptasse/ui/utilities/cn.js"
+import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react"
+import type { Table } from "@tanstack/react-table"
 
 export function DataTablePagination<TData extends Record<keyof TData, unknown>>({
     table,

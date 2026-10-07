@@ -1,1 +1,3 @@
-window.__COMPTASSE_CONFIG__ = { apiBaseUrl: "" }
+window.__COMPTASSE_CONFIG__ = {
+    apiBaseUrl: "",
+}

@@ -2,16 +2,16 @@ import { createOneYearRouteDefinition, readAllYearsRouteDefinition } from "@comp
 import { InputDate, InputText, toast } from "@comptasse/ui"
 import { IconPlus } from "@tabler/icons-react"
 import { Fragment } from "react/jsx-runtime"
+import { useRightPanel } from "../../contexts/rightPanel/RightPanelContext.js"
+import { YearSelect } from "../../features/dashboard/$idOrganization/years/YearSelect.js"
+import { getResponseBodyFromAPI } from "../../utilities/getResponseBodyFromAPI.js"
+import { invalidateData } from "../../utilities/invalidateData.js"
 import { FormControl } from "../forms/FormControl.js"
 import { FormError } from "../forms/FormError.js"
 import { FormField } from "../forms/FormField.js"
 import { FormItem } from "../forms/FormItem.js"
 import { FormLabel } from "../forms/FormLabel.js"
 import { FormRoot } from "../forms/FormRoot.js"
-import { useRightPanel } from "../../contexts/rightPanel/RightPanelContext.js"
-import { YearSelect } from "../../features/dashboard/$idOrganization/years/YearSelect.js"
-import { invalidateData } from "../../utilities/invalidateData.js"
-import { getResponseBodyFromAPI } from "../../utilities/getResponseBodyFromAPI.js"
 
 export function CreateYearForm(props: { idOrganization: string }) {
     const { closePanel } = useRightPanel()
@@ -66,9 +66,15 @@ export function CreateYearForm(props: { idOrganization: string }) {
                         name="startingAt"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel label="Date de début" isRequired={true} />
+                                <FormLabel
+                                    label="Date de début"
+                                    isRequired={true}
+                                />
                                 <FormControl>
-                                    <InputDate value={field.value} onChange={field.onChange} />
+                                    <InputDate
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
                                 </FormControl>
                                 <FormError />
                             </FormItem>
@@ -79,9 +85,15 @@ export function CreateYearForm(props: { idOrganization: string }) {
                         name="endingAt"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel label="Date de fin" isRequired={true} />
+                                <FormLabel
+                                    label="Date de fin"
+                                    isRequired={true}
+                                />
                                 <FormControl>
-                                    <InputDate value={field.value} onChange={field.onChange} />
+                                    <InputDate
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
                                 </FormControl>
                                 <FormError />
                             </FormItem>
@@ -92,7 +104,10 @@ export function CreateYearForm(props: { idOrganization: string }) {
                         name="idYearPrevious"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel label="Exercice précédent ?" isRequired={false} />
+                                <FormLabel
+                                    label="Exercice précédent ?"
+                                    isRequired={false}
+                                />
                                 <FormControl>
                                     <YearSelect
                                         idOrganization={props.idOrganization}
@@ -109,9 +124,15 @@ export function CreateYearForm(props: { idOrganization: string }) {
                         name="label"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel label="Libellé de l'exercice" isRequired={false} />
+                                <FormLabel
+                                    label="Libellé de l'exercice"
+                                    isRequired={false}
+                                />
                                 <FormControl>
-                                    <InputText value={field.value} onChange={field.onChange} />
+                                    <InputText
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
                                 </FormControl>
                                 <FormError />
                             </FormItem>

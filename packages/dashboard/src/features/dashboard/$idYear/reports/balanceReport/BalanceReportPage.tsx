@@ -119,7 +119,9 @@ function BalanceReportContent({
                 key: j.id,
                 label: `${j.code} ${j.label ?? ""}`.trim(),
             })),
-        [journals],
+        [
+            journals,
+        ],
     )
 
     const tagOptions = useMemo(
@@ -128,7 +130,9 @@ function BalanceReportContent({
                 key: t.id,
                 label: t.label,
             })),
-        [tags],
+        [
+            tags,
+        ],
     )
 
     return (

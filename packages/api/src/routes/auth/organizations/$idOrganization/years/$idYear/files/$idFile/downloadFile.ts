@@ -3,10 +3,10 @@ import { and, eq } from "drizzle-orm"
 import { checkAuthMiddleware } from "../../../../../../../../middlewares/checkAuthMiddleware.js"
 import { requireOrganizationMiddleware } from "../../../../../../../../middlewares/requireOrganizationMiddleware.js"
 import { validateBodyMiddleware } from "../../../../../../../../middlewares/validateBody.middleware.js"
+import { Exception } from "../../../../../../../../utilities/exception.js"
 import { registerRoute } from "../../../../../../../../utilities/registerRoute.js"
 import { selectOne } from "../../../../../../../../utilities/sql/selectOne.js"
 import { getObject } from "../../../../../../../../utilities/storage/getObject.js"
-import { Exception } from "../../../../../../../../utilities/exception.js"
 
 export const downloadFileRoute = registerRoute(downloadFileRouteDefinition, async (c) => {
     const auth = await checkAuthMiddleware({
@@ -23,8 +23,7 @@ export const downloadFileRoute = registerRoute(downloadFileRouteDefinition, asyn
     const fileRecord = await selectOne({
         database: c.var.clients.sql,
         table: models.file,
-        where: (table) =>
-            and(eq(table.idOrganization, idOrganization), eq(table.id, body.idFile)),
+        where: (table) => and(eq(table.idOrganization, idOrganization), eq(table.id, body.idFile)),
     })
 
     if (!fileRecord.storageKey) {

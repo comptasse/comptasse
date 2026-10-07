@@ -23,32 +23,32 @@ export function TagsPage({
     const idYear = idYearProp ?? params.idYear ?? ""
 
     return (
-                <Section.Root>
-                    <Section.Item>
-                        <div
-                            className={css({
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "flex-start",
-                                alignItems: "center",
-                                gap: "0.5rem",
-                            })}
-                        >
-                            <CreateOneTag
-                                idOrganization={idOrganization}
-                                idYear={idYear}
-                            >
-                                <ButtonPlainContent
-                                    leftIcon={<IconPlus />}
-                                    text="Ajouter une catégorie"
-                                />
-                            </CreateOneTag>
-                        </div>
-                        <TagsListTable
-                            idOrganization={idOrganization}
-                            idYear={idYear}
+        <Section.Root>
+            <Section.Item>
+                <div
+                    className={css({
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                    })}
+                >
+                    <CreateOneTag
+                        idOrganization={idOrganization}
+                        idYear={idYear}
+                    >
+                        <ButtonPlainContent
+                            leftIcon={<IconPlus />}
+                            text="Ajouter une catégorie"
                         />
-                    </Section.Item>
-                </Section.Root>
+                    </CreateOneTag>
+                </div>
+                <TagsListTable
+                    idOrganization={idOrganization}
+                    idYear={idYear}
+                />
+            </Section.Item>
+        </Section.Root>
     )
 }

@@ -404,7 +404,9 @@ function buildScenarioExecutionSection(definition: ScenarioDefinition, baseUrl: 
     )
     lines.push("```")
     lines.push("")
-    lines.push(`Référence complète des routes : [Référence API](${docUrl(baseUrl, "/documentation/guide/référence-api")})`)
+    lines.push(
+        `Référence complète des routes : [Référence API](${docUrl(baseUrl, "/documentation/guide/référence-api")})`,
+    )
     lines.push("")
     return lines.join("\n")
 }

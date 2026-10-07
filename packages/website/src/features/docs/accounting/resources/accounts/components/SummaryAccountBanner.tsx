@@ -51,8 +51,8 @@ export function SummaryAccountBanner(props: { entry: AccountEntry }) {
                 >
                     Ce compte à {entry.number.length} chiffre{entry.number.length > 1 ? "s" : ""} est un compte de
                     classification. Il ne peut pas être utilisé directement dans une{" "}
-                    <DocLink to="/documentation/comptabilité/introduction/écritures">écriture comptable</DocLink>. Les écritures
-                    doivent être passées dans les sous-comptes à 3 chiffres ou plus.
+                    <DocLink to="/documentation/comptabilité/introduction/écritures">écriture comptable</DocLink>. Les
+                    écritures doivent être passées dans les sous-comptes à 3 chiffres ou plus.
                 </span>
             </div>
         </div>
